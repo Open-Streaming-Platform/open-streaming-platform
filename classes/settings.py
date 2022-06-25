@@ -1,5 +1,6 @@
 from .shared import db
 
+
 class settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     siteName = db.Column(db.String(255))
@@ -30,7 +31,18 @@ class settings(db.Model):
     hubURL = db.Column(db.String(255))
     maxVideoRetention = db.Column(db.Integer)
 
-    def __init__(self, siteName, siteProtocol, siteAddress, allowRecording, allowUploads, adaptiveStreaming, showEmptyTables, allowComments, version):
+    def __init__(
+        self,
+        siteName,
+        siteProtocol,
+        siteAddress,
+        allowRecording,
+        allowUploads,
+        adaptiveStreaming,
+        showEmptyTables,
+        allowComments,
+        version,
+    ):
         self.siteName = siteName
         self.siteProtocol = siteProtocol
         self.siteAddress = siteAddress
@@ -57,36 +69,37 @@ class settings(db.Model):
         self.hubEnabled = False
         self.hubURL = "https://hub.openstreamingplatform.com"
         self.maxVideoRetention = 0
-        #self.terms = ''
-        #self.privacy = ''
+        # self.terms = ''
+        # self.privacy = ''
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def serialize(self):
         return {
-            'siteName': self.siteName,
-            'siteProtocol': self.siteProtocol,
-            'siteAddress': self.siteAddress,
-            'serverTimeZone': self.serverTimeZone,
-            'siteURI': self.siteProtocol + self.siteAddress,
-            'siteLogo': self.systemLogo,
-            'serverMessageTitle': self.serverMessageTitle,
-            'serverMessage': self.serverMessage,
-            'allowRecording': self.allowRecording,
-            'allowUploads': self.allowUploads,
-            'allowRestream' : self.allowRestream,
-            'allowComments': self.allowComments,
-            'version': self.version,
-            'restreamMaxBitRate': self.restreamMaxBitrate,
-            'maxClipLength': self.maxClipLength,
-            'protectionEnabled': self.protectionEnabled,
-            'adaptiveStreaming': self.adaptiveStreaming,
-            'maintenanceMode': self.maintenanceMode,
-            'hubEnabled': self.hubEnabled,
-            'hubURL': self.hubURL,
-            'maxVideoRetention': self.maxVideoRetention
+            "siteName": self.siteName,
+            "siteProtocol": self.siteProtocol,
+            "siteAddress": self.siteAddress,
+            "serverTimeZone": self.serverTimeZone,
+            "siteURI": self.siteProtocol + self.siteAddress,
+            "siteLogo": self.systemLogo,
+            "serverMessageTitle": self.serverMessageTitle,
+            "serverMessage": self.serverMessage,
+            "allowRecording": self.allowRecording,
+            "allowUploads": self.allowUploads,
+            "allowRestream": self.allowRestream,
+            "allowComments": self.allowComments,
+            "version": self.version,
+            "restreamMaxBitRate": self.restreamMaxBitrate,
+            "maxClipLength": self.maxClipLength,
+            "protectionEnabled": self.protectionEnabled,
+            "adaptiveStreaming": self.adaptiveStreaming,
+            "maintenanceMode": self.maintenanceMode,
+            "hubEnabled": self.hubEnabled,
+            "hubURL": self.hubURL,
+            "maxVideoRetention": self.maxVideoRetention,
         }
+
 
 class edgeStreamer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -104,17 +117,18 @@ class edgeStreamer(db.Model):
         self.loadPct = loadPct
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def serialize(self):
         return {
-            'id': self.id,
-            'address': self.address,
-            'port': self.port,
-            'active': self.active,
-            'status': self.status,
-            'loadPct': self.loadPct
+            "id": self.id,
+            "address": self.address,
+            "port": self.port,
+            "active": self.active,
+            "status": self.status,
+            "loadPct": self.loadPct,
         }
+
 
 class rtmpServer(db.Model):
     __tablename__ = "rtmpServer"
@@ -122,7 +136,9 @@ class rtmpServer(db.Model):
     address = db.Column(db.String(1024))
     active = db.Column(db.Boolean)
     hide = db.Column(db.Boolean)
-    streams = db.relationship('Stream', backref='server', cascade="all, delete-orphan", lazy="joined")
+    streams = db.relationship(
+        "Stream", backref="server", cascade="all, delete-orphan", lazy="joined"
+    )
 
     def __init__(self, address):
         self.address = address
@@ -130,14 +146,11 @@ class rtmpServer(db.Model):
         self.active = True
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'address': self.address,
-            'active': self.active
-        }
+        return {"id": self.id, "address": self.address, "active": self.active}
+
 
 class oAuthProvider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -158,7 +171,22 @@ class oAuthProvider(db.Model):
     username_value = db.Column(db.String(256))
     email_value = db.Column(db.String(256))
 
-    def __init__(self, name, preset_auth_type, friendlyName, displayColor, client_id, client_secret, access_token_url, authorize_url, api_base_url, profile_endpoint, id_value, username_value, email_value):
+    def __init__(
+        self,
+        name,
+        preset_auth_type,
+        friendlyName,
+        displayColor,
+        client_id,
+        client_secret,
+        access_token_url,
+        authorize_url,
+        api_base_url,
+        profile_endpoint,
+        id_value,
+        username_value,
+        email_value,
+    ):
         self.name = name
         self.preset_auth_type = preset_auth_type
         self.friendlyName = friendlyName
@@ -174,7 +202,8 @@ class oAuthProvider(db.Model):
         self.email_value = email_value
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class static_page(db.Model):
     __tablename__ = "static_page"
@@ -192,4 +221,4 @@ class static_page(db.Model):
         self.isTopBar = False
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id

@@ -3,18 +3,20 @@ import datetime
 from binascii import hexlify
 import os
 
+
 def generateKey(length):
     key = hexlify(os.urandom(length))
     return key.decode()
 
+
 class invitedViewer(db.Model):
-    __tablename__ = 'invitedViewer'
+    __tablename__ = "invitedViewer"
     id = db.Column(db.Integer, primary_key=True)
-    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
-    channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    userID = db.Column(db.Integer, db.ForeignKey("user.id"))
+    channelID = db.Column(db.Integer, db.ForeignKey("Channel.id"))
     addedDate = db.Column(db.DateTime)
     expiration = db.Column(db.DateTime)
-    inviteCode = db.Column(db.Integer, db.ForeignKey('inviteCode.id'))
+    inviteCode = db.Column(db.Integer, db.ForeignKey("inviteCode.id"))
 
     def __init__(self, userID, channelID, expirationDays, inviteCode=None):
         self.userID = userID
@@ -26,10 +28,12 @@ class invitedViewer(db.Model):
         if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(days=int(expirationDays))
+            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(
+                days=int(expirationDays)
+            )
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def isValid(self):
         now = datetime.datetime.utcnow()
@@ -40,14 +44,15 @@ class invitedViewer(db.Model):
         else:
             return False
 
+
 class inviteCode(db.Model):
-    __tablename__ = 'inviteCode'
+    __tablename__ = "inviteCode"
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(255), unique=True)
     expiration = db.Column(db.DateTime)
-    channelID = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    channelID = db.Column(db.Integer, db.ForeignKey("Channel.id"))
     uses = db.Column(db.Integer)
-    viewers = db.relationship('invitedViewer', backref='usedCode', lazy="joined")
+    viewers = db.relationship("invitedViewer", backref="usedCode", lazy="joined")
 
     def __init__(self, expirationDays, channelID):
         self.code = generateKey(12)
@@ -57,10 +62,12 @@ class inviteCode(db.Model):
         if int(expirationDays) <= 0:
             self.expiration = None
         else:
-            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(days=int(expirationDays))
+            self.expiration = datetime.datetime.utcnow() + datetime.timedelta(
+                days=int(expirationDays)
+            )
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
 
     def isValid(self):
         now = datetime.datetime.utcnow()

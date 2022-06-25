@@ -177,7 +177,7 @@ upgrade_db() {
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
-  python3 manage.py db upgrade >> $OSPLOG 2>&1
+  flask db upgrade >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
@@ -321,6 +321,7 @@ install_osp_rtmp() {
   echo 10 | dialog --title "Installing OSP-RTMP" --gauge "Intalling Prereqs" 10 70 0
   install_prereq
   echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
+  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
 
   echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
@@ -504,6 +505,7 @@ install_osp() {
   echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   install_prereq
+  sudo pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
 
   # Setup OSP Directory
@@ -624,15 +626,14 @@ upgrade_osp() {
    if cd /opt/osp
    then
      echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
-     sudo git stash >> $UPGRADELOG 2>&1
-     sudo git pull >> $UPGRADELOG 2>&1
-     echo 15 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
+     echo 10 | dialog --title "Upgrading OSP" --gauge "Setting /opt/osp Ownership" 10 70 0
      sudo chown -R $http_user:$http_user /opt/osp >> $UPGRADELOG 2>&1
      echo 25 | dialog --title "Upgrading OSP" --gauge "Stopping OSP" 10 70 0
      sudo systemctl stop osp.target >> $UPGRADELOG 2>&1
      echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
      sudo systemctl stop nginx-osp >> $UPGRADELOG 2>&1
      echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
+     sudo pip3 uninstall -r /opt/osp/setup/remove_requirements.txt -y >> $UPGRADELOG 2>&1
      sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
      echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
@@ -640,7 +641,7 @@ upgrade_osp() {
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     python3 manage.py db upgrade >> $UPGRADELOG 2>&1
+     flask db upgrade >> $UPGRADELOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
      sudo systemctl start osp.target >> $UPGRADELOG 2>&1
      echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
@@ -652,7 +653,6 @@ upgrade_osp() {
 }
 
 upgrade_proxy() {
-  sudo git pull >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
@@ -661,7 +661,7 @@ upgrade_proxy() {
 }
 
 upgrade_rtmp() {
-  sudo git pull >> $OSPLOG 2>&1
+  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
   sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
@@ -669,7 +669,6 @@ upgrade_rtmp() {
 }
 
 upgrade_ejabberd() {
-  sudo git pull >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
 }

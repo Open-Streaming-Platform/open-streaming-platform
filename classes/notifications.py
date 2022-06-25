@@ -2,15 +2,16 @@ from .shared import db
 from uuid import uuid4
 from datetime import datetime
 
+
 class userNotification(db.Model):
     __tablename__ = "userNotification"
-    id = db.Column(db.Integer,primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     notificationID = db.Column(db.String(255), unique=True)
     timestamp = db.Column(db.DateTime)
     message = db.Column(db.String(1024))
     link = db.Column(db.String(1024))
     image = db.Column(db.String(256))
-    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    userID = db.Column(db.Integer, db.ForeignKey("user.id"))
     read = db.Column(db.Boolean)
 
     def __init__(self, message, link, image, userID):
@@ -23,7 +24,8 @@ class userNotification(db.Model):
         self.read = False
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class userMessage(db.Model):
     __tablename__ = "userMessage"
@@ -33,7 +35,7 @@ class userMessage(db.Model):
     subject = db.Column(db.String(1024))
     message = db.Column(db.String(10240))
     fromUserID = db.Column(db.Integer)
-    toUserID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    toUserID = db.Column(db.Integer, db.ForeignKey("user.id"))
     read = db.Column(db.Boolean)
 
     def __init__(self, subject, message, fromUserID, toUserID):
@@ -46,4 +48,4 @@ class userMessage(db.Model):
         self.read = False
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id

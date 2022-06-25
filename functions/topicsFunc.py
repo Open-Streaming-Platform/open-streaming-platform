@@ -9,6 +9,7 @@ from functions import cachedDbCalls, system
 
 from globals import globalvars
 
+
 def deleteTopic(topicID, toTopicID):
 
     topicID = int(topicID)
@@ -26,7 +27,9 @@ def deleteTopic(topicID, toTopicID):
     for vid in videos:
         vid.topic = newTopic.id
 
-    system.newLog(1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name))
+    system.newLog(
+        1, "User " + current_user.username + " deleted Topic " + str(topicQuery.name)
+    )
     db.session.delete(topicQuery)
     db.session.commit()
     cache.delete_memoized(cachedDbCalls.getAllTopics)

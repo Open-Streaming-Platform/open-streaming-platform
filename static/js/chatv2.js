@@ -428,7 +428,7 @@ function onMessage(msg) {
   var messageElement = msg.getElementsByTagName('body');
   var timestampElement = msg.getElementsByTagName('delay');
   var messageBanned = false;
-    
+
   if (Strophe.getResourceFromJid(from) == null) {
       from = ROOMNAME + "@" + ROOM_SERVICE + "/SERVER";
   }
@@ -454,7 +454,7 @@ function onMessage(msg) {
           console.log('CHAT: I got a message from ' + from + ': ' + Strophe.getText(body));
       // Check if message is of type groupchat, not null, within now and the message display threshold
       } else if (type == "groupchat" && messageElement.length > 0 && messageTimestamp > messageDisplayThreshold) {
-          
+
           if ( messageBanned != true) {
               var body = messageElement[0];
               var room = Strophe.unescapeNode(Strophe.getNodeFromJid(from));

@@ -183,4 +183,3 @@ function deleteComment(){
     var commentDiv = document.getElementById('vidComment-' + commentId);
     commentDiv.parentElement.removeChild(commentDiv);
 }
-

@@ -26,17 +26,18 @@ from functions import cachedDbCalls
 
 from classes.shared import celery
 
-log = logging.getLogger('app.functions.system')
+log = logging.getLogger("app.functions.system")
+
 
 def asynch(func):
-
     @wraps(func)
     def async_func(*args, **kwargs):
-        func_hl = Thread(target = func, args = args, kwargs = kwargs)
+        func_hl = Thread(target=func, args=args, kwargs=kwargs)
         func_hl.start()
         return func_hl
 
     return async_func
+
 
 def check_existing_settings():
     settingsQuery = settings.settings.query.all()
@@ -47,21 +48,26 @@ def check_existing_settings():
         db.session.close()
         return False
 
+
 # Class Required for HTML Stripping in strip_html
 class MLStripper(HTMLParser):
     def __init__(self):
         super().__init__()
         self.reset()
         self.fed = []
+
     def handle_data(self, d):
         self.fed.append(d)
+
     def get_data(self):
-        return ''.join(self.fed)
+        return "".join(self.fed)
+
 
 def strip_html(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
+
 
 def videoupload_allowedExt(filename, allowedExtensions):
     if not "." in filename:
@@ -72,29 +78,47 @@ def videoupload_allowedExt(filename, allowedExtensions):
     else:
         return False
 
+
 def formatSiteAddress(systemAddress):
     try:
         ipaddress.ip_address(systemAddress)
         return systemAddress
     except ValueError:
         try:
-            ipaddress.ip_address(systemAddress.split(':')[0])
-            return systemAddress.split(':')[0]
+            ipaddress.ip_address(systemAddress.split(":")[0])
+            return systemAddress.split(":")[0]
         except ValueError:
             return systemAddress
+
 
 def table2Dict(table):
     exportedTableList = table.query.all()
     dataList = []
     for tbl in exportedTableList:
-        dataList.append(dict((column.name, str(getattr(tbl, column.name))) for column in tbl.__table__.columns))
+        dataList.append(
+            dict(
+                (column.name, str(getattr(tbl, column.name)))
+                for column in tbl.__table__.columns
+            )
+        )
     return dataList
 
+
 def parseTags(tagString):
-    tagString = tagString.split(',')
+    tagString = tagString.split(",")
     return tagString
 
-def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPassword, smtpSender, smtpReceiver):
+
+def sendTestEmail(
+    smtpServer,
+    smtpPort,
+    smtpTLS,
+    smtpSSL,
+    smtpUsername,
+    smtpPassword,
+    smtpSender,
+    smtpReceiver,
+):
     try:
         server = smtplib.SMTP(smtpServer, int(smtpPort))
         if smtpSSL is True:
@@ -114,11 +138,13 @@ def sendTestEmail(smtpServer, smtpPort, smtpTLS, smtpSSL, smtpUsername, smtpPass
     newLog(1, "Test Email Successful for " + str(smtpServer))
     return True
 
+
 def newLog(logType, message):
     newLogItem = logs.logs(datetime.datetime.utcnow(), str(message), logType)
     db.session.add(newLogItem)
     db.session.commit()
     return True
+
 
 def rebuildOSPEdgeConf():
     f = open("/opt/osp/conf/osp-edge.conf", "w")
@@ -129,44 +155,78 @@ def rebuildOSPEdgeConf():
             if edge.port == 80 or edge.port == 443:
                 f.write(str(edge.loadPct) + "% " + edge.address + ";\n")
             else:
-                f.write(str(edge.loadPct) + "% " + edge.address + ":" + str(edge.port) +";\n" )
+                f.write(
+                    str(edge.loadPct)
+                    + "% "
+                    + edge.address
+                    + ":"
+                    + str(edge.port)
+                    + ";\n"
+                )
     else:
         f.write("100% 127.0.0.1;\n")
     f.write("}")
     f.close()
     return True
 
+
 def systemFixes(app):
 
     log.info({"level": "info", "message": "Checking for 0.7.x Clips"})
     # Fix for Beta 6 Switch from Fake Clips to real clips
     clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
-    videos_root = globalvars.videoRoot + 'videos/'
+    videos_root = globalvars.videoRoot + "videos/"
     for clip in clipQuery:
         originalVideo = videos_root + clip.recordedVideo.videoLocation
-        clipVideoLocation = clip.recordedVideo.channel.channelLoc + '/clips/' + 'clip-' + str(clip.id) + ".mp4"
+        clipVideoLocation = (
+            clip.recordedVideo.channel.channelLoc
+            + "/clips/"
+            + "clip-"
+            + str(clip.id)
+            + ".mp4"
+        )
         fullvideoLocation = videos_root + clipVideoLocation
         clip.videoLocation = clipVideoLocation
-        clipVideo = subprocess.run(['ffmpeg', '-ss', str(clip.startTime), '-i', originalVideo, '-c', 'copy', '-t', str(clip.length), '-avoid_negative_ts', '1', fullvideoLocation])
+        clipVideo = subprocess.run(
+            [
+                "ffmpeg",
+                "-ss",
+                str(clip.startTime),
+                "-i",
+                originalVideo,
+                "-c",
+                "copy",
+                "-t",
+                str(clip.length),
+                "-avoid_negative_ts",
+                "1",
+                fullvideoLocation,
+            ]
+        )
         db.session.commmit()
 
     log.info({"level": "info", "message": "Checking Stickers Directory"})
     # Create the Stickers directory if it does not exist
-    if not os.path.isdir(app.config['WEB_ROOT'] + "/images/stickers"):
+    if not os.path.isdir(app.config["WEB_ROOT"] + "/images/stickers"):
         try:
-            os.mkdir(app.config['WEB_ROOT'] + "/images/stickers")
+            os.mkdir(app.config["WEB_ROOT"] + "/images/stickers")
         except OSError:
             flash("Unable to create <web-root>/images/stickers", "error")
 
     log.info({"level": "info", "message": "Checking stream-thumb directory"})
     # Create the stream-thumb directory if it does not exist
-    if not os.path.isdir(app.config['WEB_ROOT'] + "stream-thumb"):
+    if not os.path.isdir(app.config["WEB_ROOT"] + "stream-thumb"):
         try:
-            os.mkdir(app.config['WEB_ROOT'] + "stream-thumb")
+            os.mkdir(app.config["WEB_ROOT"] + "stream-thumb")
         except OSError:
             flash("Unable to create <web-root>/stream-thumb", "error")
 
-    log.info({"level": "info", "message": "Checking for fs_uniquifier for Flask-Security-Too"})
+    log.info(
+        {
+            "level": "info",
+            "message": "Checking for fs_uniquifier for Flask-Security-Too",
+        }
+    )
     # Check fs_uniquifier
     userQuery = Sec.User.query.filter_by(fs_uniquifier=None).all()
     for user in userQuery:
@@ -174,22 +234,35 @@ def systemFixes(app):
         db.session.commit()
 
     log.info({"level": "info", "message": "Checking Pre 0.9.x Favicon Location"})
-    path = Path(globalvars.videoRoot + '/images/favicon.ico')
+    path = Path(globalvars.videoRoot + "/images/favicon.ico")
     if not path.is_file():
-        transferFiles = ['android-chrome-192x192.png', 'android-chrome-512x512.png', 'apple-touch-icon.png', 'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png']
+        transferFiles = [
+            "android-chrome-192x192.png",
+            "android-chrome-512x512.png",
+            "apple-touch-icon.png",
+            "favicon.ico",
+            "favicon-16x16.png",
+            "favicon-32x32.png",
+        ]
         for file in transferFiles:
-            shutil.copy('/opt/osp/static/' + file, globalvars.videoRoot + '/images/', follow_symlinks=True)
+            shutil.copy(
+                "/opt/osp/static/" + file,
+                globalvars.videoRoot + "/images/",
+                follow_symlinks=True,
+            )
 
     return True
+
 
 def initializeThemes():
     sysSettings = cachedDbCalls.getSystemSettings()
 
     log.info({"level": "info", "message": "Importing Theme Data into Global Cache"})
     # Import Theme Data into Theme Dictionary
-    with open('templates/themes/' + sysSettings.systemTheme + '/theme.json') as f:
+    with open("templates/themes/" + sysSettings.systemTheme + "/theme.json") as f:
         globalvars.themeData = json.load(f)
     return True
+
 
 def checkOSPEdgeConf():
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -203,8 +276,14 @@ def checkOSPEdgeConf():
             log.error("Error Rebuilding Edge Config")
             return False
     else:
-        log.info({"level": "info", "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting"})
+        log.info(
+            {
+                "level": "info",
+                "message": "Skipping Rebuilding '/opt/osp/conf/osp-edge.conf' per System Setting",
+            }
+        )
     return True
+
 
 @celery.task()
 def testCelery():

@@ -11,4 +11,3 @@ activeEdgeNodes = []
 edgeRestreamSubprocesses = {}
 
 apiLocation = "http://127.0.0.1"
-

@@ -21,8 +21,8 @@
 .cm-s-ayu-dark span.cm-comment.cm-tag { color: #39bae6; }
 .cm-s-ayu-dark span.cm-comment.cm-type { color: #5998a6; }
 
-.cm-s-ayu-dark span.cm-property, .cm-s-ayu-dark span.cm-attribute { color: #ffb454; }  
-.cm-s-ayu-dark span.cm-keyword { color: #ff8f40; } 
+.cm-s-ayu-dark span.cm-property, .cm-s-ayu-dark span.cm-attribute { color: #ffb454; }
+.cm-s-ayu-dark span.cm-keyword { color: #ff8f40; }
 .cm-s-ayu-dark span.cm-builtin { color: #e6b450; }
 .cm-s-ayu-dark span.cm-string { color: #c2d94c; }
 
@@ -35,7 +35,7 @@
 .cm-s-ayu-dark span.cm-tag { color: rgba(57, 186, 230, 80); }
 .cm-s-ayu-dark span.cm-header { color: #c2d94c; }
 .cm-s-ayu-dark span.cm-link { color: #39bae6; }
-.cm-s-ayu-dark span.cm-error { color: #ff3333; } 
+.cm-s-ayu-dark span.cm-error { color: #ff3333; }
 
 .cm-s-ayu-dark .CodeMirror-activeline-background { background: #01060e; }
 .cm-s-ayu-dark .CodeMirror-matchingbracket {

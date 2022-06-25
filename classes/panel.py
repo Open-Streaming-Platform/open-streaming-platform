@@ -13,6 +13,7 @@ class panel(db.Model):
         type : int
             Indicator of Panel Type {0: Custom Markdown, 1: Livestream List, 2: Video List, 3: Clip List, 4: Topic List}
     """
+
     __abstract__ = True
     name = db.Column(db.String(255))
     type = db.Column(db.Integer)
@@ -20,6 +21,7 @@ class panel(db.Model):
     order = db.Column(db.Integer)
     target = db.Column(db.Integer)
     content = db.Column(db.Text)
+
 
 class globalPanel(panel):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,7 +34,8 @@ class globalPanel(panel):
         self.content = content
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class userPanel(panel):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,12 +50,13 @@ class userPanel(panel):
         self.content = content
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class channelPanel(panel):
     __tablename__ = "channelPanel"
     id = db.Column(db.Integer, primary_key=True)
-    channelId = db.Column(db.Integer, db.ForeignKey('Channel.id'))
+    channelId = db.Column(db.Integer, db.ForeignKey("Channel.id"))
 
     def __init__(self, name, channelId, panelType, header, order, content):
         self.name = name
@@ -63,7 +67,8 @@ class channelPanel(panel):
         self.content = content
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id
+
 
 class panelMapping(db.Model):
 
@@ -98,4 +103,4 @@ class panelMapping(db.Model):
         self.panelLocationId = panelLocationId
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return "<id %r>" % self.id

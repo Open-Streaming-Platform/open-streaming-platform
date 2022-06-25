@@ -682,7 +682,7 @@
                         {% if userData.emailStream==True %} checked {% endif %}>
                     </div>
                     <div class="form-check form-switch">
-                      <label for="email-message" class="form-check-label">a new message is recieved</label>
+                      <label for="email-message" class="form-check-label">a new message is received</label>
                       <input type="checkbox" class="form-check-input" id="email-message" name="emailMessage"
                         {% if userData.emailMessage==True %} checked {% endif %}>
                     </div>
@@ -1619,7 +1619,7 @@
                   <div class="form-group">
                     <label for="chatHistory" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
                     <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory" name="chatHistory" onInput="$('#chatHistoryLabel').html($(this).val())">
-                    
+
                   </div>
                   <div class="row">
                     <div class="col-1 fs-2">
@@ -1701,7 +1701,7 @@
                         <div class="card-body">
                             <button class="btn btn-sm btn-success shadow" type="button" onclick="newStickerModal({{ channel.id }});"><i class="fas fa-plus"></i> Add Sticker</button>
                             <div class="d-flex flex-wrap justify-content-start">
-                                {% for sticker in channel.chatStickers %}
+                                {% for sticker in channel.id | get_channelStickers %}
                                 <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
                                     <div class="mx-auto my-2" style="width:128px;">
                                         <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">

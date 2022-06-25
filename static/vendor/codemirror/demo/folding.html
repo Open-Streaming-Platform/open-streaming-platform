@@ -53,7 +53,7 @@
     <div style="max-width: 50em; margin-bottom: 1em">JavaScript:<br>
     <textarea id="code" name="code"></textarea></div>
     <div style="max-width: 50em; margin-bottom: 1em">HTML:<br>
-    <textarea id="code-html" name="code-html"></textarea></div>    
+    <textarea id="code-html" name="code-html"></textarea></div>
     <div style="max-width: 50em; margin-bottom: 1em">JSON with custom widget:<br>
     <textarea id="code-json" name="code-json">
 {
@@ -129,7 +129,7 @@ window.onload = function() {
         var count = undefined;
 
         // Get open / close token
-        var startToken = '{', endToken = '}';        
+        var startToken = '{', endToken = '}';
         var prevLine = window.editor_json.getLine(from.line);
         if (prevLine.lastIndexOf('[') > prevLine.lastIndexOf('{')) {
           startToken = '[', endToken = ']';
@@ -143,7 +143,7 @@ window.onload = function() {
         try {
           var parsed = JSON.parse(toParse);
           count = Object.keys(parsed).length;
-        } catch(e) { }        
+        } catch(e) { }
 
         return count ? `\u21A4${count}\u21A6` : '\u2194';
       }

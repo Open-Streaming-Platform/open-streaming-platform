@@ -29,23 +29,38 @@ from functions import cachedDbCalls
 
 from functions.scheduled_tasks import message_tasks
 
-log = logging.getLogger('app.functions.database')
+log = logging.getLogger("app.functions.database")
 
 # Checks Length of a Video at path and returns the length
 def getVidLength(input_video):
-    result = subprocess.check_output(['ffprobe', '-i', input_video, '-show_entries', 'format=duration', '-loglevel', '8', '-of', 'csv=%s' % ("p=0")])
+    result = subprocess.check_output(
+        [
+            "ffprobe",
+            "-i",
+            input_video,
+            "-show_entries",
+            "format=duration",
+            "-loglevel",
+            "8",
+            "-of",
+            "csv=%s" % ("p=0"),
+        ]
+    )
     return float(result)
+
 
 def deleteVideo(videoID):
     recordedVid = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
 
     if recordedVid.videoLocation is not None:
-        videos_root = globalvars.videoRoot + 'videos/'
+        videos_root = globalvars.videoRoot + "videos/"
         filePath = videos_root + recordedVid.videoLocation
         thumbnailPath = videos_root + recordedVid.videoLocation[:-4] + ".png"
         gifPath = videos_root + recordedVid.videoLocation[:-4] + ".gif"
 
-        videoTags = RecordedVideo.video_tags.query.filter_by(videoID=recordedVid.id).all()
+        videoTags = RecordedVideo.video_tags.query.filter_by(
+            videoID=recordedVid.id
+        ).all()
         for tag in videoTags:
             db.session.delete(tag)
 
@@ -60,7 +75,9 @@ def deleteVideo(videoID):
             db.session.delete(vote)
 
         # Delete Comments Attached to Video
-        commentQuery = comments.videoComments.query.filter_by(videoID=recordedVid.id).all()
+        commentQuery = comments.videoComments.query.filter_by(
+            videoID=recordedVid.id
+        ).all()
 
         for comment in commentQuery:
             db.session.delete(comment)
@@ -73,7 +90,9 @@ def deleteVideo(videoID):
 
         # Delete Video and Thumbnails
         if filePath != videos_root:
-            if os.path.exists(filePath) and (recordedVid.videoLocation is not None or recordedVid.videoLocation != ""):
+            if os.path.exists(filePath) and (
+                recordedVid.videoLocation is not None or recordedVid.videoLocation != ""
+            ):
                 os.remove(filePath)
                 if os.path.exists(thumbnailPath):
                     os.remove(thumbnailPath)
@@ -91,7 +110,10 @@ def deleteVideo(videoID):
         return True
     return False
 
-def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allowComments):
+
+def changeVideoMetadata(
+    videoID, newVideoName, newVideoTopic, description, allowComments
+):
 
     recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -104,32 +126,68 @@ def changeVideoMetadata(videoID, newVideoName, newVideoTopic, description, allow
         recordedVidQuery.allowComments = allowComments
 
         if recordedVidQuery.channel.imageLocation is None:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/static/img/video-placeholder.jpg")
+            channelImage = (
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/static/img/video-placeholder.jpg"
+            )
         else:
-            channelImage = (sysSettings.siteProtocol + sysSettings.siteAddress + "/images/" + recordedVidQuery.channel.imageLocation)
+            channelImage = (
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/images/"
+                + recordedVidQuery.channel.imageLocation
+            )
 
-        message_tasks.send_webhook.delay(recordedVidQuery.channel.id, 9, channelname=recordedVidQuery.channel.channelName,
-                   channelurl=(sysSettings.siteProtocol + sysSettings.siteAddress + "/channel/" + str(recordedVidQuery.channel.id)),
-                   channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
-                   channelimage=channelImage, streamer=templateFilters.get_userName(recordedVidQuery.owningUser),
-                   channeldescription=str(recordedVidQuery.channel.description), videoname=recordedVidQuery.channelName,
-                   videodate=recordedVidQuery.videoDate, videodescription=recordedVidQuery.description,
-                   videotopic=templateFilters.get_topicName(recordedVidQuery.topic),
-                   videourl=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.videoLocation),
-                   videothumbnail=(sysSettings.siteProtocol + sysSettings.siteAddress + '/videos/' + recordedVidQuery.thumbnailLocation))
+        message_tasks.send_webhook.delay(
+            recordedVidQuery.channel.id,
+            9,
+            channelname=recordedVidQuery.channel.channelName,
+            channelurl=(
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/channel/"
+                + str(recordedVidQuery.channel.id)
+            ),
+            channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
+            channelimage=channelImage,
+            streamer=templateFilters.get_userName(recordedVidQuery.owningUser),
+            channeldescription=str(recordedVidQuery.channel.description),
+            videoname=recordedVidQuery.channelName,
+            videodate=recordedVidQuery.videoDate,
+            videodescription=recordedVidQuery.description,
+            videotopic=templateFilters.get_topicName(recordedVidQuery.topic),
+            videourl=(
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/videos/"
+                + recordedVidQuery.videoLocation
+            ),
+            videothumbnail=(
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/videos/"
+                + recordedVidQuery.thumbnailLocation
+            ),
+        )
         db.session.commit()
         system.newLog(4, "Video Metadata Changed - ID # " + str(recordedVidQuery.id))
         return True
     return False
 
+
 def moveVideo(videoID, newChannel):
 
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID), owningUser=current_user.id).first()
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(
+        id=int(videoID), owningUser=current_user.id
+    ).first()
 
     if recordedVidQuery is not None:
-        newChannelQuery = Channel.Channel.query.filter_by(id=newChannel, owningUser=current_user.id).first()
+        newChannelQuery = Channel.Channel.query.filter_by(
+            id=newChannel, owningUser=current_user.id
+        ).first()
         if newChannelQuery is not None:
-            videos_root = globalvars.videoRoot + 'videos/'
+            videos_root = globalvars.videoRoot + "videos/"
 
             recordedVidQuery.channelID = newChannelQuery.id
             coreVideo = (recordedVidQuery.videoLocation.split("/")[1]).split("_", 1)[1]
@@ -137,49 +195,128 @@ def moveVideo(videoID, newChannel):
                 try:
                     os.mkdir(videos_root + newChannelQuery.channelLoc)
                 except OSError:
-                    system.newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
-                        newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
+                    system.newLog(
+                        4,
+                        "Error Moving Video ID #"
+                        + str(recordedVidQuery.id)
+                        + "to Channel ID"
+                        + str(newChannelQuery.id)
+                        + "/"
+                        + newChannelQuery.channelLoc,
+                    )
                     flash("Error Moving Video - Unable to Create Directory", "error")
                     return False
-            shutil.move(videos_root + recordedVidQuery.videoLocation,
-                        videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo)
-            recordedVidQuery.videoLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreVideo
+            shutil.move(
+                videos_root + recordedVidQuery.videoLocation,
+                videos_root
+                + newChannelQuery.channelLoc
+                + "/"
+                + newChannelQuery.channelLoc
+                + "_"
+                + coreVideo,
+            )
+            recordedVidQuery.videoLocation = (
+                newChannelQuery.channelLoc
+                + "/"
+                + newChannelQuery.channelLoc
+                + "_"
+                + coreVideo
+            )
             if (recordedVidQuery.thumbnailLocation is not None) and (
-            os.path.exists(videos_root + recordedVidQuery.thumbnailLocation)):
-                coreThumbnail = (recordedVidQuery.thumbnailLocation.split("/")[1]).split("_", 1)[1]
-                coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split("_", 1)[1]
-                shutil.move(videos_root + recordedVidQuery.thumbnailLocation,
-                            videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail)
-                if (recordedVidQuery.gifLocation is not None) and (os.path.exists(videos_root + recordedVidQuery.gifLocation)):
-                    shutil.move(videos_root + recordedVidQuery.gifLocation,
-                                videos_root + newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif)
-                recordedVidQuery.thumbnailLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnail
-                recordedVidQuery.gifLocation = newChannelQuery.channelLoc + "/" + newChannelQuery.channelLoc + "_" + coreThumbnailGif
+                os.path.exists(videos_root + recordedVidQuery.thumbnailLocation)
+            ):
+                coreThumbnail = (
+                    recordedVidQuery.thumbnailLocation.split("/")[1]
+                ).split("_", 1)[1]
+                coreThumbnailGif = (recordedVidQuery.gifLocation.split("/")[1]).split(
+                    "_", 1
+                )[1]
+                shutil.move(
+                    videos_root + recordedVidQuery.thumbnailLocation,
+                    videos_root
+                    + newChannelQuery.channelLoc
+                    + "/"
+                    + newChannelQuery.channelLoc
+                    + "_"
+                    + coreThumbnail,
+                )
+                if (recordedVidQuery.gifLocation is not None) and (
+                    os.path.exists(videos_root + recordedVidQuery.gifLocation)
+                ):
+                    shutil.move(
+                        videos_root + recordedVidQuery.gifLocation,
+                        videos_root
+                        + newChannelQuery.channelLoc
+                        + "/"
+                        + newChannelQuery.channelLoc
+                        + "_"
+                        + coreThumbnailGif,
+                    )
+                recordedVidQuery.thumbnailLocation = (
+                    newChannelQuery.channelLoc
+                    + "/"
+                    + newChannelQuery.channelLoc
+                    + "_"
+                    + coreThumbnail
+                )
+                recordedVidQuery.gifLocation = (
+                    newChannelQuery.channelLoc
+                    + "/"
+                    + newChannelQuery.channelLoc
+                    + "_"
+                    + coreThumbnailGif
+                )
             for clip in recordedVidQuery.clips:
-                coreThumbnail = (clip.thumbnailLocation.split("/")[2])
-                if not os.path.isdir(videos_root + newChannelQuery.channelLoc + '/clips'):
+                coreThumbnail = clip.thumbnailLocation.split("/")[2]
+                if not os.path.isdir(
+                    videos_root + newChannelQuery.channelLoc + "/clips"
+                ):
                     try:
-                        os.mkdir(videos_root + newChannelQuery.channelLoc + '/clips')
+                        os.mkdir(videos_root + newChannelQuery.channelLoc + "/clips")
                     except OSError:
-                        system.newLog(4, "Error Moving Video ID #" + str(recordedVidQuery.id) + "to Channel ID" + str(
-                            newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
-                        flash("Error Moving Video - Unable to Create Clips Directory", "error")
+                        system.newLog(
+                            4,
+                            "Error Moving Video ID #"
+                            + str(recordedVidQuery.id)
+                            + "to Channel ID"
+                            + str(newChannelQuery.id)
+                            + "/"
+                            + newChannelQuery.channelLoc,
+                        )
+                        flash(
+                            "Error Moving Video - Unable to Create Clips Directory",
+                            "error",
+                        )
                         return False
-                newClipLocation = videos_root + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                newClipLocation = (
+                    videos_root + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                )
                 shutil.move(videos_root + clip.thumbnailLocation, newClipLocation)
-                clip.thumbnailLocation = newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                clip.thumbnailLocation = (
+                    newChannelQuery.channelLoc + "/clips/" + coreThumbnail
+                )
 
             db.session.commit()
-            system.newLog(4, "Video ID #" + str(recordedVidQuery.id) + "Moved to Channel ID" + str(
-                newChannelQuery.id) + "/" + newChannelQuery.channelLoc)
+            system.newLog(
+                4,
+                "Video ID #"
+                + str(recordedVidQuery.id)
+                + "Moved to Channel ID"
+                + str(newChannelQuery.id)
+                + "/"
+                + newChannelQuery.channelLoc,
+            )
             return True
     return False
+
 
 def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
     settingsQuery = cachedDbCalls.getSystemSettings()
 
     # TODO Add Webhook for Clip Creation
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=int(videoID)).first()
+    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(
+        id=int(videoID)
+    ).first()
 
     if recordedVidQuery is not None:
 
@@ -189,10 +326,17 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 return False, None
 
         if clipStop > clipStart:
-            videos_root = globalvars.videoRoot + 'videos/'
+            videos_root = globalvars.videoRoot + "videos/"
 
             # Generate Clip Object
-            newClip = RecordedVideo.Clips(recordedVidQuery.id, None, clipStart, clipStop, clipName, clipDescription)
+            newClip = RecordedVideo.Clips(
+                recordedVidQuery.id,
+                None,
+                clipStart,
+                clipStop,
+                clipName,
+                clipDescription,
+            )
             newClip.published = False
             db.session.add(newClip)
             db.session.commit()
@@ -202,9 +346,27 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             videoLocation = videos_root + recordedVidQuery.videoLocation
 
             # Establish Locations for Clips and Thumbnails
-            clipVideoLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".mp4"
-            clipThumbNailLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".png"
-            clipGifLocation = recordedVidQuery.channel.channelLoc + '/clips/' + 'clip-' + str(newClipQuery.id) + ".gif"
+            clipVideoLocation = (
+                recordedVidQuery.channel.channelLoc
+                + "/clips/"
+                + "clip-"
+                + str(newClipQuery.id)
+                + ".mp4"
+            )
+            clipThumbNailLocation = (
+                recordedVidQuery.channel.channelLoc
+                + "/clips/"
+                + "clip-"
+                + str(newClipQuery.id)
+                + ".png"
+            )
+            clipGifLocation = (
+                recordedVidQuery.channel.channelLoc
+                + "/clips/"
+                + "clip-"
+                + str(newClipQuery.id)
+                + ".gif"
+            )
 
             # Set Clip Object Values for Locations
             newClipQuery.videoLocation = clipVideoLocation
@@ -217,28 +379,66 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             fullgifLocation = videos_root + clipGifLocation
 
             # Create Clip Directory if doesn't exist
-            if not os.path.isdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips'):
-                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + '/clips')
+            if not os.path.isdir(
+                videos_root + recordedVidQuery.channel.channelLoc + "/clips"
+            ):
+                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + "/clips")
 
             # FFMPEG Subprocess to Clip Video and generate Thumbnails
-            clipVideo = ffmpeg.input(videoLocation, ss=clipStart).output(fullvideoLocation, t=newClipQuery.length).run(quiet=True, overwrite_output=True)
-            #clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
-            processResult = ffmpeg.input(videoLocation, ss=clipStart).output(fullthumbnailLocation, vframes=1, s='384x216').run(quiet=True, overwrite_output=True)
-            #processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-            gifprocessResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-t', '3', '-i', videoLocation, '-filter_complex', '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1', '-y', fullgifLocation])
+            clipVideo = (
+                ffmpeg.input(videoLocation, ss=clipStart)
+                .output(fullvideoLocation, t=newClipQuery.length)
+                .run(quiet=True, overwrite_output=True)
+            )
+            # clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
+            processResult = (
+                ffmpeg.input(videoLocation, ss=clipStart)
+                .output(fullthumbnailLocation, vframes=1, s="384x216")
+                .run(quiet=True, overwrite_output=True)
+            )
+            # processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+            gifprocessResult = subprocess.call(
+                [
+                    "ffmpeg",
+                    "-ss",
+                    str(clipStart),
+                    "-t",
+                    "3",
+                    "-i",
+                    videoLocation,
+                    "-filter_complex",
+                    "[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1",
+                    "-y",
+                    fullgifLocation,
+                ]
+            )
 
             redirectID = newClipQuery.id
             newClipQuery.published = True
             system.newLog(6, "New Clip Created - ID #" + str(redirectID))
 
-            cache.delete_memoized(cachedDbCalls.getAllClipsForChannel_View, recordedVidQuery.channelID)
-            cache.delete_memoized(cachedDbCalls.getAllClipsForUser, recordedVidQuery.owningUser)
+            cache.delete_memoized(
+                cachedDbCalls.getAllClipsForChannel_View, recordedVidQuery.channelID
+            )
+            cache.delete_memoized(
+                cachedDbCalls.getAllClipsForUser, recordedVidQuery.owningUser
+            )
 
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(channelID=recordedVidQuery.channel.id).all()
+            subscriptionQuery = subscriptions.channelSubs.query.filter_by(
+                channelID=recordedVidQuery.channel.id
+            ).all()
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(templateFilters.get_userName(recordedVidQuery.owningUser) + " has posted a new clip to " + recordedVidQuery.channel.channelName + " titled " + clipName, '/clip/' + str(newClipQuery.id),
-                                                                 "/images/" + str(recordedVidQuery.channel.owner.pictureLocation), sub.userID)
+                newNotification = notifications.userNotification(
+                    templateFilters.get_userName(recordedVidQuery.owningUser)
+                    + " has posted a new clip to "
+                    + recordedVidQuery.channel.channelName
+                    + " titled "
+                    + clipName,
+                    "/clip/" + str(newClipQuery.id),
+                    "/images/" + str(recordedVidQuery.channel.owner.pictureLocation),
+                    sub.userID,
+                )
                 db.session.add(newNotification)
 
             db.session.commit()
@@ -246,13 +446,17 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             return True, redirectID
     return False, None
 
+
 def changeClipMetadata(clipID, name, description, clipTags):
     # TODO Add Webhook for Clip Metadata Change
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 
     if clipQuery is not None:
-        if clipQuery.recordedVideo.owningUser == current_user.id or current_user.has_role('Admin'):
+        if (
+            clipQuery.recordedVideo.owningUser == current_user.id
+            or current_user.has_role("Admin")
+        ):
 
             clipQuery.clipName = system.strip_html(name)
             clipQuery.description = system.strip_html(description)
@@ -260,7 +464,9 @@ def changeClipMetadata(clipID, name, description, clipTags):
             if clipTags != None:
                 videoTagString = clipTags
                 tagArray = system.parseTags(videoTagString)
-                existingTagArray = RecordedVideo.clip_tags.query.filter_by(clipID=clipID).all()
+                existingTagArray = RecordedVideo.clip_tags.query.filter_by(
+                    clipID=clipID
+                ).all()
 
                 for currentTag in existingTagArray:
                     if currentTag.name not in tagArray:
@@ -269,7 +475,9 @@ def changeClipMetadata(clipID, name, description, clipTags):
                         tagArray.remove(currentTag.name)
                 db.session.commit()
                 for currentTag in tagArray:
-                    newTag = RecordedVideo.clip_tags(currentTag, clipID, current_user.id)
+                    newTag = RecordedVideo.clip_tags(
+                        currentTag, clipID, current_user.id
+                    )
                     db.session.add(newTag)
                     db.session.commit()
 
@@ -278,9 +486,10 @@ def changeClipMetadata(clipID, name, description, clipTags):
             return True
     return False
 
+
 def deleteClip(clipID):
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
-    videos_root = globalvars.videoRoot + 'videos/'
+    videos_root = globalvars.videoRoot + "videos/"
 
     if clipQuery is not None:
 
@@ -299,13 +508,19 @@ def deleteClip(clipID):
             gifPath = None
 
         if thumbnailPath != videos_root and thumbnailPath is not None:
-            if os.path.exists(thumbnailPath) and (thumbnailPath is not None or thumbnailPath != ""):
+            if os.path.exists(thumbnailPath) and (
+                thumbnailPath is not None or thumbnailPath != ""
+            ):
                 os.remove(thumbnailPath)
         if gifPath != videos_root and gifPath is not None:
-            if os.path.exists(gifPath) and (clipQuery.gifLocation is not None or gifPath != ""):
+            if os.path.exists(gifPath) and (
+                clipQuery.gifLocation is not None or gifPath != ""
+            ):
                 os.remove(gifPath)
         if videoPath != videos_root:
-            if os.path.exists(videoPath) and (clipQuery.videoLocation is not None or videoPath != ""):
+            if os.path.exists(videoPath) and (
+                clipQuery.videoLocation is not None or videoPath != ""
+            ):
                 os.remove(videoPath)
 
         upvoteQuery = upvotes.clipUpvotes.query.filter_by(clipID=clipQuery.id).all()
@@ -320,14 +535,15 @@ def deleteClip(clipID):
 
         db.session.commit()
         system.newLog(6, "Clip Deleted - ID #" + str(clipID))
-        log.info('Clip Deleted - ID: ' + str(clipID))
+        log.info("Clip Deleted - ID: " + str(clipID))
         return True
     else:
-        log.warning('Attempted to Delete Non-Existing Clip - ID: ' + str(clipID))
+        log.warning("Attempted to Delete Non-Existing Clip - ID: " + str(clipID))
         return False
 
+
 def setVideoThumbnail(videoID, timeStamp):
-    videos_root = globalvars.videoRoot + 'videos/'
+    videos_root = globalvars.videoRoot + "videos/"
 
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
     if videoQuery is not None:
@@ -352,25 +568,74 @@ def setVideoThumbnail(videoID, timeStamp):
         except OSError:
             pass
         result = subprocess.call(
-            ['ffmpeg', '-ss', str(timeStamp), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-        gifresult = subprocess.call(['ffmpeg', '-ss', str(timeStamp), '-t', '3', '-i', videoLocation, '-filter_complex',
-                                     '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1',
-                                     '-y', newGifFullThumbnailLocation])
+            [
+                "ffmpeg",
+                "-ss",
+                str(timeStamp),
+                "-i",
+                videoLocation,
+                "-s",
+                "384x216",
+                "-vframes",
+                "1",
+                fullthumbnailLocation,
+            ]
+        )
+        gifresult = subprocess.call(
+            [
+                "ffmpeg",
+                "-ss",
+                str(timeStamp),
+                "-t",
+                "3",
+                "-i",
+                videoLocation,
+                "-filter_complex",
+                "[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1",
+                "-y",
+                newGifFullThumbnailLocation,
+            ]
+        )
         return True
     else:
         return False
 
-def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, videoDescription, ChannelQuery, sourcePath=None):
+
+def processVideoUpload(
+    videoFilename,
+    thumbnailFilename,
+    topic,
+    videoTitle,
+    videoDescription,
+    ChannelQuery,
+    sourcePath=None,
+):
     currentTime = datetime.datetime.utcnow()
 
     videoPublishState = ChannelQuery.autoPublish
 
-    newVideo = RecordedVideo.RecordedVideo(ChannelQuery.owningUser, ChannelQuery.id, ChannelQuery.channelName, ChannelQuery.topic, 0,
-                                           "", currentTime, ChannelQuery.allowComments, videoPublishState)
+    newVideo = RecordedVideo.RecordedVideo(
+        ChannelQuery.owningUser,
+        ChannelQuery.id,
+        ChannelQuery.channelName,
+        ChannelQuery.topic,
+        0,
+        "",
+        currentTime,
+        ChannelQuery.allowComments,
+        videoPublishState,
+    )
 
     newFileNameGUID = str(uuid.uuid4())
-    videoLoc = ChannelQuery.channelLoc + "/" + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".mp4"
-    videos_root = current_app.config['WEB_ROOT'] + 'videos/'
+    videoLoc = (
+        ChannelQuery.channelLoc
+        + "/"
+        + newFileNameGUID
+        + "_"
+        + datetime.datetime.strftime(currentTime, "%Y%m%d_%H%M%S")
+        + ".mp4"
+    )
+    videos_root = current_app.config["WEB_ROOT"] + "videos/"
     videoPath = videos_root + videoLoc
 
     if videoFilename != "":
@@ -378,13 +643,16 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
             try:
                 os.mkdir(videos_root + ChannelQuery.channelLoc)
             except OSError:
-                system.newLog(4,
-                              "File Upload Failed - OSError - Unable to Create Directory - Channel:" + ChannelQuery.channelLoc)
+                system.newLog(
+                    4,
+                    "File Upload Failed - OSError - Unable to Create Directory - Channel:"
+                    + ChannelQuery.channelLoc,
+                )
                 db.session.close()
                 return ("Error", "Error uploading video - Unable to create directory")
         if sourcePath is None:
-            sourcePath = current_app.config['VIDEO_UPLOAD_TEMPFOLDER']
-        shutil.move(sourcePath + '/' + videoFilename, videoPath)
+            sourcePath = current_app.config["VIDEO_UPLOAD_TEMPFOLDER"]
+        shutil.move(sourcePath + "/" + videoFilename, videoPath)
     else:
         db.session.close()
         return ("Error", "Error uploading video - Couldn't move video file")
@@ -392,26 +660,73 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     newVideo.videoLocation = videoLoc
 
     if thumbnailFilename != "":
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + videoFilename.rsplit(".", 1)[-1]
+        thumbnailLoc = (
+            ChannelQuery.channelLoc
+            + "/"
+            + newFileNameGUID
+            + "_"
+            + datetime.datetime.strftime(currentTime, "%Y%m%d_%H%M%S")
+            + videoFilename.rsplit(".", 1)[-1]
+        )
 
         thumbnailPath = videos_root + thumbnailLoc
         try:
-            shutil.move(current_app.config['VIDEO_UPLOAD_TEMPFOLDER'] + '/' + thumbnailFilename, thumbnailPath)
+            shutil.move(
+                current_app.config["VIDEO_UPLOAD_TEMPFOLDER"] + "/" + thumbnailFilename,
+                thumbnailPath,
+            )
         except:
             pass
         newVideo.thumbnailLocation = thumbnailLoc
     else:
-        thumbnailLoc = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".png"
+        thumbnailLoc = (
+            ChannelQuery.channelLoc
+            + "/"
+            + newFileNameGUID
+            + "_"
+            + datetime.datetime.strftime(currentTime, "%Y%m%d_%H%M%S")
+            + ".png"
+        )
 
-        subprocess.call(['ffmpeg', '-ss', '00:00:01', '-i', videos_root + videoLoc, '-s', '384x216', '-vframes', '1',
-                         videos_root + thumbnailLoc])
+        subprocess.call(
+            [
+                "ffmpeg",
+                "-ss",
+                "00:00:01",
+                "-i",
+                videos_root + videoLoc,
+                "-s",
+                "384x216",
+                "-vframes",
+                "1",
+                videos_root + thumbnailLoc,
+            ]
+        )
         newVideo.thumbnailLocation = thumbnailLoc
 
-    newGifFullThumbnailLocation = ChannelQuery.channelLoc + '/' + newFileNameGUID + '_' + datetime.datetime.strftime(currentTime, '%Y%m%d_%H%M%S') + ".gif"
+    newGifFullThumbnailLocation = (
+        ChannelQuery.channelLoc
+        + "/"
+        + newFileNameGUID
+        + "_"
+        + datetime.datetime.strftime(currentTime, "%Y%m%d_%H%M%S")
+        + ".gif"
+    )
     gifresult = subprocess.call(
-        ['ffmpeg', '-ss', '00:00:01', '-t', '3', '-i', videos_root + videoLoc, '-filter_complex',
-         '[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1',
-         '-y', videos_root + newGifFullThumbnailLocation])
+        [
+            "ffmpeg",
+            "-ss",
+            "00:00:01",
+            "-t",
+            "3",
+            "-i",
+            videos_root + videoLoc,
+            "-filter_complex",
+            "[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1",
+            "-y",
+            videos_root + newGifFullThumbnailLocation,
+        ]
+    )
     newVideo.gifLocation = newGifFullThumbnailLocation
 
     if videoTitle != "":
@@ -446,10 +761,23 @@ def processVideoUpload(videoFilename, thumbnailFilename, topic, videoTitle, vide
     else:
         return ("Failure", "Video File Missing")
 
-def processFLVUpload(path):
-    destinationPath = path.replace('flv','mp4')
 
-    processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', path, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
+def processFLVUpload(path):
+    destinationPath = path.replace("flv", "mp4")
+
+    processedStreamVideo = subprocess.call(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            path,
+            "-codec",
+            "copy",
+            "-movflags",
+            "+faststart",
+            destinationPath,
+        ]
+    )
 
     destinationFilePath = pathlib.Path(destinationPath)
     if destinationFilePath.is_file() == False:
@@ -463,10 +791,24 @@ def processFLVUpload(path):
 
 def processStreamVideo(path, channelLoc):
 
-    inputPath = globalvars.videoRoot + 'pending/' + path
-    destinationPath = globalvars.videoRoot + 'videos/' + channelLoc + '/' + path.replace('flv', 'mp4')
+    inputPath = globalvars.videoRoot + "pending/" + path
+    destinationPath = (
+        globalvars.videoRoot + "videos/" + channelLoc + "/" + path.replace("flv", "mp4")
+    )
 
-    processedStreamVideo = subprocess.call(['ffmpeg', '-y', '-i', inputPath, '-codec', 'copy', '-movflags', '+faststart', destinationPath])
+    processedStreamVideo = subprocess.call(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            inputPath,
+            "-codec",
+            "copy",
+            "-movflags",
+            "+faststart",
+            destinationPath,
+        ]
+    )
 
     destinationFilePath = pathlib.Path(destinationPath)
     if destinationFilePath.is_file() == False:

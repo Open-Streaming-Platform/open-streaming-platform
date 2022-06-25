@@ -10,60 +10,62 @@ from functions import cachedDbCalls, apiFunc
 
 
 rtmpPost = reqparse.RequestParser()
-rtmpPost.add_argument('address', type=str, required=True)
-rtmpPost.add_argument('hide', type=bool, default=False)
+rtmpPost.add_argument("address", type=str, required=True)
+rtmpPost.add_argument("hide", type=bool, default=False)
 
 rtmpDelete = reqparse.RequestParser()
-rtmpDelete.add_argument('address', type=str, required=True)
+rtmpDelete.add_argument("address", type=str, required=True)
 
-api = Namespace('server', description='Server Related Queries and Functions')
+api = Namespace("server", description="Server Related Queries and Functions")
 
-@api.route('/')
+
+@api.route("/")
 class api_1_Server(Resource):
     # Server - Get Basic Server Information
     def get(self):
         """
-            Displays a Listing of Server Settings
+        Displays a Listing of Server Settings
         """
         serverSettings = cachedDbCalls.getSystemSettings()
         db.session.commit()
-        return {'results': serverSettings.serialize()}
+        return {"results": serverSettings.serialize()}
 
 
-@api.route('/edges')
+@api.route("/edges")
 class api_1_Edges(Resource):
     # Server - Get Edge Serves
     def get(self):
         """
-            Displays a Listing of Edge Servers
+        Displays a Listing of Edge Servers
         """
 
         edgeList = settings.edgeStreamer.query.all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in edgeList]}
+        return {"results": [ob.serialize() for ob in edgeList]}
 
-@api.route('/rtmp')
+
+@api.route("/rtmp")
 class api_1_Rtmp(Resource):
     # Server - Get RTMP Serves
     def get(self):
         """
-            Displays a Listing of RTMP Servers
+        Displays a Listing of RTMP Servers
         """
 
         rtmpList = settings.rtmpServer.query.all()
         db.session.commit()
-        return {'results': [ob.serialize() for ob in rtmpList]}
+        return {"results": [ob.serialize() for ob in rtmpList]}
 
     @api.expect(rtmpPost)
-    @api.doc(security='apikey')
-    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    @api.doc(security="apikey")
+    @api.doc(responses={200: "Success", 400: "Request Error"})
     def post(self):
         """
-            Adds a RTMP Server
+        Adds a RTMP Server
         """
 
-        if 'X-API-KEY' in request.headers:
-            apiKey = request.headers['X-API-KEY']
+        if "X-API-KEY" in request.headers:
+            apiKey = request.headers["X-API-KEY"]
             adminKeyCheck = apiFunc.isValidAdminKey(apiKey)
             if adminKeyCheck is True:
                 args = rtmpPost.parse_args()
@@ -71,43 +73,48 @@ class api_1_Rtmp(Resource):
                 newRTMP.hide = args.hide
                 db.session.add(newRTMP)
                 db.session.commit()
-                return {'results': {'message': 'RTMP Server Created'}}
+                return {"results": {"message": "RTMP Server Created"}}
             else:
-                return {'results': {'message': "Unauthorized"}}, 401
+                return {"results": {"message": "Unauthorized"}}, 401
         else:
-            return {'results': {'message': "Request Error"}}, 400
+            return {"results": {"message": "Request Error"}}, 400
 
     @api.expect(rtmpDelete)
-    @api.doc(security='apikey')
-    @api.doc(responses={200: 'Success', 400: 'Request Error'})
+    @api.doc(security="apikey")
+    @api.doc(responses={200: "Success", 400: "Request Error"})
     def delete(self):
         """
-            Deletes a RTMP Server
+        Deletes a RTMP Server
         """
 
-        if 'X-API-KEY' in request.headers:
-            apiKey = request.headers['X-API-KEY']
+        if "X-API-KEY" in request.headers:
+            apiKey = request.headers["X-API-KEY"]
             adminKeyCheck = apiFunc.isValidAdminKey(apiKey)
             if adminKeyCheck is True:
                 args = rtmpPost.parse_args()
-                rtmpQuery = settings.rtmpServer.query.filter_by(address=args.address).first()
+                rtmpQuery = settings.rtmpServer.query.filter_by(
+                    address=args.address
+                ).first()
                 if rtmpQuery is not None:
                     db.session.delete(rtmpQuery)
                     db.session.commit()
-                    return {'results': {'message': 'RTMP Server Removed'}}
+                    return {"results": {"message": "RTMP Server Removed"}}
                 else:
                     db.session.commit()
-                    return {'results': {'message': 'No Such RTMP Server'}}
+                    return {"results": {"message": "No Such RTMP Server"}}
             else:
-                return {'results': {'message': "Unauthorized"}}, 401
+                return {"results": {"message": "Unauthorized"}}, 401
         else:
-            return {'results': {'message': "Request Error"}}, 400
+            return {"results": {"message": "Request Error"}}, 400
 
-@api.route('/ping')
+
+@api.route("/ping")
 class api_1_Ping(Resource):
     # Server - Returns Pong Check
     def get(self):
         """
-            Returns a Server Pong
+        Returns a Server Pong
         """
-        return {'results': {'message': 'Pong', 'timestamp': str(datetime.datetime.now())}}
+        return {
+            "results": {"message": "Pong", "timestamp": str(datetime.datetime.now())}
+        }

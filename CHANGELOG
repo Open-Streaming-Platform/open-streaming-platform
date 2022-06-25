@@ -1,3 +1,29 @@
+0.9.2
+==============================================
+OSP-Core: Fix an issue on User Channels where uploaded stickers are not shown in the UI
+OSP-Core: Fixes an issue where Celery workers were dying prematurely
+OSP-Core: Upgrades Redis-py to 4.3.3
+OSP-Core: Upgrades Celery to 5.2.7
+OSP-Core: Upgrades Click to 8.1.3
+OSP-Core: Upgrades aiohttp to 3.8.1
+OSP-Core: Upgrades pytz to 2022.1
+OSP-Core: Upgrades Flask to 2.1.2
+OSP-Core: Upgrades Flask-SqlAlchemy to 2.5.1
+OSP-Core: Upgrades SQLAlchemy to 1.4.37
+OSP-Core: Upgrades Redis-Py to 4.3.3
+OSP-Core: Upgrades ItsDangerous to 2.1.2
+OSP-Core: Upgrades Jinja2 to 3.1.2
+OSP-Core: Upgrades Werkzeug to 2.1.2
+OSP-Core: Applies Fix to /etc/default/celery which sets Pool Type to gevent
+OSP-Core: Added Catch for Invalid Forwarded IP Address for Guests which may cause the DB to get stuck
+OSP-Core: Cleans up browser console error for when user is not logged in and uploads
+OSP-Core: Fixes Channel Chat when Channel Chat is Disabled
+OSP-Core: Fixes User Search not returning values
+OSP-Core: Fixes for Global Panels, RTMP Servers, and other set initial defaults not showing up after First Run
+OSP-Core: Removes manage.py Database Upgrade Script.  Manual DB Upgrades can now be performed via 'flask db <command>'
+OSP-Config: ** Changes to Upgrade Process ** Git Pull has been removed from the osp-config.sh script.  Pulls are expected to be done by user manually now.
+
+
 0.9.1
 ==============================================
 OSP-Core: Fix Invalid Links for Topics

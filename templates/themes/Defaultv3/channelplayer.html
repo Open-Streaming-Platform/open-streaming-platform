@@ -29,7 +29,7 @@
 <!--Start Body Block-->
 {% block body %}
     <div class="row gx-0">
-        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != 1 %} style="width: 100%;" {% endif %}>
+        <div id="mainContentPanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12" {% if channel.chatEnabled != True %} style="width: 100%;" {% endif %}>
             <div class="stream-panel">
                 {{ panels.live_stream(channel) }}
                 <div class="row gx-0 mb-2">
@@ -78,7 +78,7 @@
 
             </div>
         </div>
-        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled != 1 %} style="display: none;" {% endif %}>
+        <div id="sidePanel" class="col-xl-6 col-lg-12 col-md-12 col-sm-12" {% if channel.chatEnabled == False %} style="display: none;" {% endif %}>
             <div class="side-chat-pane h-100">
                 <div class="side-chat-panel-container h-100">
                     {{ panels.chat_loader() }}
@@ -137,7 +137,7 @@
         topicJSList["{{x.id}}"] =  "{{x.name}}";
         {% endfor %}
     </script>
-    
+
     <script>
         // Handing of Stream Timer
         function convertToHMS(timestamp) {
@@ -175,14 +175,6 @@
             var hls_user = "Guest"
         {% endif %}
         var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
-
-        // Initialize Stream Player
-        videojs.Vhs.xhr.beforeRequest = (options) => {
-            options.headers = {
-                "X-Token-Session": hls_token
-            };
-            return options;
-        };
 
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
@@ -246,20 +238,18 @@
         });
         {%  endif %}
 
-        // Disconnect XMPP on Page Unload
+        // Page Leaving Process
         $(window).bind('beforeunload', function(){
-              // Terminate Video Player to Speed up Page Load
-              player.pause();
-              player.reset();
               // Leave Room First
-              exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
-              // Execute XMPP Disconnection Process
-              //connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
-              connection.flush();
-              connection.disconnect();
+              if (connection !== null) {
+                  exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+                  // Execute XMPP Disconnection Process
+                  //connection.options.sync = true; // Switch to using synchronous requests since this is typically called onUnload.
+                  connection.flush();
+                  connection.disconnect();
+              }
              // Disconnect from SocketIO
-              socket.emit('removeViewer', {data: channelLocation});
-              socket.close();
+             socket.emit('removeViewer', {data: channelLocation});
         });
     </script>
 
@@ -272,8 +262,10 @@
             {% endif %}
             checkWindow = true;
             setTimeout(function () { popinChat('chatWindow'); }, 1000);
-            connection.flush();
-            connection.disconnect();
+            if (connection !== null) {
+                connection.flush();
+                connection.disconnect();
+            }
             document.getElementById("sidePanel").style.display = "none";
             document.getElementById("mainContentPanel").style.setProperty('width', '100%');
             if ( $('#videoContainer').hasClass('theater-mode')) {
@@ -284,8 +276,8 @@
 
     <script>
         function popinChat(win) {
-            if (checkWindow == true) {
-                if (win == 'chatWindow') {
+            if (checkWindow === true) {
+                if (win === 'chatWindow') {
                     if (popoutWindow.closed) {
                         document.getElementById("sidePanel").style.display = "block";
                         //document.getElementById("mainContentPanel").style.setProperty('width', 'calc(100% - var(--side-panel-width))');
@@ -302,14 +294,6 @@
         }
     </script>
 
-    <script type="text/javascript" charset="utf-8">
-        var conn_options = {
-            'sync disconnect on unload': true
-        };
-
-        var socket = io("/", { reconnection: true, forceNew: false });
-    </script>
-
     <script>
         setInterval(function () {
             socket.emit('getViewerTotal', { data: "{{channel.channelLoc}}" });
@@ -322,29 +306,30 @@
             socket.emit('addUserCount', { data: '{{channel.channelLoc}}' });
         });
     </script>
-    
+
     <script>
         socket.on('disconnect', function () {
             socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
         });
     </script>
-    
-    
-    <script>
-        window.addEventListener("beforeunload", function (e) {
-            socket.emit('removeViewer', { data: '{{channel.channelLoc}}' });
-            return null;
-        });
-    </script>
-    
+
     <script type="text/javascript" charset="utf-8">
         socket.on('viewerTotalResponse', function (msg) {
             document.getElementById("currentViewers").innerHTML = msg['data'];
         });
     </script>
 
+
     <script src="/static/js/liveplayerhandler.js"></script>
     <script>
+        // Initialize Stream Player HLS Tokens
+        videojs.Vhs.xhr.beforeRequest = (options) => {
+            options.headers = {
+                "X-Token-Session": hls_token
+            };
+            return options;
+        };
+
         // Initialize Stream Player
         var player = videojs('video', {
             autoplay: true,
@@ -398,7 +383,7 @@
                 player.requestFullscreen();
             }
         }
-        
+
         document.addEventListener("keydown", (e) => {
             if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
                 switch (e.keyCode) {
@@ -430,20 +415,6 @@
         })
     </script>
 
-    <script>
-        const video = document.querySelector('video');
-        video.addEventListener('play', (event) => {
-            var cookieVolume = getCookie('ospvolume');
-            if (!(cookieVolume == null)) {
-                player.volume(cookieVolume);
-            }
-        });
-
-        video.addEventListener('volumechange', (event) => {
-            var currentVolume = player.volume();
-            setCookie('ospvolume', currentVolume, 365);
-        });
-    </script>
 
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>

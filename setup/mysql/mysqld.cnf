@@ -41,4 +41,3 @@ log_error = /var/log/mysql/error.log
 expire_logs_days        = 10
 max_binlog_size   = 100M
 wait_timeout = 350
-

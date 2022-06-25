@@ -11,26 +11,36 @@ from classes import settings
 from functions import system
 
 
-@socketio.on('checkEdge')
+@socketio.on("checkEdge")
 def checkEdgeNode(message):
-    if current_user.has_role('Admin'):
-        edgeID = int(message['edgeID'])
+    if current_user.has_role("Admin"):
+        edgeID = int(message["edgeID"])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
             try:
-                edgeXML = requests.get("http://" + edgeNodeQuery.address + ":9000/stat").text
+                edgeXML = requests.get(
+                    "http://" + edgeNodeQuery.address + ":9000/stat"
+                ).text
                 edgeDict = xmltodict.parse(edgeXML)
-                if "nginx_rtmp_version" in edgeDict['rtmp']:
+                if "nginx_rtmp_version" in edgeDict["rtmp"]:
                     edgeNodeQuery.status = 1
-                    emit('edgeNodeCheckResults', {'edgeID': str(edgeNodeQuery.id), 'status': str(1)}, broadcast=False)
+                    emit(
+                        "edgeNodeCheckResults",
+                        {"edgeID": str(edgeNodeQuery.id), "status": str(1)},
+                        broadcast=False,
+                    )
                     db.session.commit()
-                    return 'OK'
+                    return "OK"
             except:
                 edgeNodeQuery.status = 0
-                emit('edgeNodeCheckResults', {'edgeID': str(edgeNodeQuery.id), 'status': str(0)}, broadcast=False)
+                emit(
+                    "edgeNodeCheckResults",
+                    {"edgeID": str(edgeNodeQuery.id), "status": str(0)},
+                    broadcast=False,
+                )
                 db.session.commit()
                 db.session.close()
-                return 'OK'
+                return "OK"
         db.session.commit()
         db.session.close()
         return abort(500)
@@ -38,11 +48,12 @@ def checkEdgeNode(message):
     db.session.close()
     return abort(401)
 
-@socketio.on('toggleOSPEdge')
+
+@socketio.on("toggleOSPEdge")
 def toggleEdgeNode(message):
-    if current_user.has_role('Admin'):
+    if current_user.has_role("Admin"):
         sysSettings = settings.settings.query.all()[0]
-        edgeID = int(message['edgeID'])
+        edgeID = int(message["edgeID"])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
             edgeNodeQuery.active = not edgeNodeQuery.active
@@ -50,7 +61,7 @@ def toggleEdgeNode(message):
             if sysSettings.buildEdgeOnRestart is True:
                 system.rebuildOSPEdgeConf()
             db.session.close()
-            return 'OK'
+            return "OK"
         else:
             db.session.commit()
             db.session.close()
@@ -60,10 +71,11 @@ def toggleEdgeNode(message):
         db.session.close()
         return abort(401)
 
-@socketio.on('deleteOSPEdge')
+
+@socketio.on("deleteOSPEdge")
 def deleteEdgeNode(message):
-    if current_user.has_role('Admin'):
-        edgeID = int(message['edgeID'])
+    if current_user.has_role("Admin"):
+        edgeID = int(message["edgeID"])
         edgeNodeQuery = settings.edgeStreamer.query.filter_by(id=edgeID).first()
         if edgeNodeQuery is not None:
             sysSettings = settings.settings.query.all()[0]
@@ -72,7 +84,7 @@ def deleteEdgeNode(message):
             if sysSettings.buildEdgeOnRestart is True:
                 system.rebuildOSPEdgeConf()
             db.session.close()
-            return 'OK'
+            return "OK"
         else:
             db.session.commit()
             db.session.close()
@@ -82,8 +94,9 @@ def deleteEdgeNode(message):
         db.session.close()
         return abort(401)
 
-@socketio.on('rebuildEdgeConf')
+
+@socketio.on("rebuildEdgeConf")
 def rebuildEdgeConfiguration(message):
     if current_user.has_role("Admin"):
         system.rebuildOSPEdgeConf()
-        emit('rebuildEdgeConfConfirm', {'results': str(True)}, broadcast=False)
+        emit("rebuildEdgeConfConfirm", {"results": str(True)}, broadcast=False)
