@@ -99,9 +99,11 @@ def handle_upvoteChange(streamData):
 
     if vidType == "stream":
         loc = str(loc)
-        channelQuery = Channel.Channel.query.filter_by(channelLoc=loc).first()
-        if channelQuery.stream:
-            stream = channelQuery.stream[0]
+        channelQuery = cachedDbCalls.getChannelByLoc(loc)
+        streamQuery = Stream.Stream.query.filter_by(linkedChannel=channelQuery.id).with_entities(
+            Stream.Stream.id).first()
+        if streamQuery != None:
+            stream = streamQuery
             myVoteQuery = upvotes.streamUpvotes.query.filter_by(
                 userID=current_user.id, streamID=stream.id
             ).first()
@@ -135,7 +137,7 @@ def handle_upvoteChange(streamData):
 
     elif vidType == "video":
         loc = int(loc)
-        videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=loc).first()
+        videoQuery = cachedDbCalls.getVideo(loc).first()
         if videoQuery is not None:
             myVoteQuery = upvotes.videoUpvotes.query.filter_by(
                 userID=current_user.id, videoID=loc
