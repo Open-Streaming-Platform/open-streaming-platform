@@ -168,7 +168,7 @@ def check_video_retention(self):
                     ):
                         results = subtask(
                             "functions.scheduled_tasks.video_tasks.delete_video",
-                            args=(video.id),
+                            args=(video.id,)
                         ).apply_async()
                         videoCount = videoCount + 1
     log.info(
