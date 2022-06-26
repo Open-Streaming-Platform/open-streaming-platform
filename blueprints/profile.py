@@ -12,7 +12,7 @@ from classes import RecordedVideo
 from classes import Stream
 from classes import Sec
 
-from functions import themes
+from functions import themes, cachedDbCalls
 
 profile_bp = Blueprint("profile", __name__, url_prefix="/profile")
 
@@ -22,27 +22,66 @@ def profile_view_page(username):
 
     userQuery = Sec.User.query.filter_by(username=username).first()
     if userQuery is not None:
-        userChannels = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
+        userChannels = cachedDbCalls.getChannelsByOwnerId(userQuery.id)
 
         streams = []
 
         for channel in userChannels:
-            for stream in channel.stream:
-                if stream.active is True:
-                    streams.append(stream)
+            activeStreams = (
+                Stream.Stream.query.filter_by(active=True, linkedChannel=channel.id)
+                    .with_entities(
+                    Stream.Stream.streamName,
+                    Stream.Stream.linkedChannel,
+                    Stream.Stream.currentViewers,
+                    Stream.Stream.topic,
+                    Stream.Stream.id,
+                    Stream.Stream.uuid,
+                    Stream.Stream.startTimestamp,
+                    Stream.Stream.totalViewers,
+                    Stream.Stream.active,
+                )
+                    .order_by(Stream.Stream.currentViewers)
+                    .all()
+            )
+            for stream in activeStreams:
+                streams.append(stream)
 
-        recordedVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-            owningUser=userQuery.id, pending=False, published=True
-        ).all()
+        recordedVideoQuery = cachedDbCalls.getAllVideoByOwnerId(userQuery.id)
 
         # Sort Video to Show Newest First
         recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
         clipsList = []
         for vid in recordedVideoQuery:
-            for clip in vid.clips:
-                if clip.published is True:
-                    clipsList.append(clip)
+            clipQuery = (
+                RecordedVideo.Clips.query.filter_by(published=True, parentVideo=vid.id)
+                    .join(
+                    RecordedVideo.RecordedVideo,
+                    RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
+                )
+                    .join(
+                    Channel.Channel,
+                    Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
+                )
+                    .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
+                    .with_entities(
+                    RecordedVideo.Clips.id,
+                    RecordedVideo.Clips.thumbnailLocation,
+                    Channel.Channel.owningUser,
+                    RecordedVideo.Clips.views,
+                    RecordedVideo.Clips.length,
+                    RecordedVideo.Clips.clipName,
+                    Channel.Channel.protected,
+                    Channel.Channel.channelName,
+                    RecordedVideo.RecordedVideo.topic,
+                    RecordedVideo.RecordedVideo.videoDate,
+                    Sec.User.pictureLocation,
+                    RecordedVideo.Clips.parentVideo,
+                )
+                    .all()
+            )
+            for clip in clipQuery:
+                clipsList.append(clip)
 
         clipsList.sort(key=lambda x: x.views, reverse=True)
 

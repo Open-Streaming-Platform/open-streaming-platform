@@ -1,3 +1,11 @@
+0.9.3
+==============================================
+OSP-Core: Fixes a bug where video retention was not working properly
+OSP-Core: Additional Optimization of SocketIO Queries
+OSP-Core: Update SentryIO to 1.6.0
+OSP-Core: Optimization of User Profile Page
+** Important Note **: Depreciated Themes (Defaultv2/Defaultv2-Dark & Dark-Cow to be Removed in 0.9.4)
+
 0.9.2
 ==============================================
 OSP-Core: Fix an issue on User Channels where uploaded stickers are not shown in the UI
