@@ -1288,7 +1288,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {% for panel in channel.panels %}
+                                                        {% for panel in channel.id | getChannelPanels %}
                                                             <tr id="panel-{{ panel.id }}">
                                                                 <td id="channelPanel-name-{{ panel.id }}">{{ panel.name }}</td>
                                                                 <td>{{ panel.type | panelTypeIdToPanelTypeName }}</td>

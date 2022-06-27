@@ -532,9 +532,11 @@ def getPanel(panelId, panelType):
         panel = cachedDbCalls.getChannelPanel(panelId)
     return panel
 
+
 def getChannelPanels(channelId):
     panelQuery = panel.channelPanel.query.filter_by(channelId=channelId).all()
     return panelQuery
+
 
 def getLiveStream(channelId):
     liveStreamQuery = (
