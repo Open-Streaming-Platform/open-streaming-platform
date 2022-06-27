@@ -86,6 +86,7 @@ def init(context):
     context.jinja_env.filters["getLiveStreamURL"] = getLiveStreamURL
     context.jinja_env.filters["getGlobalPanelArg"] = getGlobalPanelArg
     context.jinja_env.filters["getPanel"] = getPanel
+    context.jinja_env.filters["getChannelPanels"] = getChannelPanels
     context.jinja_env.filters["orderVideoBy"] = orderVideoBy
     context.jinja_env.filters["getPanelStreamList"] = getPanelStreamList
     context.jinja_env.filters["getPanelVideoList"] = getPanelVideoList
@@ -531,6 +532,9 @@ def getPanel(panelId, panelType):
         panel = cachedDbCalls.getChannelPanel(panelId)
     return panel
 
+def getChannelPanels(channelId):
+    panelQuery = panel.channelPanel.query.filter_by(channelId=channelId).all()
+    return panelQuery
 
 def getLiveStream(channelId):
     liveStreamQuery = (
