@@ -90,6 +90,7 @@ def init(context):
     context.jinja_env.filters["getPanelStreamList"] = getPanelStreamList
     context.jinja_env.filters["getPanelVideoList"] = getPanelVideoList
     context.jinja_env.filters["getPanelClipList"] = getPanelClipList
+    context.jinja_env.filters["getPanelChannelList"] = getPanelChannelList
     context.jinja_env.filters["generatePlaybackAuthToken"] = generatePlaybackAuthToken
     context.jinja_env.filters["get_channelInviteCodes"] = get_channelInviteCodes
     context.jinja_env.filters["get_channelInvitedUsers"] = get_channelInvitedUsers
@@ -894,6 +895,140 @@ def getPanelClipList(order, limitTo):
         )
     return clipQuery
 
+def getPanelChannelList(order, limitTo):
+    if order == 0:
+        channelQuery = (
+            Channel.Channel.query.with_entities(
+                Channel.Channel.id,
+                Channel.Channel.owningUser,
+                Channel.Channel.channelName,
+                Channel.Channel.channelLoc,
+                Channel.Channel.topic,
+                Channel.Channel.views,
+                Channel.Channel.currentViewers,
+                Channel.Channel.record,
+                Channel.Channel.chatEnabled,
+                Channel.Channel.chatBG,
+                Channel.Channel.chatTextColor,
+                Channel.Channel.chatAnimation,
+                Channel.Channel.imageLocation,
+                Channel.Channel.offlineImageLocation,
+                Channel.Channel.description,
+                Channel.Channel.allowComments,
+                Channel.Channel.protected,
+                Channel.Channel.channelMuted,
+                Channel.Channel.showChatJoinLeaveNotification,
+                Channel.Channel.defaultStreamName,
+                Channel.Channel.autoPublish,
+                Channel.Channel.vanityURL,
+                Channel.Channel.private,
+                Channel.Channel.streamKey,
+                Channel.Channel.xmppToken,
+            )
+            .order_by(Channel.Channel.views.desc())
+            .limit(limitTo)
+            .all()
+        )
+    elif order == 1:
+        channelQuery = (
+            Channel.Channel.query.with_entities(
+                Channel.Channel.id,
+                Channel.Channel.owningUser,
+                Channel.Channel.channelName,
+                Channel.Channel.channelLoc,
+                Channel.Channel.topic,
+                Channel.Channel.views,
+                Channel.Channel.currentViewers,
+                Channel.Channel.record,
+                Channel.Channel.chatEnabled,
+                Channel.Channel.chatBG,
+                Channel.Channel.chatTextColor,
+                Channel.Channel.chatAnimation,
+                Channel.Channel.imageLocation,
+                Channel.Channel.offlineImageLocation,
+                Channel.Channel.description,
+                Channel.Channel.allowComments,
+                Channel.Channel.protected,
+                Channel.Channel.channelMuted,
+                Channel.Channel.showChatJoinLeaveNotification,
+                Channel.Channel.defaultStreamName,
+                Channel.Channel.autoPublish,
+                Channel.Channel.vanityURL,
+                Channel.Channel.private,
+                Channel.Channel.streamKey,
+                Channel.Channel.xmppToken,
+            )
+            .order_by(Channel.Channel.views.desc())
+            .limit(limitTo)
+            .all()
+        )
+    elif order == 2:
+        channelQuery = (
+            Channel.Channel.query.with_entities(
+                Channel.Channel.id,
+                Channel.Channel.owningUser,
+                Channel.Channel.channelName,
+                Channel.Channel.channelLoc,
+                Channel.Channel.topic,
+                Channel.Channel.views,
+                Channel.Channel.currentViewers,
+                Channel.Channel.record,
+                Channel.Channel.chatEnabled,
+                Channel.Channel.chatBG,
+                Channel.Channel.chatTextColor,
+                Channel.Channel.chatAnimation,
+                Channel.Channel.imageLocation,
+                Channel.Channel.offlineImageLocation,
+                Channel.Channel.description,
+                Channel.Channel.allowComments,
+                Channel.Channel.protected,
+                Channel.Channel.channelMuted,
+                Channel.Channel.showChatJoinLeaveNotification,
+                Channel.Channel.defaultStreamName,
+                Channel.Channel.autoPublish,
+                Channel.Channel.vanityURL,
+                Channel.Channel.private,
+                Channel.Channel.streamKey,
+                Channel.Channel.xmppToken,
+            )
+            .order_by(func.random())
+            .limit(limitTo)
+            .all()
+        )
+    else:
+        channelQuery = (
+            Channel.Channel.query.with_entities(
+                Channel.Channel.id,
+                Channel.Channel.owningUser,
+                Channel.Channel.channelName,
+                Channel.Channel.channelLoc,
+                Channel.Channel.topic,
+                Channel.Channel.views,
+                Channel.Channel.currentViewers,
+                Channel.Channel.record,
+                Channel.Channel.chatEnabled,
+                Channel.Channel.chatBG,
+                Channel.Channel.chatTextColor,
+                Channel.Channel.chatAnimation,
+                Channel.Channel.imageLocation,
+                Channel.Channel.offlineImageLocation,
+                Channel.Channel.description,
+                Channel.Channel.allowComments,
+                Channel.Channel.protected,
+                Channel.Channel.channelMuted,
+                Channel.Channel.showChatJoinLeaveNotification,
+                Channel.Channel.defaultStreamName,
+                Channel.Channel.autoPublish,
+                Channel.Channel.vanityURL,
+                Channel.Channel.private,
+                Channel.Channel.streamKey,
+                Channel.Channel.xmppToken,
+            )
+            .order_by(Channel.Channel.views.desc())
+            .limit(limitTo)
+            .all()
+        )
+    return channelQuery
 
 def orderVideoBy(videoList, orderById):
     # Most Views

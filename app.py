@@ -716,6 +716,7 @@ app.jinja_env.globals.update(getLiveStream=templateFilters.getLiveStream)
 app.jinja_env.globals.update(getPanelStreamList=templateFilters.getPanelStreamList)
 app.jinja_env.globals.update(getPanelVideoList=templateFilters.getPanelVideoList)
 app.jinja_env.globals.update(getPanelClipList=templateFilters.getPanelClipList)
+app.jinja_env.globals.update(getPanelChannelList=templateFilters.getPanelChannelList)
 
 app.logger.info({"level": "info", "message": "Setting Flask Context Processors"})
 # ----------------------------------------------------------------------------#

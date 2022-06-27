@@ -44,7 +44,8 @@
             {% elif panelItem.type == 4  %}
                 {{ panels.topics_panel(uploadTopics, title=panelItem.header) }}
             {% elif panelItem.type == 5  %}
-                {{ panels.channels_panel(channelList, title=panelItem.header) }}
+                {% set panelChannelList = getPanelChannelList(panelItem.order, 32 %}
+                {{ panels.channels_panel(panelChannelList, title=panelItem.header) }}
             {% elif panelItem.type == 6 %}
                 {% set liveStream = getLiveStream(panelItem.target) %}
                 {% if liveStream != None %}
