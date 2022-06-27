@@ -895,6 +895,7 @@ def getPanelClipList(order, limitTo):
         )
     return clipQuery
 
+
 def getPanelChannelList(order, limitTo):
     if order == 0:
         channelQuery = (
@@ -1029,6 +1030,7 @@ def getPanelChannelList(order, limitTo):
             .all()
         )
     return channelQuery
+
 
 def orderVideoBy(videoList, orderById):
     # Most Views
