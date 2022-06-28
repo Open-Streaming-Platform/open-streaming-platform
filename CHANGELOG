@@ -6,6 +6,7 @@ OSP-Core: Update SentryIO to 1.6.0
 OSP-Core: Optimization of User Profile Page
 OSP-Core: Stapled Cachelib to 0.1.1
 OSP-Core: Fixes a bug which causes the Channel Panel to display no information
+OSP-Core: Fixes a bug where Channel Level Panels were not displaying in settings after creation
 ** Important Note **: Depreciated Themes (Defaultv2/Defaultv2-Dark & Dark-Cow to be Removed in 0.9.4)
 
 0.9.2
