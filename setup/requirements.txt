@@ -12,6 +12,7 @@ ffmpeg-python==0.2.0
 Flask==2.1.2
 Flask-Babel==2.0.0
 flask-caching==1.11.1
+cachelib==0.1.1
 flask-cors==3.0.9
 flask-debugtoolbar==0.13.1
 flask-limiter==1.1.0
