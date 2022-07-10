@@ -186,8 +186,14 @@ def delete_user(userID):
 
         cache.delete_memoized(cachedDbCalls.getUser, int(userID))
 
+        if current_user != None:
+            runningUser = current_user.username
+        else:
+            runningUser = "SYSTEM"
+
+
         log.warning({"level": "warning", "message": "User Deleted - " + username})
-        system.newLog(1, "User " + current_user.username + " deleted User " + username)
+        system.newLog(1, "User " + runningUser + " deleted User " + username)
         return True
     else:
         return False
