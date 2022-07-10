@@ -1,7 +1,0 @@
-{
-  "Name": "Defaultv2",
-  "Maintainer": "Deamos",
-  "Version": "2.0",
-  "Description": "The Default OSP Theme",
-    "Override": ["index.html", "admin.html", "videoListView.html", "channels.html", "topics.html", "streamers.html", "apikeys.html", "vidplayer.html", "userSettings.html", "channelplayer.html", "clipplayer.html", "user_channels.html", "404.html", "500.html", "messages.html", "notifications.html", "maintenance.html", "notready.html", "subscriptions.html", "channelProtectionAuth.html", "chatpopout.html", "devfeatures.html", "static_page.html"]
-}
