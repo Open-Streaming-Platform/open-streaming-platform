@@ -171,7 +171,7 @@ def handle_add_usercount(streamData):
     )
     streamData = (
         Stream.Stream.query.filter_by(active=True, streamKey=requestedChannel.streamKey)
-        .with_elements(Stream.Stream.id, Stream.Stream.totalViewers)
+        .with_entities(Stream.Stream.id, Stream.Stream.totalViewers)
         .first()
     )
 
