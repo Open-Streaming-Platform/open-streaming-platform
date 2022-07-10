@@ -1,7 +1,7 @@
 0.9.4
 ==============================================
 OSP-Core: Dark-Cow, Defaultv2, & Defaultv2-Dark has been removed.
-
+OSP-Core: Fixes issue where User Deletion via scheduled request was causing an unhandled error when logging
 
 0.9.3
 ==============================================
