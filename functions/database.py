@@ -137,7 +137,12 @@ def dbFixes():
         sysSettings.version = globalvars.version
         db.session.commit()
     # Sets the Default Theme is None is Set - Usual Cause is Moving from Alpha to Beta
-    if sysSettings.systemTheme is None or sysSettings.systemTheme in ["Default", "Defaultv2", "dark-cow", "Defaultv2-Dark"]:
+    if sysSettings.systemTheme is None or sysSettings.systemTheme in [
+        "Default",
+        "Defaultv2",
+        "dark-cow",
+        "Defaultv2-Dark",
+    ]:
         sysSettings.systemTheme = "Defaultv3"
         db.session.commit()
     if sysSettings.siteProtocol is None:
