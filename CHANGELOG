@@ -2,6 +2,7 @@
 ==============================================
 OSP-Core: Dark-Cow, Defaultv2, & Defaultv2-Dark has been removed.
 OSP-Core: Fixes issue where User Deletion via scheduled request was causing an unhandled error when logging
+OSP-Core: Add SQLAlchemy auto-rollback on session failure
 
 0.9.3
 ==============================================
