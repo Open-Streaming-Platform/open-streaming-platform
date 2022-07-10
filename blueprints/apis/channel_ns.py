@@ -89,10 +89,8 @@ class api_1_ListChannels(Resource):
         """
         Gets a List of all Public Channels
         """
-        channelList = Channel.Channel.query.all()
-        db.session.commit()
         return {
-            "results": [ob.serialize() for ob in channelList if ob.private is False]
+            "results": cachedDbCalls.serializeChannels()
         }
 
     # Channel - Create Channel
