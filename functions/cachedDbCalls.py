@@ -260,6 +260,12 @@ def getChannelsByOwnerId(OwnerId):
 
 
 @cache.memoize(timeout=30)
+def serializeChannelByLocationID(channelLoc):
+    channel = getChannelByLoc(channelLoc)
+    return serializeChannel(channel.id)
+
+
+@cache.memoize(timeout=30)
 def serializeChannel(channelID):
     channelData = getChannel(channelID)
     return {
