@@ -90,7 +90,7 @@ def getAllChannels():
         Channel.Channel.chatHistory,
         Channel.Channel.allowGuestNickChange,
         Channel.Channel.showHome,
-        Channel.Channel.maxVideoRetention
+        Channel.Channel.maxVideoRetention,
     ).all()
     return channelQuery
 
@@ -128,7 +128,7 @@ def getChannel(channelID):
             Channel.Channel.chatHistory,
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention
+            Channel.Channel.maxVideoRetention,
         )
         .filter_by(id=channelID)
         .first()
@@ -169,7 +169,7 @@ def getChannelByLoc(channelLoc):
             Channel.Channel.chatHistory,
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention
+            Channel.Channel.maxVideoRetention,
         )
         .filter_by(channelLoc=channelLoc)
         .first()
@@ -210,7 +210,7 @@ def getChannelByStreamKey(StreamKey):
             Channel.Channel.chatHistory,
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention
+            Channel.Channel.maxVideoRetention,
         )
         .filter_by(streamKey=StreamKey)
         .first()
@@ -251,12 +251,13 @@ def getChannelsByOwnerId(OwnerId):
             Channel.Channel.chatHistory,
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention
+            Channel.Channel.maxVideoRetention,
         )
         .filter_by(owningUser=OwnerId)
         .all()
     )
     return channelQuery
+
 
 @cache.memoize(timeout=30)
 def serializeChannel(channelID):
@@ -286,14 +287,19 @@ def serializeChannel(channelID):
         "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
     }
 
+
 @cache.memoize(timeout=30)
 def serializeChannels():
-    ChannelQuery = Channel.Channel.query.filter_by(private=False).with_entities(Channel.Channel.id).all()
+    ChannelQuery = (
+        Channel.Channel.query.filter_by(private=False)
+        .with_entities(Channel.Channel.id)
+        .all()
+    )
     returnData = []
     for channel in ChannelQuery:
-        if channel.private is False:
-            returnData.append(serializeChannel(channel.id))
+        returnData.append(serializeChannel(channel.id))
     return returnData
+
 
 @cache.memoize(timeout=60)
 def getChannelSubCount(channelID):
@@ -302,10 +308,12 @@ def getChannelSubCount(channelID):
     ).count()
     return SubscriptionQuery
 
+
 @cache.memoize(timeout=60)
 def getChannelUpvotes(channelID):
     UpvoteQuery = upvotes.channelUpvotes.query.filter_by(channelID=channelID).count()
     return UpvoteQuery
+
 
 @cache.memoize(timeout=5)
 def getChannelStreamIds(channelID):
