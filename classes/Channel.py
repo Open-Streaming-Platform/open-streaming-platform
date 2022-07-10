@@ -1,6 +1,7 @@
 from .shared import db
 import uuid
 import os
+from functions import cachedDbCalls
 
 
 class Channel(db.Model):
@@ -122,6 +123,15 @@ class Channel(db.Model):
     def get_upvotes(self):
         return len(self.upvotes)
 
+    def get_videos(self):
+        return cachedDbCalls.getChannelVideos(self.id)
+
+    def get_streams(self):
+        return cachedDbCalls.getChannelStreamIds(self.id)
+
+    def get_tags(self):
+        return cachedDbCalls.getChannelTagIds(self.id)
+
     def serialize(self):
         return {
             "id": self.id,
@@ -137,15 +147,15 @@ class Channel(db.Model):
             "currentViews": self.currentViewers,
             "recordingEnabled": self.record,
             "chatEnabled": self.chatEnabled,
-            "stream": [obj.id for obj in self.stream if obj.active == True],
-            "recordedVideoIDs": [obj.id for obj in self.recordedVideo],
+            "stream": [obj.id for obj in self.get_streams()],
+            "recordedVideoIDs": [obj.id for obj in self.get_videos()],
             "upvotes": self.get_upvotes(),
             "protected": self.protected,
             "allowGuestNickChange": self.allowGuestNickChange,
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
-            "tags": [obj.id for obj in self.tags],
+            "tags": [obj.id for obj in self.get_tags()],
         }
 
     def authed_serialize(self):
@@ -162,8 +172,8 @@ class Channel(db.Model):
             "currentViews": self.currentViewers,
             "recordingEnabled": self.record,
             "chatEnabled": self.chatEnabled,
-            "stream": [obj.id for obj in self.stream],
-            "recordedVideoIDs": [obj.id for obj in self.recordedVideo],
+            "stream": [obj.id for obj in self.get_streams()],
+            "recordedVideoIDs": [obj.id for obj in self.get_videos()],
             "upvotes": self.get_upvotes(),
             "protected": self.protected,
             "xmppToken": self.xmppToken,
@@ -172,7 +182,7 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
-            "tags": [obj.id for obj in self.tags],
+            "tags": [obj.id for obj in self.get_tags()],
         }
 
 

@@ -1,5 +1,3 @@
-from classes.shared import db
-
 from classes import settings
 from classes import Channel
 from classes import RecordedVideo
@@ -244,6 +242,16 @@ def getChannelSubCount(channelID):
 
 
 @cache.memoize(timeout=5)
+def getChannelStreamIds(channelID):
+    StreamQuery = (
+        Stream.Stream.query.filter_by(active=True, linkedChannel=channelID)
+        .with_elements(Stream.Stream.id)
+        .all()
+    )
+    return StreamQuery
+
+
+@cache.memoize(timeout=5)
 def isChannelLive(channelID):
     StreamQuery = Stream.Stream.query.filter_by(
         active=True, linkedChannel=channelID
@@ -252,6 +260,16 @@ def isChannelLive(channelID):
         return True
     else:
         return False
+
+
+@cache.memoize(timeout=30)
+def getChannelTagIds(channelID):
+    tagQuery = (
+        Channel.channel_tags.query.filter_by(channelID=channelID)
+        .with_elements(Channel.channel_tags.id)
+        .all()
+    )
+    return tagQuery
 
 
 @cache.memoize(timeout=10)
