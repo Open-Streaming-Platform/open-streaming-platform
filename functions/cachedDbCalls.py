@@ -319,7 +319,7 @@ def getChannelUpvotes(channelID):
 def getChannelStreamIds(channelID):
     StreamQuery = (
         Stream.Stream.query.filter_by(active=True, linkedChannel=channelID)
-        .with_elements(Stream.Stream.id)
+        .with_entities(Stream.Stream.id)
         .all()
     )
     return StreamQuery
@@ -340,7 +340,7 @@ def isChannelLive(channelID):
 def getChannelTagIds(channelID):
     tagQuery = (
         Channel.channel_tags.query.filter_by(channelID=channelID)
-        .with_elements(Channel.channel_tags.id)
+        .with_entities(Channel.channel_tags.id)
         .all()
     )
     return tagQuery
