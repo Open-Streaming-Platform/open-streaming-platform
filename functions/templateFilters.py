@@ -494,7 +494,7 @@ def globalPanelIdToPanelName(panelId):
     if panelQuery is not None:
         return panelQuery.name
     else:
-        return "Unknown Panel ID # " + panelId
+        return "Unknown Panel ID # " + str(panelId)
 
 
 def channelPanelIdToPanelName(panelId):
@@ -503,7 +503,7 @@ def channelPanelIdToPanelName(panelId):
     if panelQuery is not None:
         return panelQuery.name
     else:
-        return "Unknown Panel ID # " + panelId
+        return "Unknown Panel ID # " + str(panelId)
 
 
 def panelTypeIdToPanelTypeName(panelType):

@@ -37,6 +37,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 from flask_babel import Babel
 from werkzeug.middleware.proxy_fix import ProxyFix
+from sqlalchemy import exc
 
 import redis
 
@@ -389,6 +390,13 @@ from classes.shared import db
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
+
+# Handle Session Rollback Issues
+@app.errorhandler(exc.SQLAlchemyError)
+def handle_db_exceptions(error):
+    app.logger.error(error)
+    db.session.rollback()
+
 
 # Initialize Flask-Session
 app.logger.info({"level": "info", "message": "Initializing Flask-Session"})
