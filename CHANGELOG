@@ -1,3 +1,8 @@
+0.9.5
+==============================================
+OSP-Core: Upgrade Cachelib == 0.8.0
+OSP-Core (Docker): Fixed issue on running DB upgrade via Flask CLI
+
 0.9.4a
 ==============================================
 OSP-Core: Fix for Cachelib - downgrade from 0.9.0 -> 0.1.1
