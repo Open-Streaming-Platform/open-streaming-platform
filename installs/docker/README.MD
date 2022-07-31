@@ -10,7 +10,7 @@
 <div align="center">
     Open-Source Video Streaming for Everyone
     <br />
-    <a href="https://wiki.openstreamingplatform.com"><strong>Explore the docs »</strong></a>
+    <a href="https://open-streaming-platform.readthedocs.io/en/latest/install/install.html#docker-install"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://demo.openstreamingplatform.com">View Demo</a>
@@ -22,8 +22,7 @@
 <br>
 <div align="center">
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/releases"><img src="https://img.shields.io/badge/dynamic/json?color=blue&label=release&query=%24%5B0%5D.tag_name&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108%2Freleases"></a>
-    <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/v/deamos/openstreamingplatform/latest?color=blue&label=docker%20version"></a>
-    <a href="https://hub.docker.com/r/deamos/openstreamingplatform"><img src="https://img.shields.io/docker/pulls/deamos/openstreamingplatform"></a>
+    <a href="https://gitlab.com/osp-group/open-streaming-platform-docker"><img src="https://img.shields.io/docker/v/deamos/osp-core/latest?color=blue&label=docker%20version"></a>
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager"><img src="https://img.shields.io/badge/dynamic/json?color=green&logo=gitlab&label=stars&query=%24.star_count&url=https%3A%2F%2Fgitlab.com%2Fapi%2Fv4%2Fprojects%2F5871108"></a>
     <a href="https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-orange"></a>
 </div>
@@ -58,7 +57,7 @@ OSP was designed a self-hosted alternative to services like Twitch.tv, Ustream.t
  - Ability to Customize the UI as a Theme for your own personal look [![N|Solid](https://imgur.com/PldclhG.jpg)](https://imgur.com/PldclhG.jpg)
  - Modular Services - Scale your Instance of OSP to support a growing audience.
 
-Installation Instructions may be found at the [OSP Wiki Page](https://wiki.openstreamingplatform.com)
+Installation Instructions may be found at the [OSP Wiki Page](https://open-streaming-platform.readthedocs.io/)
 
 Docker
 ----
@@ -70,7 +69,7 @@ Docker Images can be found at the following locations:
 
 Attribution
 ----
-See our [Attribution Page](https://wiki.openstreamingplatform.com/en/Attribution)
+See our [Attribution Page](https://open-streaming-platform.readthedocs.io/en/latest/overview/attribution.html)
 
 Thanks
 ----

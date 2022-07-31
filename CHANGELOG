@@ -1,7 +1,19 @@
+0.9.5
+==============================================
+OSP-Core: Upgrade Cachelib == 0.8.0
+OSP-Core (Docker): Fixed issue on running DB upgrade via Flask CLI
+
+0.9.4a
+==============================================
+OSP-Core: Fix for Cachelib - downgrade from 0.9.0 -> 0.1.1
+
 0.9.4
 ==============================================
 OSP-Core: Dark-Cow, Defaultv2, & Defaultv2-Dark has been removed.
 OSP-Core: Fixes issue where User Deletion via scheduled request was causing an unhandled error when logging
+OSP-Core: Add SQLAlchemy auto-rollback on session failure
+OSP-Core: Fixes issue where an invalid global panel was causing an error on the admin page
+OSP-Core: Corrected issue of 0.9.0.sh upgrader not using the new 'flask db' method of upgrading
 
 0.9.3
 ==============================================

@@ -203,11 +203,11 @@ class api_1_ListChannel(Resource):
                         }
                 return {"results": {"message": "Request Error"}}, 400
         else:
-            channelList = Channel.Channel.query.filter_by(
-                channelLoc=channelEndpointID
-            ).all()
-            db.session.commit()
-            return {"results": [ob.serialize() for ob in channelList]}
+            return {
+                "results": [
+                    cachedDbCalls.serializeChannelByLocationID(channelEndpointID)
+                ]
+            }
 
     # Channel - Change Channel Name or Topic ID
     @api.expect(channelParserPut)
