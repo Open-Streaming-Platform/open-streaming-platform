@@ -165,7 +165,10 @@ def handle_add_usercount(streamData):
     requestedChannel = (
         Channel.Channel.query.filter_by(channelLoc=channelLoc)
         .with_entities(
-            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views, Channel.Channel.streamKey
+            Channel.Channel.channelLoc,
+            Channel.Channel.id,
+            Channel.Channel.views,
+            Channel.Channel.streamKey,
         )
         .first()
     )
