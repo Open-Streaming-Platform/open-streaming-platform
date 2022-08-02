@@ -1,3 +1,7 @@
+0.9.6
+==============================================
+Nginx-OSP: Moved Core Code of Nginx RTMP to winshining/nginx-http-flv-module.  New Installs will use the new backend. Existing can be migrated using Reset Nginx via osp-config.sh
+
 0.9.5
 ==============================================
 OSP-Core: Upgrade Cachelib == 0.8.0

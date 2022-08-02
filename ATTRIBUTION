@@ -12,6 +12,7 @@
 - Bootstrap-Toggle - Used to Build Toggle Buttons with Bootstrap
 - NGINX - Open-Source, high-performance HTTP server and reverse proxy
 - NGINX-RTMP-Module - NGINX Module for RTMP/HLS/MPEG-DASH live streaming
+- winshining/nginx-http-flv-module - Replacement Nginx Module for RTMP/HLS Live Streaming
 - Socket.io - Real-Time Communications Engine Between Client and Server
 - Flask Socket.io - Interface Socket.io with Flask
 - Video.js - Handles the HTML5 Video Playback of HLS video streams and MP4 Files

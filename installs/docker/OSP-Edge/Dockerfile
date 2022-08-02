@@ -71,7 +71,7 @@ RUN cd /tmp && \
 
 # Download the NGINX-RTMP Module
 RUN cd /tmp && \
-  wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
+  wget https://github.com/winshining/nginx-http-flv-module/archive/refs/tags/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
 RUN cd /tmp && \
@@ -85,7 +85,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-http_v2_module \
   --with-http_auth_request_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
-  --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} \
+  --add-module=../nginx-http-flv-module-${NGINX_RTMP_VERSION} \
   --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install
 
