@@ -60,20 +60,15 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
                 # Checks for is there are any existing live streams and terminates them
                 existingStreamQuery = Stream.Stream.query.filter_by(
                     active=True, linkedChannel=channelRequest.id
-                ).all()
-                if existingStreamQuery:
-                    for stream in existingStreamQuery:
-                        db.session.delete(stream)
-                    db.session.commit()
+                ).delete()
+
+                db.session.commit()
 
                 # Checks for is there are any pending live streams and terminates them
                 existingStreamQuery = Stream.Stream.query.filter_by(
                     pending=True, linkedChannel=channelRequest.id
-                ).all()
-                if existingStreamQuery:
-                    for stream in existingStreamQuery:
-                        db.session.delete(stream)
-                    db.session.commit()
+                ).delete()
+                db.session.commit()
 
                 defaultStreamName = templateFilters.normalize_date(str(currentTime))
                 if channelRequest.defaultStreamName != "":
@@ -322,9 +317,13 @@ def rtmp_record_auth_check(channelLoc):
             db.session.commit()
 
             streamID = None
-            existingStream = Stream.Stream.query.filter_by(
-                complete=False, linkedChannel=channelRequest.id
-            ).with_entities(Stream.Stream.id).first()
+            existingStream = (
+                Stream.Stream.query.filter_by(
+                    complete=False, linkedChannel=channelRequest.id
+                )
+                .with_entities(Stream.Stream.id)
+                .first()
+            )
 
             if existingStream is not None:
                 streamID = existingStream.id
@@ -344,11 +343,17 @@ def rtmp_record_auth_check(channelLoc):
             db.session.add(newRecording)
             db.session.commit()
 
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
-                channelID=channelRequest.id, videoLocation="", pending=True
-            ).with_entities(RecordedVideo.RecordedVideo.id).first()
+            pendingVideo = (
+                RecordedVideo.RecordedVideo.query.filter_by(
+                    channelID=channelRequest.id, videoLocation="", pending=True
+                )
+                .with_entities(RecordedVideo.RecordedVideo.id)
+                .first()
+            )
 
-            StreamQueryUpdate = Stream.Stream.query.filter_by(id=existingStream.id).update(dict(recordedVideoId=pendingVideo.id))
+            StreamQueryUpdate = Stream.Stream.query.filter_by(
+                id=existingStream.id
+            ).update(dict(recordedVideoId=pendingVideo.id))
 
             db.session.commit()
 
