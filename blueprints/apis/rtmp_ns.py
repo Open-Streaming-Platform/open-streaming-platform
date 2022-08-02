@@ -3,6 +3,7 @@ from flask import request
 import datetime
 import socket
 import hashlib
+import logging
 
 from classes import settings
 from classes import Channel
@@ -13,6 +14,7 @@ from functions import rtmpFunc
 from functions import system
 from functions import securityFunc
 
+log = logging.getLogger("app.blueprints.apis.rtmp_ns")
 
 def checkRTMPAuthIP(requestData):
     authorized = False
@@ -94,6 +96,7 @@ class api_1_rtmp_stage1(Resource):
         # Perform RTMP IP Authorization Check
         authorized = checkRTMPAuthIP(request)
         if authorized[0] is False:
+            log.warning({"level": "warning", "message": "Unauthorized RTMP Server - " + authorized[1]})
             return {
                 "results": {"message": "Unauthorized RTMP Server - " + authorized[1]}
             }, 400
@@ -105,10 +108,13 @@ class api_1_rtmp_stage1(Resource):
             addr = args["addr"]
             results = rtmpFunc.rtmp_stage1_streamkey_check(name, addr)
             if results["success"] is True:
+                log.info({"level": "info", "message": "Stage 1 Auth Complete - " + results['channelLoc']})
                 return {"results": results}, 200
             else:
+                log.warning({"level": "warning", "message": "Stage 1 Auth Failed - " + results['channelLoc']})
                 return {"results": results}, 400
         else:
+            log.warning({"level": "warning", "message": "Stage 1 Auth Failed - Missing Required Data"})
             return {
                 "results": {
                     "time": str(datetime.datetime.utcnow()),
@@ -140,6 +146,7 @@ class api_1_rtmp_stage2(Resource):
         # Perform RTMP IP Authorization Check
         authorized = checkRTMPAuthIP(request)
         if authorized[0] is False:
+            log.warning({"level": "warning", "message": "Unauthorized RTMP Server - " + authorized[1]})
             return {
                 "results": {"message": "Unauthorized RTMP Server - " + authorized[1]}
             }, 400
@@ -152,10 +159,13 @@ class api_1_rtmp_stage2(Resource):
             rtmpServer = authorized[2]
             results = rtmpFunc.rtmp_stage2_user_auth_check(name, addr, rtmpServer)
             if results["success"] is True:
+                log.info({"level": "info", "message": "Stage 2 Auth Complete - " + results['channelLoc']})
                 return {"results": results}, 200
             else:
+                log.warning({"level": "warning", "message": "Stage 2 Auth Failed - " + results['channelLoc']})
                 return {"results": results}, 400
         else:
+            log.warning({"level": "warning", "message": "Stage 2 Auth Failed - Missing Required Data"})
             return {
                 "results": {
                     "time": str(datetime.datetime.utcnow()),
@@ -182,6 +192,7 @@ class api_1_rtmp_reccheck(Resource):
         # Perform RTMP IP Authorization Check
         authorized = checkRTMPAuthIP(request)
         if authorized[0] is False:
+            log.warning({"level": "warning", "message": "Unauthorized RTMP Server - " + authorized[1]})
             return {
                 "results": {"message": "Unauthorized RTMP Server - " + authorized[1]}
             }, 400
@@ -192,10 +203,13 @@ class api_1_rtmp_reccheck(Resource):
             name = args["name"]
             results = rtmpFunc.rtmp_record_auth_check(name)
             if results["success"] is True:
+                log.info({"level": "info", "message": "Recording Auth Complete - " + results['channelLoc']})
                 return {"results": results}, 200
             else:
+                log.warning({"level": "warning", "message": "Recording Auth Failed - " + results['channelLoc']})
                 return {"results": results}, 400
         else:
+            log.warning({"level": "warning", "message": "Recording Auth Failed - Missing Required Data"})
             return {
                 "results": {
                     "time": str(datetime.datetime.utcnow()),
