@@ -118,7 +118,7 @@ RUN cd /tmp && \
 # Inline Patch NGINX-RTMP
 #RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION}/1158.patch
 #RUN cd /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
-RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch/1158.patch
+RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
 RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
 
 
