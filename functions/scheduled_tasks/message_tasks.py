@@ -16,7 +16,11 @@ log = logging.getLogger("app.functions.scheduler.message_tasks")
 
 
 def setup_message_tasks(sender, **kwargs):
-    pass
+    sender.add_periodic_task(
+        3600,
+        clean_read_notifications.s(),
+        name="Clean Up Old Read Notifications",
+    )
 
 
 @celery.task(bind=True)
@@ -205,3 +209,7 @@ def test_webhook(self, webhookType, webhookID, **kwargs):
             + str(url),
         )
     return True
+
+@celery.task(bind=True)
+def clean_read_notifications(self):
+    pass
