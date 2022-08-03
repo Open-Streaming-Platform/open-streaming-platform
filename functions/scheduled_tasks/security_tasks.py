@@ -36,9 +36,29 @@ def check_flagged_for_delete_users(self):
                 "message": "Flagged User Deleted: "
                 + str(userFlag.userID)
                 + "/ "
-                + str(userFlag.timestamp),
+                + str(userFlag.timestamp)
             }
         )
     db.session.commit()
     db.session.close()
+    return True
+
+@celery.task(bind=True)
+def check_old_guests(self):
+    """
+    Task to check for Guest Entries in the DB and Delete those last active older than 3 months
+    """
+    guestDeleteCount = Sec.Guest.query.filter(
+        Sec.Guest.last_active_at < datetime.datetime.now() - datetime.timedelta(days=90)).count()
+    results = Sec.Guest.query.filter(Sec.Guest.last_active_at < datetime.datetime.now() - datetime.timedelta(days=90)).delete()
+    db.session.commit()
+    db.session.close()
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Stale Guest Users Deleted: "
+                       + str(guestDeleteCount)
+        }
+    )
     return True
