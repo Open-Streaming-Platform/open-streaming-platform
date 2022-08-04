@@ -10,7 +10,8 @@ from classes import notifications, Sec, webhook
 
 from app import config
 
-from functions import notifications, webhookFunc, system, cachedDbCalls, templateFilters
+from functions import webhookFunc, system, cachedDbCalls, templateFilters
+from functions import notifications as notificationFunc
 
 log = logging.getLogger("app.functions.scheduler.message_tasks")
 
@@ -55,7 +56,7 @@ def send_email(self, subject, destination, message):
 @celery.task(bind=True)
 def send_message(self, subject, message, fromUser, toUser):
     sysSettings = cachedDbCalls.getSystemSettings()
-    result = notifications.sendMessage(subject, message, fromUser, toUser)
+    result = notificationFunc.sendMessage(subject, message, fromUser, toUser)
     userNotificationQuery = (
         Sec.User.query.filter_by(id=toUser)
         .with_entities(Sec.User.email, Sec.User.emailMessage)
@@ -224,25 +225,30 @@ def clean_read_notifications(self):
 
     oldReadNotificationsCount = notifications.userNotification.query.filter(
         notifications.userNotification.read == True,
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
     ).count()
     oldUnreadNotificationsCount = notifications.userNotification.query.filter(
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
     ).count()
 
     oldReadNotifications = notifications.userNotification.query.filter(
         notifications.userNotification.read == True,
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
     ).delete()
     oldUnreadNotifications = notifications.userNotification.query.filter(
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
     ).delete()
 
     log.info(
         {
             "level": "info",
             "taskID": self.request.id.__str__(),
-            "message": "Old Read Notifications Deleted: " + str(oldReadNotificationsCount),
+            "message": "Old Read Notifications Deleted: "
+            + str(oldReadNotificationsCount),
         }
     )
 
@@ -250,11 +256,9 @@ def clean_read_notifications(self):
         {
             "level": "info",
             "taskID": self.request.id.__str__(),
-            "message": "Old Unread Notifications Deleted: " + str(oldUnreadNotificationsCount),
+            "message": "Old Unread Notifications Deleted: "
+            + str(oldUnreadNotificationsCount),
         }
     )
     db.session.commit()
     return True
-
-
-
