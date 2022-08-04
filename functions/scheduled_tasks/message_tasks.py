@@ -10,7 +10,8 @@ from classes import notifications, Sec, webhook
 
 from app import config
 
-from functions import notifications, webhookFunc, system, cachedDbCalls, templateFilters
+from functions import webhookFunc, system, cachedDbCalls, templateFilters
+from functions import notifications as notificationFunc
 
 log = logging.getLogger("app.functions.scheduler.message_tasks")
 
@@ -55,7 +56,7 @@ def send_email(self, subject, destination, message):
 @celery.task(bind=True)
 def send_message(self, subject, message, fromUser, toUser):
     sysSettings = cachedDbCalls.getSystemSettings()
-    result = notifications.sendMessage(subject, message, fromUser, toUser)
+    result = notificationFunc.sendMessage(subject, message, fromUser, toUser)
     userNotificationQuery = (
         Sec.User.query.filter_by(id=toUser)
         .with_entities(Sec.User.email, Sec.User.emailMessage)
