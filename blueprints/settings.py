@@ -1309,7 +1309,7 @@ def settings_channels_page():
         topicList = cachedDbCalls.getAllTopics()
         user_channels = (
             Channel.Channel.query.filter_by(owningUser=current_user.id)
-                .with_entities(
+            .with_entities(
                 Channel.Channel.id,
                 Channel.Channel.channelName,
                 Channel.Channel.channelLoc,
@@ -1334,10 +1334,12 @@ def settings_channels_page():
                 Channel.Channel.chatFormat,
                 Channel.Channel.chatHistory,
             )
-                .all()
+            .all()
         )
 
-        activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
+        activeRTMPQuery = settings.rtmpServer.query.filter_by(
+            active=True, hide=False
+        ).all()
         activeRTMPList = []
         for server in activeRTMPQuery:
             address = server.address
@@ -1373,7 +1375,10 @@ def settings_channels_page():
                 # Default values
                 for key, value in globalvars.room_config.items():
                     ejabberd.change_room_option(
-                        chan.channelLoc, "conference." + sysSettings.siteAddress, key, value
+                        chan.channelLoc,
+                        "conference." + sysSettings.siteAddress,
+                        key,
+                        value,
                     )
 
                 # Name and title
@@ -1440,15 +1445,17 @@ def settings_channels_page():
             viewersTotal = 0
 
             statsViewsLiveDay = (
-                db.session.query(func.date(views.views.date), func.count(views.views.id))
-                    .filter(views.views.viewType == 0)
-                    .filter(views.views.itemID == channel.id)
-                    .filter(
+                db.session.query(
+                    func.date(views.views.date), func.count(views.views.id)
+                )
+                .filter(views.views.viewType == 0)
+                .filter(views.views.itemID == channel.id)
+                .filter(
                     views.views.date
                     > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
                 )
-                    .group_by(func.date(views.views.date))
-                    .all()
+                .group_by(func.date(views.views.date))
+                .all()
             )
             statsViewsLiveDayArray = []
             for entry in statsViewsLiveDay:
@@ -1465,20 +1472,20 @@ def settings_channels_page():
                     db.session.query(
                         func.date(views.views.date), func.count(views.views.id)
                     )
-                        .filter(views.views.viewType == 1)
-                        .filter(views.views.itemID == vid.id)
-                        .filter(
+                    .filter(views.views.viewType == 1)
+                    .filter(views.views.itemID == vid.id)
+                    .filter(
                         views.views.date
                         > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
                     )
-                        .group_by(func.date(views.views.date))
-                        .all()
+                    .group_by(func.date(views.views.date))
+                    .all()
                 )
 
                 for entry in statsViewsRecordedDay:
                     if entry[0] in statsViewsRecordedDayDict:
                         statsViewsRecordedDayDict[entry[0]] = (
-                                statsViewsRecordedDayDict[entry[0]] + entry[1]
+                            statsViewsRecordedDayDict[entry[0]] + entry[1]
                         )
                     else:
                         statsViewsRecordedDayDict[entry[0]] = entry[1]
@@ -1491,7 +1498,10 @@ def settings_channels_page():
 
             sortedStatsArray = sorted(statsViewsRecordedDayArray, key=lambda d: d["t"])
 
-            statsViewsDay = {"live": statsViewsLiveDayArray, "recorded": sortedStatsArray}
+            statsViewsDay = {
+                "live": statsViewsLiveDayArray,
+                "recorded": sortedStatsArray,
+            }
 
             user_channels_stats[channel.id] = statsViewsDay
 
@@ -1527,8 +1537,13 @@ def settings_channels_page():
         # Process New Stickers
         if requestType == "newSticker":
             if "stickerChannelID" in request.form:
-                channelQuery = cachedDbCalls.getChannel(int(request.form["stickerChannelID"]))
-                if channelQuery is not None and current_user.id == channelQuery.owningUser:
+                channelQuery = cachedDbCalls.getChannel(
+                    int(request.form["stickerChannelID"])
+                )
+                if (
+                    channelQuery is not None
+                    and current_user.id == channelQuery.owningUser
+                ):
                     if "stickerName" in request.form:
                         stickerName = request.form["stickerName"]
                         existingStickerNameQuery = stickers.stickers.query.filter_by(
@@ -1792,7 +1807,7 @@ def settings_channels_page():
                     defaultStreamName=defaultstreamName,
                     autoPublish=autoPublish,
                     private=private,
-                    vanityURL=vanityURL
+                    vanityURL=vanityURL,
                 )
 
                 from app import ejabberd
@@ -1835,7 +1850,7 @@ def settings_channels_page():
                         filename = photos.save(
                             request.files["photo"], name=str(uuid.uuid4()) + "."
                         )
-                        updateDict['imageLocation'] = filename
+                        updateDict["imageLocation"] = filename
 
                         if oldImage is not None:
                             try:
@@ -1854,7 +1869,7 @@ def settings_channels_page():
                         filename = photos.save(
                             request.files["offlinephoto"], name=str(uuid.uuid4()) + "."
                         )
-                        updateDict['offlineImageLocation'] = filename
+                        updateDict["offlineImageLocation"] = filename
 
                         if oldImage is not None:
                             try:
@@ -1862,7 +1877,9 @@ def settings_channels_page():
                             except OSError:
                                 pass
 
-                channelUpdateQuery = Channel.Channel.query.filter_by(id=requestedChannel.id).update(updateDict)
+                channelUpdateQuery = Channel.Channel.query.filter_by(
+                    id=requestedChannel.id
+                ).update(updateDict)
 
                 # Invalidate Channel Cache
                 cachedDbCalls.invalidateChannelCache(requestedChannel.id)
@@ -1873,6 +1890,7 @@ def settings_channels_page():
                 flash("Invalid Change Attempt", "Error")
             redirect(url_for(".settings_channels_page"))
         redirect(url_for(".settings_channels_page"))
+
 
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
 @login_required

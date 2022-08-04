@@ -1238,7 +1238,7 @@
 </div>
 {% endmacro %}
 
-{% macro move_video_socketio(current_user) %}
+{% macro move_video_socketio(channels) %}
 <div class="modal fade" id="videoMoveModal" tabindex="-1" role="dialog" aria-labelledby="videoMoveModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1249,7 +1249,7 @@
           <h5>Move this Video to Channel:</h5>
           <select id="moveToChannelInput" name="moveToChannelID" class="form-select">
             <option disabled selected value>-- Select Destination Channel --</option>
-            {% for chan in current_user.channels %}
+            {% for chan in channels %}
             <option value="{{chan.id}}">{{chan.channelName}}</option>
             {% endfor %}
           </select>
