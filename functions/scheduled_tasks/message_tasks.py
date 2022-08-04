@@ -160,7 +160,15 @@ def send_webhook(self, channelID, triggerType, **kwargs):
                     elif requestType == 3:
                         r = requests.delete(url, headers=header, data=payload)
                 except:
-                    pass
+                    log.error(
+                        {
+                            "level": "error",
+                            "taskID": self.request.id.__str__(),
+                            "message": "Webhook Failure",
+                            "requestType": str(requestType),
+                            "url": url,
+                        }
+                    )
                 system.newLog(
                     8,
                     "Processing Webhook for ID #"
@@ -210,6 +218,43 @@ def test_webhook(self, webhookType, webhookID, **kwargs):
         )
     return True
 
+
 @celery.task(bind=True)
 def clean_read_notifications(self):
-    pass
+
+    oldReadNotificationsCount = notifications.userNotification.query.filter(
+        notifications.userNotification.read == True,
+        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+    ).count()
+    oldUnreadNotificationsCount = notifications.userNotification.query.filter(
+        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+    ).count()
+
+    oldReadNotifications = notifications.userNotification.query.filter(
+        notifications.userNotification.read == True,
+        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+    ).delete()
+    oldUnreadNotifications = notifications.userNotification.query.filter(
+        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+    ).delete()
+
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Old Read Notifications Deleted: " + str(oldReadNotificationsCount),
+        }
+    )
+
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Old Unread Notifications Deleted: " + str(oldUnreadNotificationsCount),
+        }
+    )
+    db.session.commit()
+    return True
+
+
+
