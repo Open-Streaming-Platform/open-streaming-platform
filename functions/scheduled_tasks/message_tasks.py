@@ -224,25 +224,30 @@ def clean_read_notifications(self):
 
     oldReadNotificationsCount = notifications.userNotification.query.filter(
         notifications.userNotification.read == True,
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
     ).count()
     oldUnreadNotificationsCount = notifications.userNotification.query.filter(
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
     ).count()
 
     oldReadNotifications = notifications.userNotification.query.filter(
         notifications.userNotification.read == True,
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=90)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
     ).delete()
     oldUnreadNotifications = notifications.userNotification.query.filter(
-        notifications.userNotification.timestamp < datetime.datetime.now() - datetime.timedelta(days=180)
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
     ).delete()
 
     log.info(
         {
             "level": "info",
             "taskID": self.request.id.__str__(),
-            "message": "Old Read Notifications Deleted: " + str(oldReadNotificationsCount),
+            "message": "Old Read Notifications Deleted: "
+            + str(oldReadNotificationsCount),
         }
     )
 
@@ -250,11 +255,9 @@ def clean_read_notifications(self):
         {
             "level": "info",
             "taskID": self.request.id.__str__(),
-            "message": "Old Unread Notifications Deleted: " + str(oldUnreadNotificationsCount),
+            "message": "Old Unread Notifications Deleted: "
+            + str(oldUnreadNotificationsCount),
         }
     )
     db.session.commit()
     return True
-
-
-
