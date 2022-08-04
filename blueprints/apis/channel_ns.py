@@ -358,10 +358,25 @@ class api_1_GetRestreams(Resource):
         if channelData is not None:
             restreamDestinationQuery = Channel.restreamDestinations.query.filter_by(
                 channel=channelData.id
-            ).all()
-            restreamDestinations = restreamDestinationQuery
+            ).with_entities(
+                Channel.restreamDestinations.id,
+                Channel.restreamDestinations.channel,
+                Channel.restreamDestinations.name,
+                Channel.restreamDestinations.enabled,
+                Channel.restreamDestinations.url
+                ).all()
+            restreamDestinations = []
+            for entry in restreamDestinationQuery:
+                serialized = {
+                    "id": entry.id,
+                    "channel": templateFilters.get_channelLocationFromID(entry.channel),
+                    "name": entry.name,
+                    "enabled": entry.enabled,
+                    "url": entry.url,
+                }
+                restreamDestinations.append(serialized)
             db.session.commit()
-            return {"results": [ob.serialize() for ob in restreamDestinations]}
+            return {"results": restreamDestinations}
 
         else:
             db.session.commit()
