@@ -215,9 +215,13 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
                 ),
             )
 
-            subscriptionQuery = subscriptions.channelSubs.query.filter_by(
-                channelID=requestedChannel.id
-            ).with_entities(subscriptions.channelSubs.id, subscriptions.channelSubs.userID).all()
+            subscriptionQuery = (
+                subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id)
+                .with_entities(
+                    subscriptions.channelSubs.id, subscriptions.channelSubs.userID
+                )
+                .all()
+            )
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
                 newNotification = notifications.userNotification(
