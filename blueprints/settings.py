@@ -1305,8 +1305,217 @@ def settings_channels_page():
     sysSettings = cachedDbCalls.getSystemSettings()
 
     videos_root = current_app.config["WEB_ROOT"] + "videos/"
+    if request.method == "GET":
+        topicList = cachedDbCalls.getAllTopics()
+        user_channels = (
+            Channel.Channel.query.filter_by(owningUser=current_user.id)
+                .with_entities(
+                Channel.Channel.id,
+                Channel.Channel.channelName,
+                Channel.Channel.channelLoc,
+                Channel.Channel.topic,
+                Channel.Channel.views,
+                Channel.Channel.streamKey,
+                Channel.Channel.protected,
+                Channel.Channel.private,
+                Channel.Channel.showHome,
+                Channel.Channel.xmppToken,
+                Channel.Channel.chatEnabled,
+                Channel.Channel.autoPublish,
+                Channel.Channel.allowComments,
+                Channel.Channel.record,
+                Channel.Channel.description,
+                Channel.Channel.offlineImageLocation,
+                Channel.Channel.imageLocation,
+                Channel.Channel.vanityURL,
+                Channel.Channel.defaultStreamName,
+                Channel.Channel.allowGuestNickChange,
+                Channel.Channel.showChatJoinLeaveNotification,
+                Channel.Channel.chatFormat,
+                Channel.Channel.chatHistory,
+            )
+                .all()
+        )
 
-    if request.method == "POST":
+        activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
+        activeRTMPList = []
+        for server in activeRTMPQuery:
+            address = server.address
+            if address == "127.0.0.1" or address == "localhost":
+                address = sysSettings.siteAddress
+            if address not in activeRTMPList:
+                activeRTMPList.append(address)
+
+        # Get xmpp room options
+        from app import ejabberd
+
+        channelRooms = {}
+        channelMods = {}
+        for chan in user_channels:
+            try:
+                xmppQuery = ejabberd.get_room_options(
+                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                )
+            except AttributeError:
+                # If Channel Doesn't Exist in ejabberd, Create
+                ejabberd.create_room(
+                    chan.channelLoc,
+                    "conference." + sysSettings.siteAddress,
+                    sysSettings.siteAddress,
+                )
+                ejabberd.set_room_affiliation(
+                    chan.channelLoc,
+                    "conference." + sysSettings.siteAddress,
+                    (current_user.uuid) + "@" + sysSettings.siteAddress,
+                    "owner",
+                )
+
+                # Default values
+                for key, value in globalvars.room_config.items():
+                    ejabberd.change_room_option(
+                        chan.channelLoc, "conference." + sysSettings.siteAddress, key, value
+                    )
+
+                # Name and title
+                ejabberd.change_room_option(
+                    chan.channelLoc,
+                    "conference." + sysSettings.siteAddress,
+                    "title",
+                    chan.channelName,
+                )
+                ejabberd.change_room_option(
+                    chan.channelLoc,
+                    "conference." + sysSettings.siteAddress,
+                    "description",
+                    current_user.username
+                    + 's chat room for the channel "'
+                    + chan.channelName
+                    + '"',
+                )
+                xmppQuery = ejabberd.get_room_options(
+                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                )
+            except:
+                # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
+                return redirect(url_for("settings.settings_channels_page"))
+            channelOptionsDict = {}
+            if "options" in xmppQuery:
+                for option in xmppQuery["options"]:
+                    key = None
+                    value = None
+                    for entry in option["option"]:
+                        if "name" in entry:
+                            key = entry["name"]
+                        elif "value" in entry:
+                            value = entry["value"]
+                    if key is not None and value is not None:
+                        channelOptionsDict[key] = value
+            channelRooms[chan.channelLoc] = channelOptionsDict
+
+            # Get room affiliations
+            xmppQuery = ejabberd.get_room_affiliations(
+                chan.channelLoc, "conference." + sysSettings.siteAddress
+            )
+
+            affiliationList = []
+            for affiliation in xmppQuery["affiliations"]:
+                user = {}
+                for entry in affiliation["affiliation"]:
+                    for key, value in entry.items():
+                        user[key] = value
+                affiliationList.append(user)
+
+            channelModList = []
+            for user in affiliationList:
+                if user["affiliation"] == "admin":
+                    channelModList.append(user["username"] + "@" + user["domain"])
+            channelMods[chan.channelLoc] = channelModList
+
+        # Calculate Channel Views by Date based on Video or Live Views and Generate Chanel Panel Ordering
+        user_channels_stats = {}
+        channelPanelOrder = {}
+        for channel in user_channels:
+
+            # 30 Days Viewer Stats
+            viewersTotal = 0
+
+            statsViewsLiveDay = (
+                db.session.query(func.date(views.views.date), func.count(views.views.id))
+                    .filter(views.views.viewType == 0)
+                    .filter(views.views.itemID == channel.id)
+                    .filter(
+                    views.views.date
+                    > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
+                )
+                    .group_by(func.date(views.views.date))
+                    .all()
+            )
+            statsViewsLiveDayArray = []
+            for entry in statsViewsLiveDay:
+                viewersTotal = viewersTotal + entry[1]
+                statsViewsLiveDayArray.append({"t": (entry[0]), "y": entry[1]})
+
+            statsViewsRecordedDayDict = {}
+            statsViewsRecordedDayArray = []
+
+            recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
+
+            for vid in recordedVidsQuery:
+                statsViewsRecordedDay = (
+                    db.session.query(
+                        func.date(views.views.date), func.count(views.views.id)
+                    )
+                        .filter(views.views.viewType == 1)
+                        .filter(views.views.itemID == vid.id)
+                        .filter(
+                        views.views.date
+                        > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
+                    )
+                        .group_by(func.date(views.views.date))
+                        .all()
+                )
+
+                for entry in statsViewsRecordedDay:
+                    if entry[0] in statsViewsRecordedDayDict:
+                        statsViewsRecordedDayDict[entry[0]] = (
+                                statsViewsRecordedDayDict[entry[0]] + entry[1]
+                        )
+                    else:
+                        statsViewsRecordedDayDict[entry[0]] = entry[1]
+                    viewersTotal = viewersTotal + entry[1]
+
+            for entry in statsViewsRecordedDayDict:
+                statsViewsRecordedDayArray.append(
+                    {"t": entry, "y": statsViewsRecordedDayDict[entry]}
+                )
+
+            sortedStatsArray = sorted(statsViewsRecordedDayArray, key=lambda d: d["t"])
+
+            statsViewsDay = {"live": statsViewsLiveDayArray, "recorded": sortedStatsArray}
+
+            user_channels_stats[channel.id] = statsViewsDay
+
+            channelPanelOrderMappingQuery = panel.panelMapping.query.filter_by(
+                panelType=2, panelLocationId=channel.id
+            ).all()
+            ChannelPanelOrderArray = []
+            for panelEntry in channelPanelOrderMappingQuery:
+                ChannelPanelOrderArray.append(panelEntry)
+            channelPanelOrder[channel.id] = sorted(
+                ChannelPanelOrderArray, key=lambda x: x.panelOrder
+            )
+
+        return render_template(
+            themes.checkOverride("user_channels.html"),
+            channels=user_channels,
+            topics=topicList,
+            channelRooms=channelRooms,
+            channelMods=channelMods,
+            viewStats=user_channels_stats,
+            rtmpList=activeRTMPList,
+            channelPanelMapping=channelPanelOrder,
+        )
+    elif request.method == "POST":
         requestType = None
 
         # Workaround check if we are now using a modal originally for Admin/Global
@@ -1318,10 +1527,8 @@ def settings_channels_page():
         # Process New Stickers
         if requestType == "newSticker":
             if "stickerChannelID" in request.form:
-                channelQuery = Channel.Channel.query.filter_by(
-                    id=int(request.form["stickerChannelID"]), owningUser=current_user.id
-                ).first()
-                if channelQuery is not None:
+                channelQuery = cachedDbCalls.getChannel(int(request.form["stickerChannelID"]))
+                if channelQuery is not None and current_user.id == channelQuery.owningUser:
                     if "stickerName" in request.form:
                         stickerName = request.form["stickerName"]
                         existingStickerNameQuery = stickers.stickers.query.filter_by(
@@ -1361,10 +1568,8 @@ def settings_channels_page():
             PanelId = request.form["PanelId"]
             panelChannelId = int(request.form["PanelLocationId"])
 
-            channelQuery = Channel.Channel.query.filter_by(
-                id=panelChannelId, owningUser=current_user.id
-            ).first()
-            if channelQuery is not None:
+            channelQuery = cachedDbCalls.getChannel(panelChannelId)
+            if channelQuery is not None and channelQuery.owningUser == current_user.id:
 
                 panelOrder = 0
                 if panelType != 0:
@@ -1496,7 +1701,7 @@ def settings_channels_page():
                 "owner",
             )
 
-            # Defautl values
+            # Default values
             for key, value in globalvars.room_config.items():
                 ejabberd.change_room_option(
                     newChannel.channelLoc,
@@ -1531,27 +1736,9 @@ def settings_channels_page():
 
             defaultstreamName = request.form["channelStreamName"]
 
-            # rtmpRestreamDestination = request.form['rtmpDestination']
-
-            # TODO Validate ChatBG and chatAnimation
-
-            requestedChannel = Channel.Channel.query.filter_by(
-                streamKey=origStreamKey
-            ).first()
+            requestedChannel = cachedDbCalls.getChannelByStreamKey(origStreamKey)
 
             if current_user.id == requestedChannel.owningUser:
-                requestedChannel.channelName = channelName
-                requestedChannel.streamKey = streamKey
-                requestedChannel.topic = topic
-                requestedChannel.record = record
-                requestedChannel.chatEnabled = chatEnabled
-                requestedChannel.allowComments = allowComments
-                requestedChannel.showHome = showHome
-                requestedChannel.description = description
-                requestedChannel.protected = protection
-                requestedChannel.defaultStreamName = defaultstreamName
-                requestedChannel.autoPublish = autoPublish
-                requestedChannel.private = private
 
                 if "channelTags" in request.form:
                     channelTagString = request.form["channelTags"]
@@ -1592,7 +1779,21 @@ def settings_channels_page():
                                 "error",
                             )
 
-                requestedChannel.vanityURL = vanityURL
+                updateDict = dict(
+                    channelName=channelName,
+                    streamKey=streamKey,
+                    topic=topic,
+                    record=record,
+                    chatEnabled=chatEnabled,
+                    allowComments=allowComments,
+                    showHome=showHome,
+                    description=description,
+                    protected=protection,
+                    defaultStreamName=defaultstreamName,
+                    autoPublish=autoPublish,
+                    private=private,
+                    vanityURL=vanityURL
+                )
 
                 from app import ejabberd
 
@@ -1634,7 +1835,7 @@ def settings_channels_page():
                         filename = photos.save(
                             request.files["photo"], name=str(uuid.uuid4()) + "."
                         )
-                        requestedChannel.imageLocation = filename
+                        updateDict['imageLocation'] = filename
 
                         if oldImage is not None:
                             try:
@@ -1653,13 +1854,15 @@ def settings_channels_page():
                         filename = photos.save(
                             request.files["offlinephoto"], name=str(uuid.uuid4()) + "."
                         )
-                        requestedChannel.offlineImageLocation = filename
+                        updateDict['offlineImageLocation'] = filename
 
                         if oldImage is not None:
                             try:
                                 os.remove(oldImage)
                             except OSError:
                                 pass
+
+                channelUpdateQuery = Channel.Channel.query.filter_by(id=requestedChannel.id).update(updateDict)
 
                 # Invalidate Channel Cache
                 cachedDbCalls.invalidateChannelCache(requestedChannel.id)
@@ -1669,218 +1872,7 @@ def settings_channels_page():
             else:
                 flash("Invalid Change Attempt", "Error")
             redirect(url_for(".settings_channels_page"))
-
-    topicList = cachedDbCalls.getAllTopics()
-    # user_channels = Channel.Channel.query.filter_by(owningUser=current_user.id).all()
-    user_channels = (
-        Channel.Channel.query.filter_by(owningUser=current_user.id)
-        .with_entities(
-            Channel.Channel.id,
-            Channel.Channel.channelName,
-            Channel.Channel.channelLoc,
-            Channel.Channel.topic,
-            Channel.Channel.views,
-            Channel.Channel.streamKey,
-            Channel.Channel.protected,
-            Channel.Channel.private,
-            Channel.Channel.showHome,
-            Channel.Channel.xmppToken,
-            Channel.Channel.chatEnabled,
-            Channel.Channel.autoPublish,
-            Channel.Channel.allowComments,
-            Channel.Channel.record,
-            Channel.Channel.description,
-            Channel.Channel.offlineImageLocation,
-            Channel.Channel.imageLocation,
-            Channel.Channel.vanityURL,
-            Channel.Channel.defaultStreamName,
-            Channel.Channel.allowGuestNickChange,
-            Channel.Channel.showChatJoinLeaveNotification,
-            Channel.Channel.chatFormat,
-            Channel.Channel.chatHistory,
-        )
-        .all()
-    )
-
-    activeRTMPQuery = settings.rtmpServer.query.filter_by(active=True, hide=False).all()
-    activeRTMPList = []
-    for server in activeRTMPQuery:
-        address = server.address
-        if address == "127.0.0.1" or address == "localhost":
-            address = sysSettings.siteAddress
-        if address not in activeRTMPList:
-            activeRTMPList.append(address)
-
-    # Get xmpp room options
-    from app import ejabberd
-
-    channelRooms = {}
-    channelMods = {}
-    for chan in user_channels:
-        try:
-            xmppQuery = ejabberd.get_room_options(
-                chan.channelLoc, "conference." + sysSettings.siteAddress
-            )
-        except AttributeError:
-            # If Channel Doesn't Exist in ejabberd, Create
-            ejabberd.create_room(
-                chan.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                sysSettings.siteAddress,
-            )
-            ejabberd.set_room_affiliation(
-                chan.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                (current_user.uuid) + "@" + sysSettings.siteAddress,
-                "owner",
-            )
-
-            # Default values
-            for key, value in globalvars.room_config.items():
-                ejabberd.change_room_option(
-                    chan.channelLoc, "conference." + sysSettings.siteAddress, key, value
-                )
-
-            # Name and title
-            ejabberd.change_room_option(
-                chan.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                "title",
-                chan.channelName,
-            )
-            ejabberd.change_room_option(
-                chan.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                "description",
-                current_user.username
-                + 's chat room for the channel "'
-                + chan.channelName
-                + '"',
-            )
-            xmppQuery = ejabberd.get_room_options(
-                chan.channelLoc, "conference." + sysSettings.siteAddress
-            )
-        except:
-            # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
-            return redirect(url_for("settings.settings_channels_page"))
-        channelOptionsDict = {}
-        if "options" in xmppQuery:
-            for option in xmppQuery["options"]:
-                key = None
-                value = None
-                for entry in option["option"]:
-                    if "name" in entry:
-                        key = entry["name"]
-                    elif "value" in entry:
-                        value = entry["value"]
-                if key is not None and value is not None:
-                    channelOptionsDict[key] = value
-        channelRooms[chan.channelLoc] = channelOptionsDict
-
-        # Get room affiliations
-        xmppQuery = ejabberd.get_room_affiliations(
-            chan.channelLoc, "conference." + sysSettings.siteAddress
-        )
-
-        affiliationList = []
-        for affiliation in xmppQuery["affiliations"]:
-            user = {}
-            for entry in affiliation["affiliation"]:
-                for key, value in entry.items():
-                    user[key] = value
-            affiliationList.append(user)
-
-        channelModList = []
-        for user in affiliationList:
-            if user["affiliation"] == "admin":
-                channelModList.append(user["username"] + "@" + user["domain"])
-        channelMods[chan.channelLoc] = channelModList
-
-    # Calculate Channel Views by Date based on Video or Live Views and Generate Chanel Panel Ordering
-    user_channels_stats = {}
-    channelPanelOrder = {}
-    for channel in user_channels:
-
-        # 30 Days Viewer Stats
-        viewersTotal = 0
-
-        statsViewsLiveDay = (
-            db.session.query(func.date(views.views.date), func.count(views.views.id))
-            .filter(views.views.viewType == 0)
-            .filter(views.views.itemID == channel.id)
-            .filter(
-                views.views.date
-                > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
-            )
-            .group_by(func.date(views.views.date))
-            .all()
-        )
-        statsViewsLiveDayArray = []
-        for entry in statsViewsLiveDay:
-            viewersTotal = viewersTotal + entry[1]
-            statsViewsLiveDayArray.append({"t": (entry[0]), "y": entry[1]})
-
-        statsViewsRecordedDayDict = {}
-        statsViewsRecordedDayArray = []
-
-        recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
-
-        for vid in recordedVidsQuery:
-            statsViewsRecordedDay = (
-                db.session.query(
-                    func.date(views.views.date), func.count(views.views.id)
-                )
-                .filter(views.views.viewType == 1)
-                .filter(views.views.itemID == vid.id)
-                .filter(
-                    views.views.date
-                    > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
-                )
-                .group_by(func.date(views.views.date))
-                .all()
-            )
-
-            for entry in statsViewsRecordedDay:
-                if entry[0] in statsViewsRecordedDayDict:
-                    statsViewsRecordedDayDict[entry[0]] = (
-                        statsViewsRecordedDayDict[entry[0]] + entry[1]
-                    )
-                else:
-                    statsViewsRecordedDayDict[entry[0]] = entry[1]
-                viewersTotal = viewersTotal + entry[1]
-
-        for entry in statsViewsRecordedDayDict:
-            statsViewsRecordedDayArray.append(
-                {"t": entry, "y": statsViewsRecordedDayDict[entry]}
-            )
-
-        sortedStatsArray = sorted(statsViewsRecordedDayArray, key=lambda d: d["t"])
-
-        statsViewsDay = {"live": statsViewsLiveDayArray, "recorded": sortedStatsArray}
-
-        user_channels_stats[channel.id] = statsViewsDay
-
-        channelPanelOrderMappingQuery = panel.panelMapping.query.filter_by(
-            panelType=2, panelLocationId=channel.id
-        ).all()
-        ChannelPanelOrderArray = []
-        for panelEntry in channelPanelOrderMappingQuery:
-            ChannelPanelOrderArray.append(panelEntry)
-        channelPanelOrder[channel.id] = sorted(
-            ChannelPanelOrderArray, key=lambda x: x.panelOrder
-        )
-
-    return render_template(
-        themes.checkOverride("user_channels.html"),
-        channels=user_channels,
-        topics=topicList,
-        channelRooms=channelRooms,
-        channelMods=channelMods,
-        viewStats=user_channels_stats,
-        rtmpList=activeRTMPList,
-        channelPanelMapping=channelPanelOrder,
-    )
-
+        redirect(url_for(".settings_channels_page"))
 
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
 @login_required
