@@ -1402,7 +1402,7 @@ def settings_channels_page():
                 )
             except:
                 # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
-                return redirect(url_for("settings.settings_channels_page"))
+                return redirect(url_for(".settings_channels_page"))
             channelOptionsDict = {}
             if "options" in xmppQuery:
                 for option in xmppQuery["options"]:
@@ -1574,7 +1574,7 @@ def settings_channels_page():
                         flash("Sticker Name Missing", "Error")
                 else:
                     flash("Sticker Did Not Define Channel ID", "Error")
-            return redirect(url_for("settings.settings_channels_page"))
+            return redirect(url_for(".settings_channels_page"))
         elif requestType == "panel":
             panelName = request.form["panel-name"]
             panelType = int(request.form["panel-type"])
@@ -1618,10 +1618,10 @@ def settings_channels_page():
                         flash("Panel Updated", "Success")
                     else:
                         flash("Invalid Panel", "Error")
-                return redirect(url_for("settings.settings_channels_page"))
+                return redirect(url_for(".settings_channels_page"))
             else:
                 flash("Invalid Channel", "Error")
-                return redirect(url_for("settings.settings_channels_page"))
+                return redirect(url_for(".settings_channels_page"))
 
         channelName = system.strip_html(request.form["channelName"])
         topic = request.form["channeltopic"]
@@ -1677,7 +1677,7 @@ def settings_channels_page():
                         "error",
                     )
                     db.session.commit()
-                    return redirect(url_for("settings.settings_channels_page"))
+                    return redirect(url_for(".settings_channels_page"))
 
             newUUID = str(uuid.uuid4())
 
@@ -1888,8 +1888,9 @@ def settings_channels_page():
                 db.session.commit()
             else:
                 flash("Invalid Change Attempt", "Error")
-            redirect(url_for(".settings_channels_page"))
-        redirect(url_for(".settings_channels_page"))
+            return redirect(url_for(".settings_channels_page"))
+        return redirect(url_for(".settings_channels_page"))
+
 
 
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
@@ -1977,7 +1978,7 @@ def settings_channels_chat_page():
             db.session.commit()
             cachedDbCalls.invalidateChannelCache(channelQuery.id)
 
-    return redirect(url_for("settings.settings_channels_page"))
+    return redirect(url_for(".settings_channels_page"))
 
 
 @settings_bp.route("/api", methods=["GET"])
