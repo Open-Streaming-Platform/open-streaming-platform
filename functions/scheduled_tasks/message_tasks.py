@@ -10,13 +10,18 @@ from classes import notifications, Sec, webhook
 
 from app import config
 
-from functions import notifications, webhookFunc, system, cachedDbCalls, templateFilters
+from functions import webhookFunc, system, cachedDbCalls, templateFilters
+from functions import notifications as notificationFunc
 
 log = logging.getLogger("app.functions.scheduler.message_tasks")
 
 
 def setup_message_tasks(sender, **kwargs):
-    pass
+    sender.add_periodic_task(
+        3600,
+        clean_read_notifications.s(),
+        name="Clean Up Old Read Notifications",
+    )
 
 
 @celery.task(bind=True)
@@ -51,7 +56,7 @@ def send_email(self, subject, destination, message):
 @celery.task(bind=True)
 def send_message(self, subject, message, fromUser, toUser):
     sysSettings = cachedDbCalls.getSystemSettings()
-    result = notifications.sendMessage(subject, message, fromUser, toUser)
+    result = notificationFunc.sendMessage(subject, message, fromUser, toUser)
     userNotificationQuery = (
         Sec.User.query.filter_by(id=toUser)
         .with_entities(Sec.User.email, Sec.User.emailMessage)
@@ -156,7 +161,15 @@ def send_webhook(self, channelID, triggerType, **kwargs):
                     elif requestType == 3:
                         r = requests.delete(url, headers=header, data=payload)
                 except:
-                    pass
+                    log.error(
+                        {
+                            "level": "error",
+                            "taskID": self.request.id.__str__(),
+                            "message": "Webhook Failure",
+                            "requestType": str(requestType),
+                            "url": url,
+                        }
+                    )
                 system.newLog(
                     8,
                     "Processing Webhook for ID #"
@@ -204,4 +217,48 @@ def test_webhook(self, webhookType, webhookID, **kwargs):
             + " - Destination:"
             + str(url),
         )
+    return True
+
+
+@celery.task(bind=True)
+def clean_read_notifications(self):
+
+    oldReadNotificationsCount = notifications.userNotification.query.filter(
+        notifications.userNotification.read == True,
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
+    ).count()
+    oldUnreadNotificationsCount = notifications.userNotification.query.filter(
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
+    ).count()
+
+    oldReadNotifications = notifications.userNotification.query.filter(
+        notifications.userNotification.read == True,
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=90),
+    ).delete()
+    oldUnreadNotifications = notifications.userNotification.query.filter(
+        notifications.userNotification.timestamp
+        < datetime.datetime.now() - datetime.timedelta(days=180)
+    ).delete()
+
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Old Read Notifications Deleted: "
+            + str(oldReadNotificationsCount),
+        }
+    )
+
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Old Unread Notifications Deleted: "
+            + str(oldUnreadNotificationsCount),
+        }
+    )
+    db.session.commit()
     return True

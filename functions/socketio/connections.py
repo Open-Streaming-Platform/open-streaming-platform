@@ -43,7 +43,7 @@ def handle_new_viewer(streamData):
     ).update(dict(currentViewers=currentViewers))
 
     if stream is not None:
-        StreamUpdateStatement = Channel.Channel.query.filter_by(
+        StreamUpdateStatement = Stream.Stream.query.filter_by(
             active=True, streamKey=requestedChannel.streamKey
         ).update(dict(currentViewers=currentViewers))
 
@@ -165,7 +165,10 @@ def handle_add_usercount(streamData):
     requestedChannel = (
         Channel.Channel.query.filter_by(channelLoc=channelLoc)
         .with_entities(
-            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views
+            Channel.Channel.channelLoc,
+            Channel.Channel.id,
+            Channel.Channel.views,
+            Channel.Channel.streamKey,
         )
         .first()
     )

@@ -17,9 +17,11 @@ log = logging.getLogger("app.functions.subsFunc")
 
 
 def processSubscriptions(channelID, subject, message, type):
-    subscriptionQuery = subscriptions.channelSubs.query.filter_by(
-        channelID=channelID
-    ).all()
+    subscriptionQuery = (
+        subscriptions.channelSubs.query.filter_by(channelID=channelID)
+        .with_entities(subscriptions.channelSubs.id, subscriptions.channelSubs.userID)
+        .all()
+    )
 
     sysSettings = cachedDbCalls.getSystemSettings()
     if sysSettings.maintenanceMode == False:
@@ -31,14 +33,20 @@ def processSubscriptions(channelID, subject, message, type):
             subCount = 0
             for sub in subscriptionQuery:
                 send = False
-                userQuery = Sec.User.query.filter_by(id=int(sub.userID)).first()
+                userQuery = (
+                    Sec.User.query.filter_by(id=int(sub.userID))
+                    .with_entities(
+                        Sec.User.email, Sec.User.emailStream, Sec.User.emailVideo
+                    )
+                    .first()
+                )
                 if userQuery is not None:
-                    if type == "video" and userQuery.emailVideo == True:
+                    if type == "video" and userQuery.emailVideo is True:
                         send = True
-                    elif type == "stream" and userQuery.emailStream == True:
+                    elif type == "stream" and userQuery.emailStream is True:
                         send = True
 
-                    if send == True:
+                    if send is True:
                         result = message_tasks.send_email.delay(
                             subject, userQuery.email, message
                         )

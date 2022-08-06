@@ -5,7 +5,7 @@ ARG OSP_VERSION=0.9.0
 ARG OSP_GIT_BRANCH=build/0.9.x
 
 ARG NGINX_VERSION=1.22.0
-ARG NGINX_RTMP_VERSION=1.2.1
+ARG NGINX_RTMP_VERSION=1.2.10
 ARG NGINX_ZLIB_VERSION=1.2.12
 
 ARG DEFAULT_API=http://127.0.0.1:5010
@@ -69,12 +69,12 @@ RUN cd /tmp && \
 
 # Download the NGINX-RTMP Module
 RUN cd /tmp && \
-  wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
+  wget https://github.com/winshining/nginx-http-flv-module/archive/refs/tags/v${NGINX_RTMP_VERSION}.tar.gz && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
 # Inline Patch NGINX-RTMP
-RUN cp /opt/osp-rtmp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION}/1158.patch
-RUN cd /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
+RUN cp /opt/osp-rtmp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
+RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
 
 RUN cd /tmp && \
   wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \
@@ -92,7 +92,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
   --with-http_auth_request_module \
   --with-http_stub_status_module \
   --with-cc-opt="-Wimplicit-fallthrough=0" \
-  --add-module=../nginx-rtmp-module-${NGINX_RTMP_VERSION} \
+  --add-module=../nginx-http-flv-module-${NGINX_RTMP_VERSION} \
   --add-module=../nginx-goodies-nginx-sticky-module-ng-08a395c66e42 \
   --with-zlib=../zlib-${NGINX_ZLIB_VERSION} && \
   cd /tmp/nginx-${NGINX_VERSION} && make && make install

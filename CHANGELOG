@@ -1,3 +1,11 @@
+0.9.6
+==============================================
+Nginx-OSP: Moved Core Code of Nginx RTMP to winshining/nginx-http-flv-module.  New Installs will use the new backend. Existing can be migrated using Reset Nginx via osp-config.sh
+OSP-Core: Hourly Task of Cleaning up Guests which have not logged in within the last 3 months
+OSP-Core: Hourly Task of Cleaning up Read/Unread Notifications in DB (90 days for read, 180 days for unread)
+OSP-Core: Optimized RTMP Stage 1, Stage 2, and RTMP Restream API Queries which were causing an issue with Starting a Stream on larger channels
+OSP-Core: Optimized User Channels Settings Page to load and post faster
+
 0.9.5
 ==============================================
 OSP-Core: Upgrade Cachelib == 0.8.0
