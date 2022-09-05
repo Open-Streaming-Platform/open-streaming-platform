@@ -687,6 +687,7 @@ def admin_page():
             buildEdgeOnRestart = False
             protectionEnabled = False
             maintenanceMode = False
+            webRTCPlaybackEnabled = False
 
             # OSP Proxy Settings
             if "ospProxyFQDN" in request.form:
@@ -722,6 +723,8 @@ def admin_page():
                 protectionEnabled = True
             if "maintenanceMode" in request.form:
                 maintenanceMode = True
+            if "enableWebRTC" in request.form:
+                webRTCPlaybackEnabled = True
 
             if "bannedChatWords" in request.form:
                 bannedWordListString = request.form["bannedChatWords"]
@@ -764,6 +767,7 @@ def admin_page():
             sysSettings.showEmptyTables = showEmptyTables
             sysSettings.allowComments = allowComments
             sysSettings.systemTheme = theme
+            sysSettings.webrtcPlaybackEnabled = webRTCPlaybackEnabled
             if "mainPageSort" in request.form:
                 sysSettings.sortMainBy = int(request.form["mainPageSort"])
             if "limitMaxChannels" in request.form:
@@ -786,6 +790,11 @@ def admin_page():
             sysSettings.maintenanceMode = maintenanceMode
             sysSettings.maxClipLength = int(clipMaxLength)
             sysSettings.buildEdgeOnRestart = buildEdgeOnRestart
+            sysSettings.webrtcSignalProtocol = request.form["webRTCSignalEndpointProtocol"]
+            if request.form["webRTCSignalEndpointInput"].strip() != "":
+                sysSettings.webrtcSignalEndpointURL = request.form["webRTCSignalEndpointInput"].strip()
+            else:
+                sysSettings.webrtcSignalEndpointURL = None
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo

@@ -273,6 +273,11 @@ def dbFixes():
     if sysSettings.buildEdgeOnRestart is None:
         sysSettings.buildEdgeOnRestart = True
         db.session.commit()
+    
+    # Set WebRTC Default
+    if sysSettings.webrtcPlaybackEnabled is None:
+        sysSettings.webrtcPlaybackEnabled = False
+        db.session.commit()
 
     # Fixes for Server Settings Missing the Main Page Sort Option
     if sysSettings.sortMainBy is None:

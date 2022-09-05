@@ -30,6 +30,9 @@ class settings(db.Model):
     hubEnabled = db.Column(db.Boolean)
     hubURL = db.Column(db.String(255))
     maxVideoRetention = db.Column(db.Integer)
+    webrtcPlaybackEnabled = db.Column(db.Boolean)
+    webrtcSignalProtocol = db.Column(db.String(128))
+    webrtcSignalURL = db.Column(db.String(1024))
 
     def __init__(
         self,
@@ -69,8 +72,7 @@ class settings(db.Model):
         self.hubEnabled = False
         self.hubURL = "https://hub.openstreamingplatform.com"
         self.maxVideoRetention = 0
-        # self.terms = ''
-        # self.privacy = ''
+        self.webrtcPlaybackEnabled = False
 
     def __repr__(self):
         return "<id %r>" % self.id
@@ -98,6 +100,7 @@ class settings(db.Model):
             "hubEnabled": self.hubEnabled,
             "hubURL": self.hubURL,
             "maxVideoRetention": self.maxVideoRetention,
+            "webrtcPlaybackEnabled": self.webrtcPlaybackEnabled
         }
 
 
