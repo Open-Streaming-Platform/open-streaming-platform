@@ -371,11 +371,15 @@
                    <div class="col">
                        <label for="webRTCSignalEndpointProtocolSelect" class="form-label">WebRTC Signalling Endpoint</label>
                        <div class="input-group mb-3">
-                           <select name="webRTCSignalEndpointProtocol" id="webRTCSignalEndpointProtocolSelect" class="form-select">
-                               <option value="ws://" {% if sysSettings.webrtcSignalProtocol=="ws://" %}selected{% endif %}>ws://</option>
-                               <option value="wss://" {% if sysSettings.webrtcSignalProtocol=="wss://" %}selected{% endif %}>wss://</option>
-                           </select>
-                           <input type="text" class="form-control" id="webRTCSignalEndpointInput" name="webRTCSignalEndpoint" {% if sysSettings.webrtcSignalEndpointURL != None %}value="{{sysSettings.webrtcSignalEndpointURL}}"{% endif %}>
+                           <div class="col-2">
+                               <select name="webRTCSignalEndpointProtocol" id="webRTCSignalEndpointProtocolSelect" class="form-select"">
+                                   <option value="ws://" {% if sysSettings.webrtcSignalProtocol=="ws://" %}selected{% endif %}>ws://</option>
+                                   <option value="wss://" {% if sysSettings.webrtcSignalProtocol=="wss://" %}selected{% endif %}>wss://</option>
+                               </select>
+                           </div>
+                           <div class="col-6">
+                                <input type="text" class="form-control" id="webRTCSignalEndpointInput" name="webRTCSignalEndpoint" {% if sysSettings.webrtcSignalURL != None %}value="{{sysSettings.webrtcSignalURL}}"{% endif %}>
+                           </div>
                        </div>
                    </div>
                </div>
