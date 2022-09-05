@@ -1892,7 +1892,6 @@ def settings_channels_page():
         return redirect(url_for(".settings_channels_page"))
 
 
-
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
 @login_required
 @roles_required("Streamer")

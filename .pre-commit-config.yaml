@@ -12,23 +12,27 @@ repos:
     -   id: mixed-line-ending
     -   id: requirements-txt-fixer
     -   id: check-builtin-literals
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: 'v1.6.0'
+    hooks:
+    -   id: autopep8
+-   repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
 -   repo: https://github.com/kontrolilo/kontrolilo
     rev: v2.1.0
     hooks:
       - id: license-check-configuration-lint
       - id: license-check-pipenv
--   repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-      - id: black
--   repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
-    hooks:
-      - id: flake8
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
     rev: v1.2.4
     hooks:
     -   id: python-safety-dependencies-check
+-   repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.7.4
     hooks:
