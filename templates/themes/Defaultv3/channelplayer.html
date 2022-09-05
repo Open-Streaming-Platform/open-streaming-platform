@@ -21,9 +21,9 @@
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 
-<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
+<!--<link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
-<link href="/static/vendor/videojs-webrtc-plugin/videojs-webrtc-plugin.css" rel="stylesheet">
+<link href="/static/vendor/videojs-webrtc-plugin/videojs-webrtc-plugin.css" rel="stylesheet"><-->
 <link href="/static/css/Defaultv3/chat.css" rel="stylesheet">
 {% endblock %}
 
@@ -108,10 +108,23 @@
 
 <!--Start Script Block-->
 {% block scripts %}
-    <script src="/static/vendor/videojs/js/video.js"></script>
+    <script src="/static/vendor/ovenplayer/ovenplayer.js"></script>
+    <script>
+    const player = OvenPlayer.create("video", {
+    "autoStart": true,
+    "autoFallback": true,
+    "mute": false,
+    "sources": [{
+        "type": "webrtc",
+        "file": "ws://docker0.internal.divby0.net:3333/app/{{channel.channelLoc}}"
+        }]
+    });
+    </script>
+
+    <!--<script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
-    <script src="/static/vendor/videojs-webrtc-plugin/videojs-webrtc-plugin.min.js"></script>
+    <-->
     <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
@@ -323,157 +336,5 @@
     </script>
 
 
-    <script src="/static/js/liveplayerhandler.js"></script>
-    <script>
-        // Initialize Stream Player HLS Tokens
-        videojs.Vhs.xhr.beforeRequest = (options) => {
-            options.headers = {
-                "X-Token-Session": hls_token
-            };
-            return options;
-        };
 
-        // Initialize Stream Player
-        var player = videojs('video', {
-            autoplay: true,
-            errorDisplay: false,
-            liveui: true,
-            liveTracker: {
-                trackingThreshold: 5,
-                liveTolerance: 15
-            },
-            html5:
-                {
-                    nativeAudioTracks: false,
-                    nativeVideoTracks:false,
-                    vhs:
-                        {
-                            overrideNative: true
-                        }
-                },
-            plugins : {
-                httpSourceSelector: {
-                    default: 'auto'
-                }
-            }
-        });
-
-        qualityLevels = player.qualityLevels();
-        httpSelector = player.httpSourceSelector();
-
-        player.ready(function() {
-               this.src({
-                       src: "ws://docker0.internal.divby0.net:3333/app/{{channel.channelLoc}}"
-               });
-       });
-       player.play();
-    </script>
-
-    <script>
-        function togglePlayPause() {
-            if (player.paused()) {
-                player.play();
-            } else {
-                player.pause();
-            }
-        }
-
-        function toggleFullscreen() {
-            if (player.isFullscreen()) {
-                player.exitFullscreen();
-            } else  {
-                player.requestFullscreen();
-            }
-        }
-
-        document.addEventListener("keydown", (e) => {
-            if (!/^(?:input|textarea|select|button)$/i.test(e.target.tagName)) {
-                switch (e.keyCode) {
-                    case 37: // left arrow
-                        player.currentTime(player.currentTime() - 5);
-                        break;
-                    case 39: // right arrow
-                        player.currentTime(player.currentTime() + 5);
-                        break;
-                    case 38: // up arrow
-                        e.preventDefault();
-                        player.volume(player.volume() + 0.1);
-                        break;
-                    case 40: // down arrow
-                        e.preventDefault();
-                        player.volume(player.volume() - 0.1);
-                        break;
-                    case 0: case 32: // spacebar
-                        e.preventDefault();
-                        togglePlayPause();
-                        break;
-                    case 70: // F
-                        toggleFullscreen();
-                        break;
-                    default:
-                        return;
-                }
-            }
-        })
-    </script>
-
-
-    <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
-    <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
-    <script>
-        player.theaterMode({ elementToToggle: 'videoContainer', className: 'theater-mode' });
-
-        // get default maxHeight
-        var videoMaxHeight = document.getElementById("video").style.maxHeight;
-
-        function enableTheaterMode() {
-            document.getElementById("nav").style.display = 'none';
-            document.getElementById("leftnav").style.display = 'none';
-            document.getElementById("vidControls").style.display = 'none';
-            document.getElementById("video").style.maxHeight = '100vh';
-            document.getElementById("video_html5_api").style.maxHeight = '100vh';
-            document.getElementById("video_html5_api").style.setProperty('height', '100vh', 'important');
-            document.getElementById("sidePanel").style.maxHeight = '100vh';
-            document.getElementById("sidePanel").style.setProperty('height', '100vh', 'important');
-            document.getElementById("sidePanel").style.position = 'fixed';
-            document.getElementById("sidePanel").style.top = '0';
-            document.getElementById("sidePanel").style.right = '0';
-            if ( $('#sidePanel').is(':hidden')) {
-                document.getElementById("videoContainer").style.setProperty('width', '100%');
-            }
-        }
-
-        function disableTheaterMode() {
-            document.getElementById("nav").style.display = 'block';
-            document.getElementById("leftnav").style.removeProperty('display');
-            document.getElementById("vidControls").style.display = 'block';
-            document.getElementById("video").style.maxHeight = videoMaxHeight;
-            document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
-            document.getElementById("video_html5_api").style.removeProperty('height');
-            document.getElementById("sidePanel").style.removeProperty('maxHeight');
-            document.getElementById("sidePanel").style.removeProperty('height');
-            document.getElementById("sidePanel").style.removeProperty('position');
-            document.getElementById("sidePanel").style.removeProperty('top');
-            document.getElementById("sidePanel").style.removeProperty('right');
-            document.getElementById("videoContainer").classList.remove('theater-mode');
-        }
-
-        player.on('theaterMode', function (elm, data) {
-            if (data.theaterModeIsOn) {
-                enableTheaterMode();
-            } else {
-                disableTheaterMode();
-            }
-        });
-
-        player.on('fullscreenchange', function (elm, data) {
-            if (player.isFullscreen()) {
-                document.getElementById("video_html5_api").style.maxHeight = '100vh';
-            } else if ($("#videoContainer").hasClass("theater-mode")) {
-                document.getElementById("video_html5_api").style.maxHeight = '100vh';
-            } else {
-                document.getElementById("video_html5_api").style.maxHeight = videoMaxHeight;
-            }
-        });
-    </script>
 {% endblock %}
