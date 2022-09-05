@@ -794,11 +794,11 @@ def admin_page():
                 "webRTCSignalEndpointProtocol"
             ]
             if request.form["webRTCSignalEndpoint"].strip() != "":
-                sysSettings.webrtcSignalEndpointURL = request.form[
+                sysSettings.webrtcSignalURL = request.form[
                     "webRTCSignalEndpoint"
                 ].strip()
             else:
-                sysSettings.webrtcSignalEndpointURL = None
+                sysSettings.webrtcSignalURL = None
 
             if systemLogo is not None:
                 sysSettings.systemLogo = systemLogo
