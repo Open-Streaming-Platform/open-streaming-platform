@@ -23,6 +23,7 @@
 
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+<link href="/static/vendor/videojs-webrtc-plugin/videojs-webrtc-plugin.css" rel="stylesheet">
 <link href="/static/css/Defaultv3/chat.css" rel="stylesheet">
 {% endblock %}
 
@@ -110,6 +111,7 @@
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    <script src="/static/vendor/videojs-webrtc-plugin/videojs-webrtc-plugin.min.js"></script>
     <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
@@ -361,8 +363,7 @@
 
         player.ready(function() {
                this.src({
-                       src: streamURL,
-                       type: 'application/x-mpegURL'
+                       src: "ws://docker0.internal.divby0.net/app/{{channel.channelLoc}}"
                });
        });
        player.play();
