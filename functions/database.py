@@ -273,7 +273,7 @@ def dbFixes():
     if sysSettings.buildEdgeOnRestart is None:
         sysSettings.buildEdgeOnRestart = True
         db.session.commit()
-    
+
     # Set WebRTC Default
     if sysSettings.webrtcPlaybackEnabled is None:
         sysSettings.webrtcPlaybackEnabled = False
@@ -299,7 +299,8 @@ def dbFixes():
     for user in userQuery:
         user.emailStream = 1
         db.session.commit()
-    useQuery = Sec.User.query.filter_by(emailMessage=None).all()
+
+    userQuery = Sec.User.query.filter_by(emailMessage=None).all()
     for user in userQuery:
         user.emailMessage = 1
         db.session.commit()

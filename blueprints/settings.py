@@ -790,9 +790,13 @@ def admin_page():
             sysSettings.maintenanceMode = maintenanceMode
             sysSettings.maxClipLength = int(clipMaxLength)
             sysSettings.buildEdgeOnRestart = buildEdgeOnRestart
-            sysSettings.webrtcSignalProtocol = request.form["webRTCSignalEndpointProtocol"]
-            if request.form["webRTCSignalEndpointInput"].strip() != "":
-                sysSettings.webrtcSignalEndpointURL = request.form["webRTCSignalEndpointInput"].strip()
+            sysSettings.webrtcSignalProtocol = request.form[
+                "webRTCSignalEndpointProtocol"
+            ]
+            if request.form["webRTCSignalEndpoint"].strip() != "":
+                sysSettings.webrtcSignalEndpointURL = request.form[
+                    "webRTCSignalEndpoint"
+                ].strip()
             else:
                 sysSettings.webrtcSignalEndpointURL = None
 

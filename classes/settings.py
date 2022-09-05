@@ -100,7 +100,7 @@ class settings(db.Model):
             "hubEnabled": self.hubEnabled,
             "hubURL": self.hubURL,
             "maxVideoRetention": self.maxVideoRetention,
-            "webrtcPlaybackEnabled": self.webrtcPlaybackEnabled
+            "webrtcPlaybackEnabled": self.webrtcPlaybackEnabled,
         }
 
 

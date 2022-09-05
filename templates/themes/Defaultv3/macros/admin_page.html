@@ -369,8 +369,8 @@
                </div>
                <div class="row">
                    <div class="col">
+                       <label for="webRTCSignalEndpointProtocolSelect" class="form-label">WebRTC Signalling Endpoint</label>
                        <div class="input-group mb-3">
-                           <label for="webRTCSignalEndpointProtocolSelect" class="form-label">WebRTC Signalling Endpoint</label>
                            <select name="webRTCSignalEndpointProtocol" id="webRTCSignalEndpointProtocolSelect" class="form-select">
                                <option value="ws://" {% if sysSettings.webrtcSignalProtocol=="ws://" %}selected{% endif %}>ws://</option>
                                <option value="wss://" {% if sysSettings.webrtcSignalProtocol=="wss://" %}selected{% endif %}>wss://</option>
