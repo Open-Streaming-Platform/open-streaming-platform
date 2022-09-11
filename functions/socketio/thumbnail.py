@@ -17,7 +17,7 @@ from classes import Stream
 
 from globals import globalvars
 
-from functions import system
+from functions import system, cachedDbCalls
 from functions.scheduled_tasks import video_tasks
 
 
@@ -47,9 +47,7 @@ def newScreenShot(message):
             channelLocation = clipQuery.recordedVideo.channel.channelLoc
     else:
         if video is not None:
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=int(video)
-            ).first()
+            videoQuery = cachedDbCalls.getVideo(int(video))
             if videoQuery is not None and (
                 videoQuery.owningUser == current_user.id
                 or current_user.has_role("Admin")

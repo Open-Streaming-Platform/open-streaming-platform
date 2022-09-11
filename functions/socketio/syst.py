@@ -258,7 +258,11 @@ def get_admin_component_status(msg):
         status = "Failed"
 
         if component == "osp_core":
-            r = requests.get(sysSettings.siteProtocol + sysSettings.siteAddress + "/apiv1/server/ping")
+            r = requests.get(
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/apiv1/server/ping"
+            )
             if r.status_code == 200:
                 response = r.json()
                 if "results" in response:
