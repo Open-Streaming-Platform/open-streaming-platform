@@ -67,6 +67,7 @@ function toggleChannelSub(chanID) {
 }
 
 socket.on('checkScreenShot', function (msg) {
+    console.log('Received New Thumbnail');
     document.getElementById('screenshotPendingBox').style.display = "none";
     document.getElementById('screenshotImageBox').style.display = "block";
     document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
