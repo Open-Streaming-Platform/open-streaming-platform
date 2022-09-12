@@ -557,7 +557,7 @@ def setVideoThumbnail(videoID, timeStamp):
         videoLocation = videos_root + videoQuery.videoLocation
         newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
         newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
-        videoQuery.thumbnailLocation = newThumbnailLocation
+        #videoQuery.thumbnailLocation = newThumbnailLocation
         fullthumbnailLocation = videos_root + newThumbnailLocation
         newGifFullThumbnailLocation = videos_root + newGifThumbnailLocation
 
