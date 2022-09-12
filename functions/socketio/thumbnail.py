@@ -17,7 +17,7 @@ from classes import Stream
 
 from globals import globalvars
 
-from functions import system, cachedDbCalls
+from functions import system, cachedDbCalls, templateFilters
 from functions.scheduled_tasks import video_tasks
 
 
@@ -52,11 +52,12 @@ def newScreenShot(message):
                 videoQuery.owningUser == current_user.id
                 or current_user.has_role("Admin")
             ):
+                channelQuery = cachedDbCalls.getChannel(videoQuery.channelID)
                 videoLocation = videos_root + videoQuery.videoLocation
                 thumbnailLocation = (
-                    videos_root + videoQuery.channel.channelLoc + "/tempThumbnail.png"
+                    videos_root + channelQuery.channelLoc + "/tempThumbnail.png"
                 )
-                channelLocation = videoQuery.channel.channelLoc
+                channelLocation = channelQuery.channelLoc
     if (
         videoLocation is not None
         and thumbnailLocation is not None

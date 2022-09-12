@@ -444,31 +444,6 @@ def admin_page():
             return redirect(url_for(".admin_page"))
 
         page = None
-        if request.args.get("page") is not None:
-            page = str(request.args.get("page"))
-        repoSHA = "N/A"
-        remoteSHA = repoSHA
-        branch = "Local Install"
-        validGitRepo = False
-        repo = None
-        try:
-            repo = git.Repo(search_parent_directories=True)
-            validGitRepo = True
-        except:
-            pass
-
-        if validGitRepo:
-            try:
-                remoteSHA = None
-                if repo is not None:
-                    repoSHA = str(repo.head.object.hexsha)
-                    branch = repo.active_branch
-                    branch = branch.name
-                    remote = repo.remotes.origin.fetch()[0].commit
-                    remoteSHA = str(remote)
-            except:
-                validGitRepo = False
-                branch = "Local Install"
 
         appDBVer = dbVersion.dbVersion.query.first().version
         userList = Sec.User.query.all()
@@ -638,9 +613,6 @@ def admin_page():
             streamList=streamList,
             streamHistory=streamHistory,
             topicsList=topicsList,
-            repoSHA=repoSHA,
-            repoBranch=branch,
-            remoteSHA=remoteSHA,
             themeList=themeList,
             statsViewsDay=statsViewsDay,
             viewersTotal=viewersTotal,

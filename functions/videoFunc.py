@@ -125,7 +125,9 @@ def changeVideoMetadata(
         recordedVidQuery.description = system.strip_html(description)
         recordedVidQuery.allowComments = allowComments
 
-        if recordedVidQuery.channel.imageLocation is None:
+        channelQuery = cachedDbCalls.getChannel(recordedVidQuery.channelID)
+
+        if channelQuery.imageLocation is None:
             channelImage = (
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
@@ -136,13 +138,13 @@ def changeVideoMetadata(
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
                 + "/images/"
-                + recordedVidQuery.channel.imageLocation
+                + channelQuery.imageLocation
             )
 
         message_tasks.send_webhook.delay(
             recordedVidQuery.channel.id,
             9,
-            channelname=recordedVidQuery.channel.channelName,
+            channelname=channelQuery.channelName,
             channelurl=(
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
@@ -152,7 +154,7 @@ def changeVideoMetadata(
             channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
             channelimage=channelImage,
             streamer=templateFilters.get_userName(recordedVidQuery.owningUser),
-            channeldescription=str(recordedVidQuery.channel.description),
+            channeldescription=str(channelQuery.description),
             videoname=recordedVidQuery.channelName,
             videodate=recordedVidQuery.videoDate,
             videodescription=recordedVidQuery.description,

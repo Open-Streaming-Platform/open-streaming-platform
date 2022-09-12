@@ -114,7 +114,8 @@ class api_1_ListStream(Resource):
                         active=True, id=int(streamID)
                     ).first()
                     if streamQuery is not None:
-                        if streamQuery.channel.owningUser == requestAPIKey.userID:
+                        channelQuery = cachedDbCalls.getChannel(streamQuery.linkedChannel)
+                        if channelQuery.owningUser == requestAPIKey.userID:
                             args = streamParserPut.parse_args()
                             if "streamName" in args:
                                 if args["streamName"] is not None:
