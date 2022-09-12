@@ -335,8 +335,9 @@
             document.getElementById("currentViewers").innerHTML = msg['data'];
         });
     </script>
-    {% if sysSettings.webrtcPlaybackEnabled == False %}
     <script src="/static/js/liveplayerhandler.js"></script>
+    {% if sysSettings.webrtcPlaybackEnabled == False %}
+    <script src="/static/js/liveVideoJsHandler.js"></script>
     <script>
         // Initialize Stream Player HLS Tokens
         videojs.Vhs.xhr.beforeRequest = (options) => {
@@ -489,5 +490,7 @@
             }
         });
     </script>
+    {% else %}
+    <script src="/static/js/liveWebRTCHandler.js"></script>
     {% endif %}
 {% endblock %}

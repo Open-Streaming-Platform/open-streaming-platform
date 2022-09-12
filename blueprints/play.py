@@ -274,7 +274,7 @@ def delete_vid_page(videoID):
             cache.delete_memoized(cachedDbCalls.getVideo, videoID)
             flash("Video Scheduled for Deletion", "success")
             return redirect(url_for("root.main_page"))
-        
+
     flash("Error Deleting Video")
     return redirect(url_for(".view_vid_page", videoID=videoID))
 
