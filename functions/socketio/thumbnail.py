@@ -91,15 +91,14 @@ def newScreenShot(message):
             emit(
                 "checkClipScreenShot",
                 {"thumbnailLocation": tempLocation, "timestamp": timeStamp},
-                broadcast=False,
+                broadcast=False
             )
         else:
             emit(
                 "checkScreenShot",
                 {"thumbnailLocation": tempLocation, "timestamp": timeStamp},
-                broadcast=False,
+                broadcast=False
             )
-    db.session.close()
     db.session.commit()
     db.session.close()
     return "OK"
