@@ -5,9 +5,7 @@ import shutil
 import uuid
 import socket
 import xmltodict
-import git
 import re
-import psutil
 import pytz
 
 import requests

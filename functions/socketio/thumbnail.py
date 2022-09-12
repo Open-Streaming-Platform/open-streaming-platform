@@ -113,9 +113,7 @@ def setScreenShot(message):
     if "loc" in message:
         video = message["loc"]
         if video is not None:
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=int(video)
-            ).first()
+            videoQuery = cachedDbCalls.getVideo(video)
             if videoQuery is not None and (
                 videoQuery.owningUser == current_user.id
                 or current_user.has_role("Admin")
@@ -209,10 +207,8 @@ def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:
         if "videoID" in message:
             videoID = int(message["videoID"])
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=videoID, owningUser=current_user.id
-            ).first()
-            if videoQuery is not None:
+            videoQuery = cachedDbCalls.getVideo(videoID)
+            if videoQuery is not None and videoQuery.owningUser == current_user.id:
                 thumbnailFilename = message["thumbnailFilename"]
                 if thumbnailFilename != "" or thumbnailFilename is not None:
                     videos_root = globalvars.videoRoot + "videos/"

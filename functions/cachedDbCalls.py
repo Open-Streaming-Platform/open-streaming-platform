@@ -533,6 +533,14 @@ def invalidateChannelCache(channelId):
 
     return True
 
+def invalidateVideoCache(videoId):
+    cachedVideo = getVideo(videoId)
+    cache.delete_memoized(getVideo, videoId)
+    cache.delete_memoized(getAllVideoByOwnerId, cachedVideo.owningUser)
+    cache.delete_memoized(getChannelVideos, cachedVideo.channelID)
+
+    return True
+
 
 @cache.memoize(timeout=5)
 def getChanneActiveStreams(channelID):
