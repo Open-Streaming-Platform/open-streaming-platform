@@ -121,12 +121,20 @@ def changeVideoMetadata(
     sysSettings = cachedDbCalls.getSystemSettings()
 
     if recordedVidQuery is not None:
-        updateVideo = RecordedVideo.RecordedVideo.query.filter_by(id=recordedVidQuery.id).update(
-            dict(channelName=system.strip_html(newVideoName), topic=newVideoTopic, description=system.strip_html(description), allowComments=allowComments))
-        #recordedVidQuery.channelName = system.strip_html(newVideoName)
-        #recordedVidQuery.topic = newVideoTopic
-        #recordedVidQuery.description = system.strip_html(description)
-        #recordedVidQuery.allowComments = allowComments
+        updateVideo = RecordedVideo.RecordedVideo.query.filter_by(
+            id=recordedVidQuery.id
+        ).update(
+            dict(
+                channelName=system.strip_html(newVideoName),
+                topic=newVideoTopic,
+                description=system.strip_html(description),
+                allowComments=allowComments,
+            )
+        )
+        # recordedVidQuery.channelName = system.strip_html(newVideoName)
+        # recordedVidQuery.topic = newVideoTopic
+        # recordedVidQuery.description = system.strip_html(description)
+        # recordedVidQuery.allowComments = allowComments
         cachedDbCalls.invalidateVideoCache(recordedVidQuery.id)
 
         recordedVidQuery = cachedDbCalls.getVideo(videoID)
@@ -557,14 +565,20 @@ def setVideoThumbnail(videoID, timeStamp):
         videoLocation = videos_root + videoQuery.videoLocation
         newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
         newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
-        #videoQuery.thumbnailLocation = newThumbnailLocation
+        # videoQuery.thumbnailLocation = newThumbnailLocation
         fullthumbnailLocation = videos_root + newThumbnailLocation
         newGifFullThumbnailLocation = videos_root + newGifThumbnailLocation
 
-        updateVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).update(
-            dict(thumbnailLocation=newThumbnailLocation, gifLocation=newGifThumbnailLocation))
-        #videoQuery.thumbnailLocation = newThumbnailLocation
-        #videoQuery.gifLocation = newGifThumbnailLocation
+        updateVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(
+            id=videoID
+        ).update(
+            dict(
+                thumbnailLocation=newThumbnailLocation,
+                gifLocation=newGifThumbnailLocation,
+            )
+        )
+        # videoQuery.thumbnailLocation = newThumbnailLocation
+        # videoQuery.gifLocation = newGifThumbnailLocation
 
         db.session.commit()
         db.session.close()

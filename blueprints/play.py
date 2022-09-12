@@ -267,15 +267,16 @@ def vid_change_page(videoID):
 @login_required
 def delete_vid_page(videoID):
     videoQuery = cachedDbCalls.getVideo(videoID)
-    if videoQuery.owningUser == current_user.id or current_user.has_role("Admin"):
-        result = video_tasks.delete_video.delay(videoID)
+    if videoQuery is not None:
+        if videoQuery.owningUser == current_user.id or current_user.has_role("Admin"):
+            result = video_tasks.delete_video.delay(videoID)
 
-        cache.delete_memoized(cachedDbCalls.getVideo, videoID)
-        flash("Video Scheduled for Deletion", "success")
-        return redirect(url_for("root.main_page"))
-    else:
-        flash("Error Deleting Video")
-        return redirect(url_for(".view_vid_page", videoID=videoID))
+            cache.delete_memoized(cachedDbCalls.getVideo, videoID)
+            flash("Video Scheduled for Deletion", "success")
+            return redirect(url_for("root.main_page"))
+        
+    flash("Error Deleting Video")
+    return redirect(url_for(".view_vid_page", videoID=videoID))
 
 
 @play_bp.route("/<videoID>/comment", methods=["GET", "POST"])
