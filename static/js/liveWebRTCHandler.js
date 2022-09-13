@@ -32,10 +32,15 @@ function monitor_vid(vidplayer){
             nameDiv.innerHTML = nameDivHTML;
             topicDiv.innerHTML = topicDivHTML;
 
+            var playerStatus = webRTCPlayer.getStatus();
+            if (playerStatus === 'idle' || playerStatus === 'error') {
+                webRTCPlayer.play();
+            }
+
 
         } else {
             try {
-                webRTCPlayer.stop();
+                webRTCPlayer.pause();
                 onlineBadge.className = 'btn btn-secondary boxShadow';
                 onlineBadge.innerHTML = 'OFFLINE';
                 videoContainer.style.display = "none";

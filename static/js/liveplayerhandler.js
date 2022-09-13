@@ -58,11 +58,11 @@ const videoElm = document.querySelector('video');
 videoElm.addEventListener('play', (event) => {
     var cookieVolume = getCookie('ospvolume');
     if (!(cookieVolume == null)) {
-      player.volume(cookieVolume);
+      player.setVolume(cookieVolume);
     }
 });
 
 videoElm.addEventListener('volumechange', (event) => {
-    var currentVolume = player.volume();
+    var currentVolume = player.getVolume();
     setCookie('ospvolume',currentVolume, 365);
 });
