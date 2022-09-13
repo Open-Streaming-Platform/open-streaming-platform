@@ -34,7 +34,7 @@ function monitor_vid(vidplayer){
 
             var playerStatus = webRTCPlayer.getState();
             if (playerStatus === 'idle' || playerStatus === 'error') {
-                webRTCPlayer.play();
+                webRTCPlayer.load(0);
             }
 
 
