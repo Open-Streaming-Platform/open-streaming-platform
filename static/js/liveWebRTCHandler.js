@@ -32,7 +32,7 @@ function monitor_vid(vidplayer){
             nameDiv.innerHTML = nameDivHTML;
             topicDiv.innerHTML = topicDivHTML;
 
-            var playerStatus = webRTCPlayer.getStatus();
+            var playerStatus = webRTCPlayer.getState();
             if (playerStatus === 'idle' || playerStatus === 'error') {
                 webRTCPlayer.play();
             }
