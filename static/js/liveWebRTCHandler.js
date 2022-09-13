@@ -67,3 +67,16 @@ $(document).ready( function () {
 var monitorInterval = setInterval(function() {
     monitor_vid(player);
 }, 10000);
+
+const videoElm = document.querySelector('video');
+videoElm.addEventListener('play', (event) => {
+    var cookieVolume = getCookie('ospvolume');
+    if (!(cookieVolume == null)) {
+      player.setVolume(cookieVolume);
+    }
+});
+
+videoElm.addEventListener('volumechange', (event) => {
+    var currentVolume = player.getVolume();
+    setCookie('ospvolume',currentVolume, 365);
+});
