@@ -118,6 +118,7 @@
         var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
     </script>
     {% if sysSettings.webrtcPlaybackEnabled == True %}
+    <script src="/static/vendor/hls.js/hls.min.js"></script>
     <script src="/static/vendor/ovenplayer/ovenplayer.js"></script>
     <script>
         const player = OvenPlayer.create("video", {
