@@ -108,6 +108,15 @@
 
 <!--Start Script Block-->
 {% block scripts %}
+    <script>
+        // Generate HLS Tokens
+        {% if current_user.is_authenticated %}
+            var hls_user = "{{ current_user.username }}"
+        {% else %}
+            var hls_user = "Guest"
+        {% endif %}
+        var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
+    </script>
     {% if sysSettings.webrtcPlaybackEnabled == True %}
     <script src="/static/vendor/ovenplayer/ovenplayer.js"></script>
     <script>
@@ -198,14 +207,6 @@
     </script>
 
     <script>
-        // Generate HLS Tokens
-        {% if current_user.is_authenticated %}
-            var hls_user = "{{ current_user.username }}"
-        {% else %}
-            var hls_user = "Guest"
-        {% endif %}
-        var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
-
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
