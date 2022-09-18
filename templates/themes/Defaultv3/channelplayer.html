@@ -115,10 +115,18 @@
         "autoStart": true,
         "autoFallback": true,
         "mute": false,
-        "sources": [{
+        "sources": [
+            {
             "type": "webrtc",
-            "file": "{{sysSettings.webrtcSignalProtocol}}{{sysSettings.webrtcSignalURL}}/{{channel.channelLoc}}"
-            }]
+            "file": "{{sysSettings.webrtcSignalProtocol}}{{sysSettings.webrtcSignalURL}}/{{channel.channelLoc}}",
+            "label": "WebRTC (Experimental)"
+            },
+            {
+            "type": "hls",
+            "file": "{{streamURL}}",
+            "label": "OSP HLS"
+            }
+            ]
         });
     </script>
     {% else %}
