@@ -112,21 +112,26 @@
     <script src="/static/vendor/ovenplayer/ovenplayer.js"></script>
     <script>
         const player = OvenPlayer.create("video", {
-        "autoStart": true,
-        "autoFallback": true,
-        "mute": false,
-        "sources": [
-            {
-            "type": "webrtc",
-            "file": "{{sysSettings.webrtcSignalProtocol}}{{sysSettings.webrtcSignalURL}}/{{channel.channelLoc}}",
-            "label": "WebRTC (Experimental)"
-            },
-            {
-            "type": "hls",
-            "file": "{{streamURL}}",
-            "label": "OSP HLS"
+            "autoStart": true,
+            "autoFallback": true,
+            "mute": false,
+            "sources": [
+                {
+                    "type": "webrtc",
+                    "file": "{{sysSettings.webrtcSignalProtocol}}{{sysSettings.webrtcSignalURL}}/{{channel.channelLoc}}",
+                    "label": "WebRTC (Experimental)"
+                },
+                {
+                    "type": "hls",
+                    "file": "{{streamURL}}",
+                    "label": "OSP HLS"
+                }
+            ],
+            "hlsConfig": {
+                xhrSetup: function (xhr, url) {
+                    xhr.setRequestHeader("X-Token-Session", hls_token);
+                }
             }
-            ]
         });
     </script>
     {% else %}
