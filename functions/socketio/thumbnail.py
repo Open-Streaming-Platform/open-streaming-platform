@@ -17,7 +17,7 @@ from classes import Stream
 
 from globals import globalvars
 
-from functions import system
+from functions import system, cachedDbCalls, templateFilters
 from functions.scheduled_tasks import video_tasks
 
 
@@ -47,18 +47,17 @@ def newScreenShot(message):
             channelLocation = clipQuery.recordedVideo.channel.channelLoc
     else:
         if video is not None:
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=int(video)
-            ).first()
+            videoQuery = cachedDbCalls.getVideo(int(video))
             if videoQuery is not None and (
                 videoQuery.owningUser == current_user.id
                 or current_user.has_role("Admin")
             ):
+                channelQuery = cachedDbCalls.getChannel(videoQuery.channelID)
                 videoLocation = videos_root + videoQuery.videoLocation
                 thumbnailLocation = (
-                    videos_root + videoQuery.channel.channelLoc + "/tempThumbnail.png"
+                    videos_root + channelQuery.channelLoc + "/tempThumbnail.png"
                 )
-                channelLocation = videoQuery.channel.channelLoc
+                channelLocation = channelQuery.channelLoc
     if (
         videoLocation is not None
         and thumbnailLocation is not None
@@ -92,15 +91,14 @@ def newScreenShot(message):
             emit(
                 "checkClipScreenShot",
                 {"thumbnailLocation": tempLocation, "timestamp": timeStamp},
-                broadcast=False,
+                broadcast=False
             )
         else:
             emit(
                 "checkScreenShot",
                 {"thumbnailLocation": tempLocation, "timestamp": timeStamp},
-                broadcast=False,
+                broadcast=False
             )
-    db.session.close()
     db.session.commit()
     db.session.close()
     return "OK"
@@ -114,9 +112,7 @@ def setScreenShot(message):
     if "loc" in message:
         video = message["loc"]
         if video is not None:
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=int(video)
-            ).first()
+            videoQuery = cachedDbCalls.getVideo(video)
             if videoQuery is not None and (
                 videoQuery.owningUser == current_user.id
                 or current_user.has_role("Admin")
@@ -210,10 +206,8 @@ def saveUploadedThumbnailSocketIO(message):
     if current_user.is_authenticated:
         if "videoID" in message:
             videoID = int(message["videoID"])
-            videoQuery = RecordedVideo.RecordedVideo.query.filter_by(
-                id=videoID, owningUser=current_user.id
-            ).first()
-            if videoQuery is not None:
+            videoQuery = cachedDbCalls.getVideo(videoID)
+            if videoQuery is not None and videoQuery.owningUser == current_user.id:
                 thumbnailFilename = message["thumbnailFilename"]
                 if thumbnailFilename != "" or thumbnailFilename is not None:
                     videos_root = globalvars.videoRoot + "videos/"

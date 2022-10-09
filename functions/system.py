@@ -22,7 +22,7 @@ from classes import logs
 from classes import RecordedVideo
 from classes import Sec
 
-from functions import cachedDbCalls
+from functions import cachedDbCalls, templateFilters
 
 from classes.shared import celery
 
@@ -177,9 +177,11 @@ def systemFixes(app):
     clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
     videos_root = globalvars.videoRoot + "videos/"
     for clip in clipQuery:
-        originalVideo = videos_root + clip.recordedVideo.videoLocation
+        videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
+        channelQuery = cachedDbCalls.getChannel(videoQuery.channelID)
+        originalVideo = videos_root + videoQuery
         clipVideoLocation = (
-            clip.recordedVideo.channel.channelLoc
+            channelQuery.channelLoc
             + "/clips/"
             + "clip-"
             + str(clip.id)
