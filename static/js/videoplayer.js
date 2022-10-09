@@ -67,8 +67,11 @@ function toggleChannelSub(chanID) {
 }
 
 socket.on('checkScreenShot', function (msg) {
+    console.log('Received New Thumbnail');
+    document.getElementById('screenshotPendingBox').style.display = "none";
+    document.getElementById('screenshotImageBox').style.display = "block";
     document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-    openModal('newSSModal')
+    document.getElementById('newScreenShotSetThumbButton').disabled = false;
 });
 
 function toggleShareTimestamp(requestURL, startTime) {
@@ -87,12 +90,19 @@ function newThumbnailRequest() {
     window.whereYouAt = player.currentTime();
     document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
     socket.emit('newScreenShot', { loc: videoID, timeStamp: window.whereYouAt });
+    document.getElementById('screenshotPendingBox').style.display = "block";
+    document.getElementById('screenshotImageBox').style.display = "none";
+    document.getElementById('newScreenShotSetThumbButton').disabled = true;
+    openModal('newSSModal');
 }
 
 function setNewThumbnail() {
     var timestamp = document.getElementById("thumbnailTimestamp").value;
     socket.emit('setScreenShot', { loc: videoID, timeStamp: timestamp });
     createNewBSAlert("New Thumbnail Set", "success")
+    document.getElementById('screenshotPendingBox').style.display = "block";
+    document.getElementById('screenshotImageBox').style.display = "none";
+    document.getElementById('newScreenShotSetThumbButton').disabled = true;
 }
 
 

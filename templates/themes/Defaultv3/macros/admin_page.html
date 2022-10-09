@@ -358,12 +358,37 @@
                         </div>
                     </div>
                </div>
-                <div class="row">
-                    <div class="col-3 mb-1">
-                        <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
-                        <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
-                        <small>Set to 0 for Indefinite Retention</small>
+               <div class="row">
+                    <div class="col">
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="enableWebRTCToggle">Enable WebRTC Playback</label>
+                            <input class="form-check-input boxShadow" type="checkbox" name="enableWebRTC" id="enableWebRTCToggle"{% if sysSettings.webrtcPlaybackEnabled == True %} checked {% endif %}>
+                            <small class="text-danger"><b>Experimental - See Wiki Prior to Turning This On</b></small>
+                        </div>
                     </div>
+               </div>
+               <div class="row">
+                   <div class="col">
+                       <label for="webRTCSignalEndpointProtocolSelect" class="form-label">WebRTC Signalling Endpoint</label>
+                       <div class="input-group mb-3">
+                           <div class="col-2 me-2">
+                               <select name="webRTCSignalEndpointProtocol" id="webRTCSignalEndpointProtocolSelect" class="form-select"">
+                                   <option value="ws://" {% if sysSettings.webrtcSignalProtocol=="ws://" %}selected{% endif %}>ws://</option>
+                                   <option value="wss://" {% if sysSettings.webrtcSignalProtocol=="wss://" %}selected{% endif %}>wss://</option>
+                               </select>
+                           </div>
+                           <div class="col-6">
+                                <input type="text" class="form-control" id="webRTCSignalEndpointInput" name="webRTCSignalEndpoint" {% if sysSettings.webrtcSignalURL != None %}value="{{sysSettings.webrtcSignalURL}}"{% endif %}>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
+                       <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
+                       <small>Set to 0 for Indefinite Retention</small>
+                   </div>
                </div>
                <div class="row">
                     <div class="col-3">

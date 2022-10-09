@@ -32,6 +32,8 @@ from functions.scheduled_tasks import message_tasks
 log = logging.getLogger("app.functions.database")
 
 # Checks Length of a Video at path and returns the length
+
+
 def getVidLength(input_video):
     result = subprocess.check_output(
         [
@@ -115,17 +117,30 @@ def changeVideoMetadata(
     videoID, newVideoName, newVideoTopic, description, allowComments
 ):
 
-    recordedVidQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    recordedVidQuery = cachedDbCalls.getVideo(videoID)
     sysSettings = cachedDbCalls.getSystemSettings()
 
     if recordedVidQuery is not None:
+        updateVideo = RecordedVideo.RecordedVideo.query.filter_by(
+            id=recordedVidQuery.id
+        ).update(
+            dict(
+                channelName=system.strip_html(newVideoName),
+                topic=newVideoTopic,
+                description=system.strip_html(description),
+                allowComments=allowComments,
+            )
+        )
+        # recordedVidQuery.channelName = system.strip_html(newVideoName)
+        # recordedVidQuery.topic = newVideoTopic
+        # recordedVidQuery.description = system.strip_html(description)
+        # recordedVidQuery.allowComments = allowComments
+        cachedDbCalls.invalidateVideoCache(recordedVidQuery.id)
 
-        recordedVidQuery.channelName = system.strip_html(newVideoName)
-        recordedVidQuery.topic = newVideoTopic
-        recordedVidQuery.description = system.strip_html(description)
-        recordedVidQuery.allowComments = allowComments
+        recordedVidQuery = cachedDbCalls.getVideo(videoID)
+        channelQuery = cachedDbCalls.getChannel(recordedVidQuery.channelID)
 
-        if recordedVidQuery.channel.imageLocation is None:
+        if channelQuery.imageLocation is None:
             channelImage = (
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
@@ -136,23 +151,23 @@ def changeVideoMetadata(
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
                 + "/images/"
-                + recordedVidQuery.channel.imageLocation
+                + channelQuery.imageLocation
             )
 
         message_tasks.send_webhook.delay(
-            recordedVidQuery.channel.id,
+            channelQuery.id,
             9,
-            channelname=recordedVidQuery.channel.channelName,
+            channelname=channelQuery.channelName,
             channelurl=(
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
                 + "/channel/"
                 + str(recordedVidQuery.channel.id)
             ),
-            channeltopic=templateFilters.get_topicName(recordedVidQuery.channel.topic),
+            channeltopic=templateFilters.get_topicName(channelQuery.topic),
             channelimage=channelImage,
             streamer=templateFilters.get_userName(recordedVidQuery.owningUser),
-            channeldescription=str(recordedVidQuery.channel.description),
+            channeldescription=str(channelQuery.description),
             videoname=recordedVidQuery.channelName,
             videodate=recordedVidQuery.videoDate,
             videodescription=recordedVidQuery.description,
@@ -545,17 +560,25 @@ def deleteClip(clipID):
 def setVideoThumbnail(videoID, timeStamp):
     videos_root = globalvars.videoRoot + "videos/"
 
-    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).first()
+    videoQuery = cachedDbCalls.getVideo(videoID)
     if videoQuery is not None:
         videoLocation = videos_root + videoQuery.videoLocation
         newThumbnailLocation = videoQuery.videoLocation[:-3] + "png"
         newGifThumbnailLocation = videoQuery.videoLocation[:-3] + "gif"
-        videoQuery.thumbnailLocation = newThumbnailLocation
+        # videoQuery.thumbnailLocation = newThumbnailLocation
         fullthumbnailLocation = videos_root + newThumbnailLocation
         newGifFullThumbnailLocation = videos_root + newGifThumbnailLocation
 
-        videoQuery.thumbnailLocation = newThumbnailLocation
-        videoQuery.gifLocation = newGifThumbnailLocation
+        updateVideoQuery = RecordedVideo.RecordedVideo.query.filter_by(
+            id=videoID
+        ).update(
+            dict(
+                thumbnailLocation=newThumbnailLocation,
+                gifLocation=newGifThumbnailLocation,
+            )
+        )
+        # videoQuery.thumbnailLocation = newThumbnailLocation
+        # videoQuery.gifLocation = newGifThumbnailLocation
 
         db.session.commit()
         db.session.close()
