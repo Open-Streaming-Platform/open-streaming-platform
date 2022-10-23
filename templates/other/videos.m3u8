@@ -1,0 +1,6 @@
+#EXTM3U
+
+{%- for videos in video %}
+#EXTINF:{{video.length}} logo="{{sysSettings.siteProtocol}}/videos/{{thumbnailLocation}}",{{video.channelName}}
+{{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/videos/{{videoLocation}}
+{%- endfor %}

@@ -659,6 +659,17 @@ def get_stream_index():
     return outputM3u8
 
 
+@root_bp.route("/video_index_all.m3u8")
+def get_all_video_index():
+    sysSettings = cachedDbCalls.getSystemSettings()
+    videoQuery = cachedDbCalls.getAllVideo_View()
+    templateLoader = jinja2.FileSystemLoader(searchpath="./templates/other")
+    templateEnv = jinja2.Environment(loader=templateLoader)
+    template = templateEnv.get_template("videos.m3u8")
+    outputM3u8 = template.render(sysSettings=sysSettings, videos=videoQuery)
+    return outputM3u8
+
+
 # Static Page Redirect
 
 
