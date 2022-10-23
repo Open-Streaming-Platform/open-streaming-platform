@@ -1,3 +1,5 @@
+from sqlalchemy import and_
+
 from classes import settings
 from classes import Channel
 from classes import RecordedVideo
@@ -8,7 +10,6 @@ from classes import topics
 from classes import comments
 from classes import panel
 from classes import upvotes
-
 
 from classes.shared import cache
 
@@ -602,7 +603,6 @@ def getAllVideo_View(channelID):
             RecordedVideo.RecordedVideo.channelName,
             RecordedVideo.RecordedVideo.channelID,
             RecordedVideo.RecordedVideo.description,
-            RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.topic,
             RecordedVideo.RecordedVideo.views,
             RecordedVideo.RecordedVideo.length,
@@ -630,7 +630,6 @@ def getVideo(videoID):
             RecordedVideo.RecordedVideo.owningUser,
             RecordedVideo.RecordedVideo.channelName,
             RecordedVideo.RecordedVideo.channelID,
-            RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.topic,
             RecordedVideo.RecordedVideo.views,
@@ -662,7 +661,6 @@ def getAllVideoByOwnerId(ownerId):
             RecordedVideo.RecordedVideo.channelName,
             RecordedVideo.RecordedVideo.channelID,
             RecordedVideo.RecordedVideo.description,
-            RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.topic,
             RecordedVideo.RecordedVideo.views,
             RecordedVideo.RecordedVideo.length,
@@ -682,7 +680,7 @@ def getAllVideoByOwnerId(ownerId):
 @cache.memoize(timeout=60)
 def getAllVideo():
     recordedVid = (
-        RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
+        RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).join(Channel.Channel, and_(Channel.Channel.id == RecordedVideo.RecordedVideo.channelID, Channel.Channel.protected == False)).filter_by()
         .with_entities(
             RecordedVideo.RecordedVideo.id,
             RecordedVideo.RecordedVideo.uuid,
@@ -690,7 +688,6 @@ def getAllVideo():
             RecordedVideo.RecordedVideo.owningUser,
             RecordedVideo.RecordedVideo.channelName,
             RecordedVideo.RecordedVideo.channelID,
-            RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.description,
             RecordedVideo.RecordedVideo.topic,
             RecordedVideo.RecordedVideo.views,
