@@ -561,6 +561,23 @@ def getChanneActiveStreams(channelID):
     )
     return StreamQuery
 
+@cache.memoize(timeout=10)
+def getAllStreams():
+    StreamQuery = Stream.Stream.query.filter_by(active=True, complete=False).join(
+        Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel).with_entities(
+        Stream.Stream.id,
+        Stream.Stream.topic,
+        Stream.Stream.streamName,
+        Stream.Stream.startTimestamp,
+        Stream.Stream.uuid,
+        Stream.Stream.currentViewers,
+        Stream.Stream.totalViewers,
+        Channel.Channel.channelLoc,
+        Channel.Channel.owningUser
+    ).all()
+
+    return StreamQuery
+
 
 ### Recorded Video Related DB Calls
 @cache.memoize(timeout=60)

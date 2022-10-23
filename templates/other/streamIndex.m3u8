@@ -1,0 +1,10 @@
+#EXTM3U
+
+{%- for stream in streams %}
+#EXTINF:0,{{stream.streamName}}
+{%- if sysSettings.adaptiveStreaming == false %}
+{{sysSettings.siteProtocol}}://{{sysSettings.siteAddress}}/live/{{stream.channelLoc}}/index.m3u8
+{%- elif sysSettings.adaptiveStreaming == true %}
+{{sysSettings.siteProtocol}}://{{sysSettings.siteAddress}}/live-adapt/{{stream.channelLoc}}.m3u8
+{%- endif %}
+{%- endfor %}
