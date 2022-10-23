@@ -3,7 +3,7 @@ import jinja2
 
 from flask import Blueprint
 
-m3u8_bp = Blueprint("m3u8", __name__)
+m3u8_bp = Blueprint("m3u8", __name__, url_prefix="/m3u8")
 
 
 @m3u8_bp.route("/stream/index.m3u8")
