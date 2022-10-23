@@ -648,11 +648,41 @@ def getVideo(videoID):
     return recordedVid
 
 
+@cache.memoize(timeout=60)
 def getAllVideoByOwnerId(ownerId):
     recordedVid = (
         RecordedVideo.RecordedVideo.query.filter_by(
             owningUser=ownerId, pending=False, published=True
         )
+        .with_entities(
+            RecordedVideo.RecordedVideo.id,
+            RecordedVideo.RecordedVideo.uuid,
+            RecordedVideo.RecordedVideo.videoDate,
+            RecordedVideo.RecordedVideo.owningUser,
+            RecordedVideo.RecordedVideo.channelName,
+            RecordedVideo.RecordedVideo.channelID,
+            RecordedVideo.RecordedVideo.description,
+            RecordedVideo.RecordedVideo.description,
+            RecordedVideo.RecordedVideo.topic,
+            RecordedVideo.RecordedVideo.views,
+            RecordedVideo.RecordedVideo.length,
+            RecordedVideo.RecordedVideo.videoLocation,
+            RecordedVideo.RecordedVideo.thumbnailLocation,
+            RecordedVideo.RecordedVideo.gifLocation,
+            RecordedVideo.RecordedVideo.pending,
+            RecordedVideo.RecordedVideo.allowComments,
+            RecordedVideo.RecordedVideo.published,
+            RecordedVideo.RecordedVideo.originalStreamID,
+        )
+        .all()
+    )
+    return recordedVid
+
+
+@cache.memoize(timeout=60)
+def getAllVideo():
+    recordedVid = (
+        RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
         .with_entities(
             RecordedVideo.RecordedVideo.id,
             RecordedVideo.RecordedVideo.uuid,
