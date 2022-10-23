@@ -662,7 +662,7 @@ def get_stream_index():
 @root_bp.route("/video_index_all.m3u8")
 def get_all_video_index():
     sysSettings = cachedDbCalls.getSystemSettings()
-    videoQuery = cachedDbCalls.getAllVideo_View()
+    videoQuery = cachedDbCalls.getAllVideo()
     templateLoader = jinja2.FileSystemLoader(searchpath="./templates/other")
     templateEnv = jinja2.Environment(loader=templateLoader)
     template = templateEnv.get_template("videos.m3u8")
