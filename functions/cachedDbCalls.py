@@ -689,7 +689,6 @@ def getAllVideo():
                 Channel.Channel.private == False
             ),
         )
-        .filter_by()
         .with_entities(
             RecordedVideo.RecordedVideo.id,
             RecordedVideo.RecordedVideo.uuid,
