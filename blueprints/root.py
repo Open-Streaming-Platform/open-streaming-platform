@@ -647,7 +647,8 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
     protocol = sysSettings.siteProtocol
     return redirect(protocol + proxyAddress + "/live-adapt/" + channelLoc + "/" + file)
 
-@root_bp.route('/stream_index.m3u8')
+
+@root_bp.route("/stream_index.m3u8")
 def get_stream_index():
     sysSettings = cachedDbCalls.getSystemSettings()
     streams = cachedDbCalls.getAllStreams()
@@ -657,7 +658,10 @@ def get_stream_index():
     outputM3u8 = template.render(sysSettings=sysSettings, streams=streams)
     return outputM3u8
 
+
 # Static Page Redirect
+
+
 @root_bp.route("/p/<static_page>")
 def render_staticPage(static_page):
     sanitized_page_string = re.sub(r"[^a-zA-Z0-9]+", "", static_page)
