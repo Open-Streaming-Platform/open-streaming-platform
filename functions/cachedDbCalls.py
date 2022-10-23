@@ -680,7 +680,15 @@ def getAllVideoByOwnerId(ownerId):
 @cache.memoize(timeout=60)
 def getAllVideo():
     recordedVid = (
-        RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True).join(Channel.Channel, and_(Channel.Channel.id == RecordedVideo.RecordedVideo.channelID, Channel.Channel.protected == False)).filter_by()
+        RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
+        .join(
+            Channel.Channel,
+            and_(
+                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
+                Channel.Channel.protected == False,
+            ),
+        )
+        .filter_by()
         .with_entities(
             RecordedVideo.RecordedVideo.id,
             RecordedVideo.RecordedVideo.uuid,
