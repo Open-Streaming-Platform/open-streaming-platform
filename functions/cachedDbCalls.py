@@ -12,7 +12,9 @@ from classes import upvotes
 
 from classes.shared import cache
 
-### System Settings Related DB Calls
+# System Settings Related DB Calls
+
+
 @cache.memoize(timeout=600)
 def getSystemSettings():
     sysSettings = settings.settings.query.first()
@@ -25,7 +27,7 @@ def getOAuthProviders():
     return SystemOAuthProviders
 
 
-### Stream Related DB Calls
+# Stream Related DB Calls
 @cache.memoize(timeout=60)
 def searchStreams(term):
     if term is not None:
@@ -57,7 +59,7 @@ def searchStreams(term):
         return []
 
 
-### Channel Related DB Calls
+# Channel Related DB Calls
 @cache.memoize(timeout=60)
 def getAllChannels():
     channelQuery = Channel.Channel.query.with_entities(
@@ -533,6 +535,7 @@ def invalidateChannelCache(channelId):
 
     return True
 
+
 def invalidateVideoCache(videoId):
     cachedVideo = getVideo(videoId)
     cache.delete_memoized(getVideo, videoId)
@@ -561,25 +564,30 @@ def getChanneActiveStreams(channelID):
     )
     return StreamQuery
 
+
 @cache.memoize(timeout=10)
 def getAllStreams():
-    StreamQuery = Stream.Stream.query.filter_by(active=True, complete=False).join(
-        Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel).with_entities(
-        Stream.Stream.id,
-        Stream.Stream.topic,
-        Stream.Stream.streamName,
-        Stream.Stream.startTimestamp,
-        Stream.Stream.uuid,
-        Stream.Stream.currentViewers,
-        Stream.Stream.totalViewers,
-        Channel.Channel.channelLoc,
-        Channel.Channel.owningUser
-    ).all()
+    StreamQuery = (
+        Stream.Stream.query.filter_by(active=True, complete=False)
+        .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)
+        .with_entities(
+            Stream.Stream.id,
+            Stream.Stream.topic,
+            Stream.Stream.streamName,
+            Stream.Stream.startTimestamp,
+            Stream.Stream.uuid,
+            Stream.Stream.currentViewers,
+            Stream.Stream.totalViewers,
+            Channel.Channel.channelLoc,
+            Channel.Channel.owningUser,
+        )
+        .all()
+    )
 
     return StreamQuery
 
 
-### Recorded Video Related DB Calls
+# Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
 def getAllVideo_View(channelID):
     recordedVid = (
@@ -785,7 +793,7 @@ def searchVideos(term):
         return []
 
 
-### Clip Related DB Calls
+# Clip Related DB Calls
 @cache.memoize(timeout=30)
 def getClipChannelID(clipID):
     ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
@@ -923,7 +931,7 @@ def searchClips(term):
         return []
 
 
-### Topic Related DB Calls
+# Topic Related DB Calls
 @cache.memoize(timeout=120)
 def getAllTopics():
     topicQuery = topics.topics.query.all()
@@ -945,7 +953,7 @@ def searchTopics(term):
         return []
 
 
-### User Related DB Calls
+# User Related DB Calls
 @cache.memoize(timeout=300)
 def getUserPhotoLocation(userID):
     UserQuery = (
