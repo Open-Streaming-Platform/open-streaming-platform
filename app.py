@@ -1,26 +1,83 @@
 # -*- coding: UTF-8 -*-
-from gevent import monkey
-
-monkey.patch_all(thread=True)
-
-# Import Standary Python Libraries
-import socket
-import os
-import subprocess
-import time
-import sys
-import hashlib
-import logging
-import datetime
-import json
-import uuid
-import time
-import random
-
-# Import 3rd Party Libraries
-from flask import Flask, redirect, request, abort, flash, current_app, session
-from flask.wrappers import Request
-from flask_session import Session
+from functions import templateFilters
+from blueprints.m3u8 import m3u8_bp
+from blueprints.oauth import oauth_bp
+from blueprints.settings import settings_bp
+from blueprints.upload import upload_bp
+from blueprints.clip import clip_bp
+from blueprints.liveview import liveview_bp
+from blueprints.play import play_bp
+from blueprints.topics import topics_bp
+from blueprints.channels import channels_bp
+from blueprints.profile import profile_bp
+from blueprints.streamers import streamers_bp
+from blueprints.root import root_bp
+from blueprints.apiv1 import api_v1
+from blueprints.errorhandler import errorhandler_bp
+from functions.socketio import notifications_socketio
+from functions.socketio import pictures
+from functions.socketio import rtmp
+from functions.socketio import restream
+from functions.socketio import xmpp
+from functions.socketio import syst
+from functions.socketio import thumbnail
+from functions.socketio import subscription
+from functions.socketio import edge
+from functions.socketio import webhooks
+from functions.socketio import invites
+from functions.socketio import vote
+from functions.socketio import stream
+from functions.socketio import video
+from functions.socketio import connections
+from functions.scheduled_tasks import scheduler
+from classes.shared import celery
+from classes.shared import email
+from functions.oauth import fetch_token
+from classes.shared import oauth
+from classes.shared import cache
+from classes.shared import db
+from classes.shared import socketio
+from classes.shared import limiter
+from functions import celeryFunc
+from functions.scheduled_tasks import message_tasks
+from functions import cachedDbCalls
+from functions.ejabberdctl import ejabberdctl
+from functions import webhookFunc
+from functions import votes
+from functions import securityFunc
+from functions import system
+from functions import database
+from classes import hub
+from classes import panel
+from classes import stickers
+from classes import notifications
+from classes import subscriptions
+from classes import logs
+from classes import webhook
+from classes import invites
+from classes import comments
+from classes import views
+from classes import apikey
+from classes import upvotes
+from classes import Sec
+from classes import banList
+from classes import settings
+from classes import topics
+from classes import RecordedVideo
+from classes import dbVersion
+from classes import Channel
+from classes import Stream
+from globals import globalvars
+import redis
+from sqlalchemy import exc
+from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_babel import Babel
+from flask_cors import CORS
+from flask_debugtoolbar import DebugToolbarExtension
+from flaskext.markdown import Markdown
+from flask_migrate import Migrate, upgrade, init, migrate
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+from flask_security.signals import user_registered
 from flask_security import (
     Security,
     SQLAlchemyUserDatastore,
@@ -29,17 +86,28 @@ from flask_security import (
     roles_required,
     uia_email_mapper,
 )
-from flask_security.signals import user_registered
-from flask_uploads import UploadSet, configure_uploads, IMAGES
-from flask_migrate import Migrate, upgrade, init, migrate
-from flaskext.markdown import Markdown
-from flask_debugtoolbar import DebugToolbarExtension
-from flask_cors import CORS
-from flask_babel import Babel
-from werkzeug.middleware.proxy_fix import ProxyFix
-from sqlalchemy import exc
+from flask_session import Session
+from flask.wrappers import Request
+from flask import Flask, redirect, request, abort, flash, current_app, session
+import random
+import uuid
+import json
+import datetime
+import logging
+import hashlib
+import sys
+import time
+import subprocess
+import os
+import socket
+from gevent import monkey
 
-import redis
+monkey.patch_all(thread=True)
+
+# Import Standary Python Libraries
+
+# Import 3rd Party Libraries
+
 
 # Import Paths
 cwp = sys.path[0]
@@ -116,7 +184,6 @@ except:
 # ----------------------------------------------------------------------------#
 # Global Vars Imports
 # ----------------------------------------------------------------------------#
-from globals import globalvars
 
 # ----------------------------------------------------------------------------#
 # App Configuration Setup
@@ -236,6 +303,8 @@ app.config["MAX_CONTENT_LENGTH"] = 4000000000
 # ----------------------------------------------------------------------------#
 # Monkey Fix Flask-Restx issue (https://github.com/pallets/flask/issues/4552#issuecomment-1109785314)
 # ----------------------------------------------------------------------------#
+
+
 class AnyJsonRequest(Request):
     def on_json_loading_failed(self, e):
         if e is not None:
@@ -289,40 +358,11 @@ if hasattr(config, "RECAPTCHA_ENABLED"):
 # Modal Imports
 # ----------------------------------------------------------------------------#
 app.logger.info({"level": "info", "message": "Importing Database Classes"})
-from classes import Stream
-from classes import Channel
-from classes import dbVersion
-from classes import RecordedVideo
-from classes import topics
-from classes import settings
-from classes import banList
-from classes import Sec
-from classes import upvotes
-from classes import apikey
-from classes import views
-from classes import comments
-from classes import invites
-from classes import webhook
-from classes import logs
-from classes import subscriptions
-from classes import notifications
-from classes import stickers
-from classes import panel
-from classes import hub
 
 # ----------------------------------------------------------------------------#
 # Function Imports
 # ----------------------------------------------------------------------------#
 app.logger.info({"level": "info", "message": "Importing Function"})
-from functions import database
-from functions import system
-from functions import securityFunc
-from functions import votes
-from functions import webhookFunc
-from functions.ejabberdctl import ejabberdctl
-from functions import cachedDbCalls
-from functions.scheduled_tasks import message_tasks
-from functions import celeryFunc
 
 # ----------------------------------------------------------------------------#
 # Begin App Initialization
@@ -335,7 +375,6 @@ babel = Babel(app)
 # Initialize Flask-Limiter
 app.logger.info({"level": "info", "message": "Importing Flask-Limiter"})
 app.config["RATELIMIT_STORAGE_URL"] = RedisURL
-from classes.shared import limiter
 
 limiter.init_app(app)
 
@@ -353,7 +392,6 @@ r.flushdb()
 
 # Initialize Flask-SocketIO
 app.logger.info({"level": "info", "message": "Initializing Flask-SocketIO"})
-from classes.shared import socketio
 
 if config.redisPassword == "" or config.redisPassword is None:
     socketio.init_app(
@@ -385,13 +423,14 @@ else:
 
 # Begin Database Initialization
 app.logger.info({"level": "info", "message": "Loading Database Object"})
-from classes.shared import db
 
 db.init_app(app)
 db.app = app
 migrateObj = Migrate(app, db)
 
 # Handle Session Rollback Issues
+
+
 @app.errorhandler(exc.SQLAlchemyError)
 def handle_db_exceptions(error):
     app.logger.error(error)
@@ -409,7 +448,6 @@ cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
 # Initialize Flask-Caching
 app.logger.info({"level": "info", "message": "Performing Flask Caching Initialization"})
 
-from classes.shared import cache
 
 redisCacheOptions = {
     "CACHE_TYPE": "RedisCache",
@@ -553,8 +591,6 @@ except:
 
 # Initialize oAuth
 app.logger.info({"level": "info", "message": "Initializing OAuth Info"})
-from classes.shared import oauth
-from functions.oauth import fetch_token
 
 oauth.init_app(app, fetch_token=fetch_token)
 
@@ -601,7 +637,6 @@ except:
 
 app.logger.info({"level": "info", "message": "Initializing Flask-Mail"})
 # Initialize Flask-Mail
-from classes.shared import email
 
 email.init_app(app)
 email.app = app
@@ -629,7 +664,6 @@ except:
 
 # Initialize Celery
 app.logger.info({"level": "info", "message": "Initializing Celery"})
-from classes.shared import celery
 
 celery.conf.broker_url = app.config["broker_url"]
 celery.conf.result_backend = app.config["result_backend"]
@@ -647,45 +681,16 @@ class ContextTask(celery.Task):
 celery.Task = ContextTask
 
 # Import Celery Beat Scheduled Tasks
-from functions.scheduled_tasks import scheduler
 
 app.logger.info({"level": "info", "message": "Initializing SocketIO Handlers"})
 # ----------------------------------------------------------------------------#
 # SocketIO Handler Import
 # ----------------------------------------------------------------------------#
-from functions.socketio import connections
-from functions.socketio import video
-from functions.socketio import stream
-from functions.socketio import vote
-from functions.socketio import invites
-from functions.socketio import webhooks
-from functions.socketio import edge
-from functions.socketio import subscription
-from functions.socketio import thumbnail
-from functions.socketio import syst
-from functions.socketio import xmpp
-from functions.socketio import restream
-from functions.socketio import rtmp
-from functions.socketio import pictures
-from functions.socketio import notifications_socketio
 
 app.logger.info({"level": "info", "message": "Initializing Flask Blueprints"})
 # ----------------------------------------------------------------------------#
 # Blueprint Filter Imports
 # ----------------------------------------------------------------------------#
-from blueprints.errorhandler import errorhandler_bp
-from blueprints.apiv1 import api_v1
-from blueprints.root import root_bp
-from blueprints.streamers import streamers_bp
-from blueprints.profile import profile_bp
-from blueprints.channels import channels_bp
-from blueprints.topics import topics_bp
-from blueprints.play import play_bp
-from blueprints.liveview import liveview_bp
-from blueprints.clip import clip_bp
-from blueprints.upload import upload_bp
-from blueprints.settings import settings_bp
-from blueprints.oauth import oauth_bp
 
 # Register all Blueprints
 app.register_blueprint(errorhandler_bp)
@@ -701,12 +706,12 @@ app.register_blueprint(upload_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(liveview_bp)
 app.register_blueprint(oauth_bp)
+app.register_blueprint(m3u8_bp)
 
 app.logger.info({"level": "info", "message": "Initializing Template Filters"})
 # ----------------------------------------------------------------------------#
 # Template Filter Imports
 # ----------------------------------------------------------------------------#
-from functions import templateFilters
 
 # Initialize Jinja2 Template Filters
 templateFilters.init(app)
@@ -730,6 +735,8 @@ app.logger.info({"level": "info", "message": "Setting Flask Context Processors"}
 # ----------------------------------------------------------------------------#
 # Context Processors
 # ----------------------------------------------------------------------------#
+
+
 @app.context_processor
 def inject_notifications():
     notificationList = []
@@ -810,6 +817,8 @@ app.logger.info({"level": "info", "message": "Initializing Flask Signal Handlers
 # ----------------------------------------------------------------------------#
 # Flask Signal Handlers.
 # ----------------------------------------------------------------------------#
+
+
 @user_registered.connect_via(app)
 def user_registered_sighandler(
     app, user, confirm_token, confirmation_token=None, form_data=None

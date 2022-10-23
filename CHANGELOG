@@ -1,8 +1,8 @@
 0.9.7
 ==============================================
 OSP-Core/OSP-RTMP: Adds WebRTC playback via OvenMediaEngine RTMP Push (*Experimental*). Read more at https://open-streaming-platform.readthedocs.io/en/nightly/usage/streaming.html#osp-web-rtc-playback-experimental
-OSP-Core: Adds Server M3U8 for all active streams -> /stream_index.m3u8
-OSP-Core: Adds Server M3U8 for all videos -> /video_index_all.m3u8
+OSP-Core: Adds Server M3U8 for all active streams -> /m3u8/stream/index.m3u8
+OSP-Core: Adds Server M3U8 for all videos -> /m3u8/video/index.m3u8
 OSP-Core: Upgrades Sentry IO Library to 1.10.1
 
 0.9.6
