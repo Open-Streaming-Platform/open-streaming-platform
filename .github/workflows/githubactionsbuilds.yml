@@ -39,6 +39,11 @@ jobs:
       run: echo ${{ steps.buildx.outputs.name }}
     - name: Available platforms
       run: echo ${{ steps.buildx.outputs.platforms }}
+    - name: Run script file
+      run: |
+         chmod +x ./build-docker-directory.sh
+         ./build-docker-directory.sh
+      shell: bash
     - name: Run Buildx
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
