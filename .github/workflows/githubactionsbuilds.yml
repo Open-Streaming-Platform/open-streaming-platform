@@ -56,4 +56,4 @@ jobs:
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
         echo Version: $VERSION
-        docker buildx build -f installs/docker/OSP-Core/Dockerfile --platform linux/arm,linux/arm64,linux/amd64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./installs/docker/OSP-Core
+        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/arm,linux/arm64,linux/amd64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./docker-build/osp-core
