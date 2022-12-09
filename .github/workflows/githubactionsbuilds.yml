@@ -52,23 +52,18 @@ jobs:
       run: |
          find .
       shell: bash
-    - name: Run Buildx amd64
+    - name: Run Buildx osp-core
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
         echo Version: $VERSION
-        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/amd64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./docker-build/osp-core
-    - name: Run Buildx arm64
+        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/arm64,linux/amd64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} -t devedse/osp-core:latest ${{ github.ref == 'refs/heads/master' && '--push' || '' }} ./docker-build/osp-core
+    - name: Run Buildx osp-rtmp
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
         echo Version: $VERSION
-        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/arm64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./docker-build/osp-core
-    - name: Run Buildx arm
+        docker buildx build -f docker-build/osp-rtmp/Dockerfile --platform linux/arm64,linux/amd64 -t devedse/osp-rtmp:${{needs.generate_version_number.outputs.build_number}} -t devedse/osp-rtmp:latest ${{ github.ref == 'refs/heads/master' && '--push' || '' }} ./docker-build/osp-rtmp
+    - name: Run Buildx osp-ejabberd
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
         echo Version: $VERSION
-        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/arm -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./docker-build/osp-core
-    - name: Run Buildx all
-      run: |
-        export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
-        echo Version: $VERSION
-        docker buildx build -f docker-build/osp-core/Dockerfile --platform linux/arm,linux/arm64,linux/amd64 -t devedse/osp-core:${{needs.generate_version_number.outputs.build_number}} ./docker-build/osp-core
+        docker buildx build -f docker-build/osp-ejabberd/Dockerfile --platform linux/arm64,linux/amd64 -t devedse/osp-ejabberd:${{needs.generate_version_number.outputs.build_number}} -t devedse/osp-ejabberd:latest ${{ github.ref == 'refs/heads/master' && '--push' || '' }} ./docker-build/osp-ejabberd
