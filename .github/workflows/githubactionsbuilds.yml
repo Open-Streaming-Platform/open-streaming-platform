@@ -44,6 +44,14 @@ jobs:
          chmod +x ./build-docker-directory.sh
          ./build-docker-directory.sh
       shell: bash
+    - name: Run script file
+      run: |
+         find docker-build
+      shell: bash
+    - name: Tree123
+      run: |
+         find .
+      shell: bash
     - name: Run Buildx
       run: |
         export VERSION=1.0.${{needs.generate_version_number.outputs.build_number}}
