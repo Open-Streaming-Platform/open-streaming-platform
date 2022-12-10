@@ -1,6 +1,6 @@
 #FROM ejabberd/ecs:20.04
-#FROM ugeek/ejabberd:arm64
-from sando38/docker-ejabberd-multiarch
+FROM ugeek/ejabberd:arm64
+#FROM sando38/docker-ejabberd-multiarch
 MAINTAINER David Lockwood
 
 # OSP Customized EJABBERD Docker Container
