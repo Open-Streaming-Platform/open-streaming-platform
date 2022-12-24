@@ -570,7 +570,7 @@ def getChanneActiveStreams(channelID):
 def getAllStreams():
     StreamQuery = (
         Stream.Stream.query.filter_by(active=True, complete=False)
-        .join(Channel.Channel, Channel.Channel.id == Stream.Stream.linkedChannel)
+        .join(Channel.Channel, and_(Channel.Channel.id == Stream.Stream.linkedChannel, Channel.Channel.private == False, Channel.Channel.protected == False))
         .with_entities(
             Stream.Stream.id,
             Stream.Stream.topic,
@@ -686,9 +686,9 @@ def getAllVideo():
             and_(
                 Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
                 Channel.Channel.protected == False,
+                Channel.Channel.private == False
             ),
         )
-        .filter_by()
         .with_entities(
             RecordedVideo.RecordedVideo.id,
             RecordedVideo.RecordedVideo.uuid,

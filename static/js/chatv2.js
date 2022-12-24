@@ -179,6 +179,13 @@ function setGuestNickLogin() {
     }
 }
 
+function changeGuestUserName() {
+    exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+    connection.flush();
+    connection.disconnect();
+    showLoginWindow();
+}
+
 function onPing(ping) {
     connection.ping.pong(ping);
     return true;
@@ -837,6 +844,11 @@ function closeProfileBox() {
   if (profileBox != null) {
     document.getElementById('newProfileBox').remove();
   }
+}
+
+function changeNickName() {
+    connection.disconnect();
+    showLoginWindow();
 }
 
 function messageDeleteRequest(messageDivId) {

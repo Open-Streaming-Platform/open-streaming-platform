@@ -9,3 +9,4 @@ TODO
 /db/
 /docker-build
 .env
+*.log
