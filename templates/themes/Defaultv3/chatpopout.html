@@ -63,7 +63,7 @@
             var userUUID = "{{current_user.uuid}}";
             var xmppPassword = "{{current_user.xmppToken}}";
             {% else %}
-            var username = format_nick(generateName() + (Math.floor(Math.random() * 99) + 1).toString());
+            var username = generateName() + (Math.floor(Math.random() * 99) + 1).toString();
             var userUUID = "{{session['guestUUID']}}";
             var xmppPassword = "fakepw";
             {% endif %}
@@ -80,7 +80,7 @@
             {% endif %}
             var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
 
-            var username = username.replace(/ /g,"_");
+            var username = format_nick(username.replace(/ /g,"_"));
             var ChatContentWindow = document.getElementById("chatContentWindow");
             var ChatInputBar = document.getElementById('chatinput');
             ChatInputBar.placeholder = "Send Message As " + username + "...";
