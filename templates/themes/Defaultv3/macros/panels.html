@@ -970,9 +970,13 @@
 </div>
 {% endmacro %}
 
-{% macro core_chat_footer(stickerSelectorList, hideBar) %}
+{% macro core_chat_footer(stickerSelectorList, hideBar, allowNickChange) %}
 <div class="chatFooter flex-end pl-1 mb-1 {% if hideBar == True %}d-none{% endif %}">
-  <div class="chatFooterTop"></div>
+  <div class="chatFooterTop mx-2 text-center mb-2">
+      {% if allowNickChange == True %}
+      <button class="btn btn-sm btn-primary shadow w-100" onclick="changeNickName();">Change Nick</button>
+      {% endif %}
+  </div>
   <div class="chatFooterInput mx-2">
       <div class="input-group">
           <input id="chatinput" type="text" class="form-control chatInputBox boxShadow" maxlength="750" autocomplete="off">
@@ -994,11 +998,11 @@
         {{ core_chat_members_view() }}
         <div id="chat" class="chatSection"></div>
     </div>
-    {{ core_chat_footer(stickerSelectorList) }}
+    {{ core_chat_footer(stickerSelectorList, hideBar, allowNickChange) }}
 </div>
 {% endmacro %}
 
-{% macro core_popoutchat(stickerSelectorList, hideBar) %}
+{% macro core_popoutchat(stickerSelectorList, hideBar, allowNickChange) %}
 <div id="chatPanel" class="chatPanel h-100">
   {{ core_popoutchatchat_header() }}
   <div id="chatContentWindow" class="chatContent h-100">
@@ -1006,7 +1010,7 @@
     {{ core_chat_members_view() }}
     <div id="chat" class="chatSection"></div>
   </div>
-  {{ core_chat_footer(stickerSelectorList, hideBar) }}
+  {{ core_chat_footer(stickerSelectorList, hideBar, allowNickChange) }}
 </div>
 {% endmacro %}
 

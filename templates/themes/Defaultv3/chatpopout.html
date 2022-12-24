@@ -33,7 +33,7 @@
             {{ panels.chat_loader() }}
             {{ panels.chat_guest_username_input() }}
             {{ panels.chat_unavailable_info() }}
-            {{ panels.core_popoutchat(stickerSelectorList, hideBar) }}
+            {{ panels.core_popoutchat(stickerSelectorList, hideBar, channel.allowGuestNickChange) }}
             <!--Chat Templates-->
             {% if channel.chatFormat == 'irc' %}
                 {{ panels.core_chat_message_template_irc() }}
@@ -54,6 +54,7 @@
             var channelLocation = '{{ channel.channelLoc }}';
         </script>
         <script src="/static/js/chatv2.js" type="text/javascript"></script>
+        <script src="/static/js/randomnames.js" type="text/javascript"></script>
         <script>
             // Settings and Event Hooks for XMPP
             var bannedWords = {{bannedWords|safe}};
@@ -62,7 +63,7 @@
             var userUUID = "{{current_user.uuid}}";
             var xmppPassword = "{{current_user.xmppToken}}";
             {% else %}
-            var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+            var username = generateName() + (Math.floor(Math.random() * 50000) + 1).toString();
             var userUUID = "{{session['guestUUID']}}";
             var xmppPassword = "fakepw";
             {% endif %}
@@ -103,7 +104,6 @@
             });
 
             // Start Connection on Load
-            {% if current_user.is_authenticated or channel.allowGuestNickChange == False %}
             $(window).bind('load', function() {
             var url = BOSH_SERVICE;
             connection = new Strophe.Connection(url);
@@ -111,11 +111,6 @@
             connection.rawOutput = rawOutput;
             connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
             });
-            {% else %}
-            $(window).bind('load', function() {
-            showLoginWindow()
-            });
-            {% endif %}
 
             // Disconnect XMPP on Page Unload
             $(window).bind('beforeunload', function(){

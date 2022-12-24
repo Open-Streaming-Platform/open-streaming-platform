@@ -846,6 +846,11 @@ function closeProfileBox() {
   }
 }
 
+function changeNickName() {
+    connection.disconnect();
+    showLoginWindow();
+}
+
 function messageDeleteRequest(messageDivId) {
     socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId });
 }
