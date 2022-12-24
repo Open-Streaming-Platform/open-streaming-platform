@@ -86,7 +86,7 @@
                     {{ panels.chat_loader() }}
                     {{ panels.chat_guest_username_input() }}
                     {{ panels.chat_unavailable_info() }}
-                    {{ panels.core_chat(stickerSelectorList, False, channel.allowGuestNickChange) }}
+                    {{ panels.core_chat(stickerSelectorList, False, channel.allowGuestNickChange, current_user.is_authenticated) }}
                     <!--Chat Templates-->
                     {% if channel.chatFormat == 'irc' %}
                         {{ panels.core_chat_message_template_irc() }}
@@ -216,7 +216,7 @@
         var userUUID = "{{current_user.uuid}}";
         var xmppPassword = "{{current_user.xmppToken}}";
         {% else %}
-        var username = generateName() + (Math.floor(Math.random() * 50000) + 1).toString();
+        var username = generateName() + (Math.floor(Math.random() * 99) + 1).toString();
         var userUUID = "{{session['guestUUID']}}";
         var xmppPassword = "fakepw";
         {% endif %}
