@@ -35,6 +35,7 @@ channelParserPost.add_argument("description", type=str, required=True)
 channelParserPost.add_argument("topicID", type=int, required=True)
 channelParserPost.add_argument("recordEnabled", type=bool, required=True)
 channelParserPost.add_argument("chatEnabled", type=bool, required=True)
+channelParserPost.add_argument("showHome", type=bool, required=True)
 channelParserPost.add_argument("commentsEnabled", type=bool, required=True)
 
 channelInviteGetInvite = reqparse.RequestParser()
@@ -114,6 +115,7 @@ class api_1_ListChannels(Resource):
                         args["recordEnabled"],
                         args["chatEnabled"],
                         args["commentsEnabled"],
+                        args["showHome"],
                         args["description"],
                     )
 
