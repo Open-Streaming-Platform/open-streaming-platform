@@ -5,6 +5,7 @@ var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 var modDisplayActive = false;
+var awaitingNickChange = false;
 
 var occupantCheck;
 var chatDataUpdate;
@@ -120,15 +121,18 @@ function onConnect(status) {
     console.log('Disconnecting from XMPP Server...');
   } else if (status == Strophe.Status.DISCONNECTED) {
     console.log('Disconnected from XMPP Server...');
-    document.getElementById('modDisplay').style.display = 'none';
-    document.getElementById('chatPanel').style.display = "none";
-    document.getElementById('loader').style.display = "none";
-    document.getElementById('unavailable').style.display = "block";
-    document.getElementById('guestUserName').style.display = "none"
+    if (awaitingNickChange === false) {
+        document.getElementById('modDisplay').style.display = 'none';
+        document.getElementById('chatPanel').style.display = "none";
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('unavailable').style.display = "block";
+        document.getElementById('guestUserName').style.display = "none"
 
-    document.getElementById('reasonCode').textContent = "999";
-    document.getElementById('reasonText').textContent = "Disconnected.";
+        document.getElementById('reasonCode').textContent = "999";
+        document.getElementById('reasonText').textContent = "Disconnected.";
+    }
   } else if (status == Strophe.Status.CONNECTED) {
+    awaitingNickChange = false;
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
     // set presence
@@ -177,13 +181,6 @@ function setGuestNickLogin() {
     } catch {
         console.log("Chatbar Placeholder Username Not Set...");
     }
-}
-
-function changeGuestUserName() {
-    exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
-    connection.flush();
-    connection.disconnect();
-    showLoginWindow();
 }
 
 function onPing(ping) {
@@ -856,8 +853,10 @@ function sleep(milliseconds) {
 }
 
 function changeNickName() {
+    awaitingNickChange = true;
+    exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+    connection.flush();
     connection.disconnect();
-    sleep(1000);
     showLoginWindow();
 }
 
