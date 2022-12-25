@@ -7,7 +7,7 @@ PartOf=osp.target
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/osp
-ExecStart=/usr/local/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:%i --reload --access-logfile /opt/osp/logs/osp-access.log --error-logfile /opt/osp/logs/osp-error.log
+ExecStart=/usr/local/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:%i --reload -t 0 --graceful-timeout 120 --access-logfile /opt/osp/logs/osp-access.log --error-logfile /opt/osp/logs/osp-error.log
 Restart=on-failure
 
 [Install]

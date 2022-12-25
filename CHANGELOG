@@ -3,7 +3,13 @@
 OSP-Core/OSP-RTMP: Adds WebRTC playback via OvenMediaEngine RTMP Push (*Experimental*). Read more at https://open-streaming-platform.readthedocs.io/en/nightly/usage/streaming.html#osp-web-rtc-playback-experimental
 OSP-Core: Adds Server M3U8 for all active streams -> /m3u8/stream/index.m3u8
 OSP-Core: Adds Server M3U8 for all videos -> /m3u8/video/index.m3u8
-OSP-Core: Upgrades Sentry IO Library to 1.10.1
+OSP-Core: Upgrades Sentry IO Library to 1.12.1
+OSP-Core: Changed Chat Username Changes to Force a Random name at login, but offer a method to change
+OSP-Core: Removed Startup Code which was causing timeouts on complex servers
+OSP-Core: Extended Gunicorn Startup Process Timeout
+OSP-Core: Fixed Error in Creating a Channel via the API !377 (@Jack Jang)
+OSP-Core: Changed Video Imports to use the filename as the video title with additional info !376 (@Mark Schouten)
+OSP-All: Updated ZLIB to 1.2.13
 
 0.9.6
 ==============================================
