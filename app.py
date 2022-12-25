@@ -153,6 +153,9 @@ if hasattr(config, "sentryIO_Enabled") and hasattr(config, "sentryIO_DSN"):
             release=globalvars.version,
             environment=sentryEnv,
             server_name=globalvars.processUUID,
+            _experiments={
+                "profiles_sample_rate": 1.0,
+            }
         )
 
 coreNginxRTMPAddress = "127.0.0.1"
