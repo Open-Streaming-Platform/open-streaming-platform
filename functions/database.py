@@ -370,6 +370,7 @@ def dbFixes():
         channel.showHome = True
         db.session.commit()
 
+    log.info({"level": "info", "message": "Completed DB Checks and Fixes"})
     return True
 
 
