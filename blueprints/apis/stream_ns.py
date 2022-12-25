@@ -49,6 +49,10 @@ class api_1_ListStreams(Resource):
             if channelQuery.private != True:
                 rtmpQuery = settings.rtmpServer.query.filter_by(
                     id=stream.rtmpServer
+                ).with_entities(
+                    settings.rtmpServer.id,
+                    settings.rtmpServer.active,
+                    settings.rtmpServer.address
                 ).first()
                 upvotesQueryCount = upvotes.streamUpvotes.query.filter_by(
                     streamID=stream.id
