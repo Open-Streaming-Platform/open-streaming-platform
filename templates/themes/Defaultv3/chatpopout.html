@@ -80,7 +80,11 @@
             {% endif %}
             var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
 
-            var username = format_nick(username.replace(/ /g,"_"));
+            var username = username.replace(/ /g,"_");
+            {% if current_user.is_authenticated == False %}
+            var username = format_nick(username);
+            {% endif %}
+
             var ChatContentWindow = document.getElementById("chatContentWindow");
             var ChatInputBar = document.getElementById('chatinput');
             ChatInputBar.placeholder = "Send Message As " + username + "...";
