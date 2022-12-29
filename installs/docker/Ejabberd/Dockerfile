@@ -1,7 +1,8 @@
 #FROM ejabberd/ecs:20.04
 #FROM ugeek/ejabberd:arm64
 #FROM sando38/docker-ejabberd-multiarch
-FROM andrejunqueira33/ejabberd-new:1.0.0
+#FROM andrejunqueira33/ejabberd-new:1.0.0
+FROM ghcr.io/processone/ejabberd:master
 MAINTAINER David Lockwood
 
 # OSP Customized EJABBERD Docker Container
