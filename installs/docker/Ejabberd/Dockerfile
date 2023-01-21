@@ -1,8 +1,8 @@
 #FROM ejabberd/ecs:20.04
 #FROM ugeek/ejabberd:arm64
 #FROM sando38/docker-ejabberd-multiarch
-FROM andrejunqueira33/ejabberd-new:1.0.0
-#FROM ghcr.io/processone/ejabberd:master
+#FROM andrejunqueira33/ejabberd-new:1.0.0
+FROM ghcr.io/processone/ejabberd:master
 MAINTAINER David Lockwood
 
 # OSP Customized EJABBERD Docker Container
@@ -47,15 +47,15 @@ COPY docker-files.d/supervisord.conf /run/supervisord.conf
 
 USER ejabberd
 
-RUN mkdir /home/ejabberd/run
-COPY docker-files.d/ejabberd.yml /home/ejabberd/run/ejabberd.yml
-COPY docker-files.d/auth_osp.py /home/ejabberd/run/auth_osp.py
-COPY docker-files.d/inetrc /home/ejabberd/conf/inetrc
+RUN mkdir /opt/ejabberd/run
+COPY docker-files.d/ejabberd.yml /opt/ejabberd/run/ejabberd.yml
+COPY docker-files.d/auth_osp.py /opt/ejabberd/run/auth_osp.py
+COPY docker-files.d/inetrc /opt/ejabberd/conf/inetrc
 
 EXPOSE 5222
 EXPOSE 5280
 
 USER root
-VOLUME ["/home/ejabberd/database"]
+VOLUME ["/opt/ejabberd/database"]
 
 ENTRYPOINT ["/bin/sh","-c", "/run/entrypoint.sh"]
