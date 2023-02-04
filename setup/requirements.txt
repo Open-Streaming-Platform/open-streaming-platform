@@ -54,7 +54,7 @@ python-engineio==4.3.1
 python-socketio==5.0.2
 pytz==2022.1
 redis==4.3.3
-requests==2.20.0
+requests==2.28.2
 sentry-sdk==1.12.1
 smmap2==2.0.5
 speaklater==1.3
