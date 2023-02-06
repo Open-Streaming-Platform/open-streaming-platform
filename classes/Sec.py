@@ -9,7 +9,8 @@ from flask_security.forms import (
     LoginForm,
     validators,
 )
-from flask_security import UserMixin, RoleMixin
+from flask_security import UserMixin, RoleMixin, AsaList
+from sqlalchemy.ext.mutable import MutableList
 from email_validator import validate_email, caching_resolver
 from .shared import db
 from globals import globalvars
@@ -111,6 +112,7 @@ class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
+    permissions = db.Column(MutableList.as_mutable(AsaList()), nullable=True)
     default = db.Column(db.Boolean)
 
 
