@@ -19,7 +19,7 @@ greenlet==1.1.2
 gunicorn==20.1.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
-Mako==1.0.13
+Mako==1.2.2
 MarkupSafe==2.1.1
 psutil==5.7.0
 psycopg2-binary==2.8.5
