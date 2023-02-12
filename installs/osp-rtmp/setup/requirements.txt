@@ -14,7 +14,7 @@ Flask-WTF==1.0.1
 gevent==21.12.0
 gevent-websocket==0.10.1
 gitdb2==2.0.5
-GitPython==2.1.11
+GitPython==3.1.30
 greenlet==1.1.2
 gunicorn==20.1.0
 itsdangerous==2.1.2
