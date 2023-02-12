@@ -414,7 +414,7 @@ function process_stickers(msg) {
           var stickerData = stickerList.filter(d => d.name === stickerName);
           if (stickerData.length !== 0) {
               var stickerFilename = stickerData[0]['file'];
-              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" class="sticker" alt="${stickerName}" title="${stickerName}" />`);
+              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" class="sticker lazy" alt="${stickerName}" title="${stickerName}" />`);
           } else {
               msg = msg.replace(`:${stickerName}:`, '');
           }
