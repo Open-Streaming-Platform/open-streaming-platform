@@ -1,5 +1,3 @@
-import hashlib
-
 from flask import (
     Blueprint,
     request,
@@ -648,6 +646,8 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
 
 
 # Static Page Redirect
+
+
 @root_bp.route("/p/<static_page>")
 def render_staticPage(static_page):
     sanitized_page_string = re.sub(r"[^a-zA-Z0-9]+", "", static_page)

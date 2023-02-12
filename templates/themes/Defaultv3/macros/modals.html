@@ -1120,13 +1120,20 @@
         </div>
       </div>
       <div class="modal-body">
-        <h5>Use this picture?</h5>
-        <img class="boxShadow mx-auto d-block" id="newScreenShotImg" src="">
-        <input type="hidden" id="thumbnailTimestamp">
+          <div id="screenshotPendingBox" class="text-center">
+            <div class="spinner-border text-success" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <div id="screenshotImageBox" style="display: none;">
+            <h5>Use this picture?</h5>
+            <img class="boxShadow mx-auto d-block" id="newScreenShotImg" src="">
+            <input type="hidden" id="thumbnailTimestamp">
+          </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" onclick="setNewThumbnail()" class="btn btn-success" data-bs-dismiss="modal">Save</button>
+        <button type="button" onclick="setNewThumbnail()" id="newScreenShotSetThumbButton" class="btn btn-success" data-bs-dismiss="modal" disabled>Save</button>
       </div>
     </div>
   </div>

@@ -20,9 +20,10 @@
 <meta name="keywords" content="{% for tag in channel.id | get_channelTags %}{{tag.name}}{{', ' if not loop.last else ''}}{% endfor %}">
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
-
+{% if sysSettings.webrtcPlaybackEnabled == False %}
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">
+{% endif %}
 <link href="/static/css/Defaultv3/chat.css" rel="stylesheet">
 {% endblock %}
 
@@ -85,7 +86,7 @@
                     {{ panels.chat_loader() }}
                     {{ panels.chat_guest_username_input() }}
                     {{ panels.chat_unavailable_info() }}
-                    {{ panels.core_chat(stickerSelectorList) }}
+                    {{ panels.core_chat(stickerSelectorList, False, channel.allowGuestNickChange, current_user.is_authenticated) }}
                     <!--Chat Templates-->
                     {% if channel.chatFormat == 'irc' %}
                         {{ panels.core_chat_message_template_irc() }}
@@ -107,9 +108,47 @@
 
 <!--Start Script Block-->
 {% block scripts %}
+    <script>
+        // Generate HLS Tokens
+        {% if current_user.is_authenticated %}
+            var hls_user = "{{ current_user.username }}"
+        {% else %}
+            var hls_user = "Guest"
+        {% endif %}
+        var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
+    </script>
+    {% if sysSettings.webrtcPlaybackEnabled == True %}
+    <script src="/static/vendor/hls.js/hls.min.js"></script>
+    <script src="/static/vendor/ovenplayer/ovenplayer.js"></script>
+    <script>
+        const player = OvenPlayer.create("video", {
+            "autoStart": true,
+            "autoFallback": true,
+            "mute": false,
+            "sources": [
+                {
+                    "type": "webrtc",
+                    "file": "{{sysSettings.webrtcSignalProtocol}}{{sysSettings.webrtcSignalURL}}/{{channel.channelLoc}}",
+                    "label": "WebRTC (Experimental)"
+                },
+                {
+                    "type": "hls",
+                    "file": "{{streamURL}}",
+                    "label": "OSP HLS"
+                }
+            ],
+            "hlsConfig": {
+                xhrSetup: function (xhr, url) {
+                    xhr.setRequestHeader("X-Token-Session", hls_token);
+                }
+            }
+        });
+    </script>
+    {% else %}
     <script src="/static/vendor/videojs/js/video.js"></script>
     <script src="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.js"></script>
     <script src="/static/vendor/videojs-contrib-quality-levels/js/videojs-contrib-quality-levels.js"></script>
+    {% endif %}
     <script src="/static/vendor/momentjs/js/moment.js" type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.min.js' type="text/javascript"></script>
     <script src='/static/vendor/strophe/js/strophe.disco.js' type="text/javascript"></script>
@@ -117,6 +156,7 @@
     <script src="/static/vendor/strophe/js/strophe.vcard.min.js" type="text/javascript"></script>
     <script src="/static/vendor/strophe/js/strophe.ping.js" type="text/javascript"></script>
     <script src='/static/js/chatv2.js' type="text/javascript"></script>
+    <script src="/static/js/randomnames.js" type="text/javascript"></script>
 
 
     <script>
@@ -169,14 +209,6 @@
     </script>
 
     <script>
-        // Generate HLS Tokens
-        {% if current_user.is_authenticated %}
-            var hls_user = "{{ current_user.username }}"
-        {% else %}
-            var hls_user = "Guest"
-        {% endif %}
-        var hls_token = hls_user + "_{{ channel.channelLoc | generatePlaybackAuthToken }}"
-
         // Settings and Event Hooks for XMPP
         var bannedWords = {{bannedWords|safe}};
         {% if current_user.is_authenticated %}
@@ -184,7 +216,7 @@
         var userUUID = "{{current_user.uuid}}";
         var xmppPassword = "{{current_user.xmppToken}}";
         {% else %}
-        var username = "Guest" + (Math.floor(Math.random() * 50000) + 1).toString();
+        var username = generateName() + (Math.floor(Math.random() * 99) + 1).toString();
         var userUUID = "{{session['guestUUID']}}";
         var xmppPassword = "fakepw";
         {% endif %}
@@ -202,9 +234,13 @@
         var CHATSTATUS = {jid: null, username: null, role:null, affiliation: null, muteList: [] };
 
         var username = username.replace(/ /g,"_");
+        {% if current_user.is_authenticated == False %}
+        var username = format_nick(username);
+        {% endif %}
+
         var ChatContentWindow = document.getElementById("chatContentWindow");
         var ChatInputBar = document.getElementById('chatinput');
-        ChatInputBar.placeholder = "Send Message As " + username + "...";
+        ChatInputBar.placeholder = "Send As " + username + "...";
 
         var stickerList = {{ stickerList | safe }}
 
@@ -225,7 +261,6 @@
         });
 
         // Start Connection on Load
-        {%  if current_user.is_authenticated or channel.allowGuestNickChange == False %}
         $(window).bind('load', function() {
             var url = BOSH_SERVICE;
             connection = new Strophe.Connection(url);
@@ -233,12 +268,6 @@
             connection.rawOutput = rawOutput;
             connection.connect(userUUID + '@' + server, xmppPassword, onConnect);
         });
-        {% else %}
-        $(window).bind('load', function() {
-            showLoginWindow()
-        });
-        {%  endif %}
-
         // Page Leaving Process
         $(window).bind('beforeunload', function(){
               // Leave Room First
@@ -319,9 +348,9 @@
             document.getElementById("currentViewers").innerHTML = msg['data'];
         });
     </script>
-
-
     <script src="/static/js/liveplayerhandler.js"></script>
+    {% if sysSettings.webrtcPlaybackEnabled == False %}
+    <script src="/static/js/liveVideoJsHandler.js"></script>
     <script>
         // Initialize Stream Player HLS Tokens
         videojs.Vhs.xhr.beforeRequest = (options) => {
@@ -416,7 +445,6 @@
         })
     </script>
 
-
     <link href="/static/vendor/videojs-theater-mode/videojs.theaterMode.css" rel="stylesheet">
     <script src="/static/vendor/videojs-theater-mode/videojs.theaterMode.js"></script>
     <script>
@@ -475,4 +503,7 @@
             }
         });
     </script>
+    {% else %}
+    <script src="/static/js/liveWebRTCHandler.js"></script>
+    {% endif %}
 {% endblock %}

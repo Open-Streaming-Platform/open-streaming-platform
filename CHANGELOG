@@ -1,3 +1,28 @@
+0.9.7
+==============================================
+OSP-Core/OSP-RTMP: Adds WebRTC playback via OvenMediaEngine RTMP Push (*Experimental*). Read more at https://open-streaming-platform.readthedocs.io/en/nightly/usage/streaming.html#osp-web-rtc-playback-experimental
+OSP-Core: Adds Server M3U8 for all active streams -> /m3u8/stream/index.m3u8
+OSP-Core: Adds Server M3U8 for all videos -> /m3u8/video/index.m3u8
+OSP-Core: Upgrades Sentry IO Library to 1.12.1
+OSP-Core: Changed Chat Username Changes to Force a Random name at login, but offer a method to change
+OSP-Core: Removed Startup Code which was causing timeouts on complex servers
+OSP-Core: Extended Gunicorn Startup Process Timeout
+OSP-Core: Fixed Error in Creating a Channel via the API !377 (@Jack Jang)
+OSP-Core: Changed Video Imports to use the filename as the video title with additional info !376 (@Mark Schouten)
+OSP-Core: Set Chat Stickers to lazy load to prevent heavy load on channel connect
+OSP-Core: Bump Flask-Security-Too == 5.1.0
+OSP-Core: Bump Pillow==9.4.0
+OSP-Core: Bump xmltodict==0.13.0
+OSP-Core: Bump flask-caching==2.0.2
+OSP-Core: Bump flask-cors==3.0.10
+OSP-Core: Bump cachelib==0.9.0
+OSP-Core: Bump Greenlet==2.0.2
+OSP-Core: Bump Flask-Restx==1.0.5
+OSP-Core: Bump: Flask-Login==0.6.2
+OSP-Core: Bump Flask-Reuploaded==1.3.0
+OSP-Core: Bump gevent==22.10.2
+OSP-All: Updated ZLIB to 1.2.13
+
 0.9.6
 ==============================================
 Nginx-OSP: Moved Core Code of Nginx RTMP to winshining/nginx-http-flv-module.  New Installs will use the new backend. Existing can be migrated using Reset Nginx via osp-config.sh

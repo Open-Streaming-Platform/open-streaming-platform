@@ -274,6 +274,11 @@ def dbFixes():
         sysSettings.buildEdgeOnRestart = True
         db.session.commit()
 
+    # Set WebRTC Default
+    if sysSettings.webrtcPlaybackEnabled is None:
+        sysSettings.webrtcPlaybackEnabled = False
+        db.session.commit()
+
     # Fixes for Server Settings Missing the Main Page Sort Option
     if sysSettings.sortMainBy is None:
         sysSettings.sortMainBy = 0
@@ -294,7 +299,8 @@ def dbFixes():
     for user in userQuery:
         user.emailStream = 1
         db.session.commit()
-    useQuery = Sec.User.query.filter_by(emailMessage=None).all()
+
+    userQuery = Sec.User.query.filter_by(emailMessage=None).all()
     for user in userQuery:
         user.emailMessage = 1
         db.session.commit()
@@ -364,6 +370,7 @@ def dbFixes():
         channel.showHome = True
         db.session.commit()
 
+    log.info({"level": "info", "message": "Completed DB Checks and Fixes"})
     return True
 
 

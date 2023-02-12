@@ -18,3 +18,6 @@ Disallow: /videos/
 Disallow: /unsubscribe
 Disallow: /notifications
 Disallow: /auth
+Disallow: /oauth/
+Disallow: /apiv1/
+Disallow: /m3u8/

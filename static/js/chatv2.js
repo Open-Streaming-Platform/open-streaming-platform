@@ -5,6 +5,7 @@ var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 var modDisplayActive = false;
+var awaitingNickChange = false;
 
 var occupantCheck;
 var chatDataUpdate;
@@ -120,15 +121,18 @@ function onConnect(status) {
     console.log('Disconnecting from XMPP Server...');
   } else if (status == Strophe.Status.DISCONNECTED) {
     console.log('Disconnected from XMPP Server...');
-    document.getElementById('modDisplay').style.display = 'none';
-    document.getElementById('chatPanel').style.display = "none";
-    document.getElementById('loader').style.display = "none";
-    document.getElementById('unavailable').style.display = "block";
-    document.getElementById('guestUserName').style.display = "none"
+    if (awaitingNickChange === false) {
+        document.getElementById('modDisplay').style.display = 'none';
+        document.getElementById('chatPanel').style.display = "none";
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('unavailable').style.display = "block";
+        document.getElementById('guestUserName').style.display = "none"
 
-    document.getElementById('reasonCode').textContent = "999";
-    document.getElementById('reasonText').textContent = "Disconnected.";
+        document.getElementById('reasonCode').textContent = "999";
+        document.getElementById('reasonText').textContent = "Disconnected.";
+    }
   } else if (status == Strophe.Status.CONNECTED) {
+    awaitingNickChange = false;
     console.log('Connected to XMPP Server.');
     fullJID = connection.jid; // full JID
     // set presence
@@ -173,7 +177,7 @@ function setGuestNickLogin() {
     }
     connectChat();
     try {
-        ChatInputBar.placeholder = "Send Message As " + username + "...";
+        ChatInputBar.placeholder = "Send as " + username + "...";
     } catch {
         console.log("Chatbar Placeholder Username Not Set...");
     }
@@ -410,7 +414,7 @@ function process_stickers(msg) {
           var stickerData = stickerList.filter(d => d.name === stickerName);
           if (stickerData.length !== 0) {
               var stickerFilename = stickerData[0]['file'];
-              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" class="sticker" alt="${stickerName}" title="${stickerName}" />`);
+              msg = msg.replace(`:${stickerName}:`, `<img src="${stickerFilename}" class="sticker lazy" alt="${stickerName}" title="${stickerName}" />`);
           } else {
               msg = msg.replace(`:${stickerName}:`, '');
           }
@@ -837,6 +841,23 @@ function closeProfileBox() {
   if (profileBox != null) {
     document.getElementById('newProfileBox').remove();
   }
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+function changeNickName() {
+    awaitingNickChange = true;
+    exitRoom(ROOMNAME + '@' + ROOM_SERVICE);
+    connection.flush();
+    connection.disconnect();
+    showLoginWindow();
 }
 
 function messageDeleteRequest(messageDivId) {

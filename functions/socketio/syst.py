@@ -252,12 +252,17 @@ def disable_2fa(msg):
 @socketio.on("admin_get_component_status")
 def get_admin_component_status(msg):
     if current_user.has_role("Admin"):
+        sysSettings = cachedDbCalls.getSystemSettings()
         component = msg["component"]
 
         status = "Failed"
 
         if component == "osp_core":
-            r = requests.get("http://127.0.0.1/apiv1/server/ping")
+            r = requests.get(
+                sysSettings.siteProtocol
+                + sysSettings.siteAddress
+                + "/apiv1/server/ping"
+            )
             if r.status_code == 200:
                 response = r.json()
                 if "results" in response:

@@ -1,6 +1,7 @@
 *.pyc
 .idea/
 config.py
+celerybeat-schedule
 celerybeat-schedule.db
 .vscode/
 /venv/
@@ -8,3 +9,4 @@ TODO
 /db/
 /docker-build
 .env
+*.log

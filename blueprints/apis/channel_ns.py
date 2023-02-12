@@ -35,6 +35,7 @@ channelParserPost.add_argument("description", type=str, required=True)
 channelParserPost.add_argument("topicID", type=int, required=True)
 channelParserPost.add_argument("recordEnabled", type=bool, required=True)
 channelParserPost.add_argument("chatEnabled", type=bool, required=True)
+channelParserPost.add_argument("showHome", type=bool, required=True)
 channelParserPost.add_argument("commentsEnabled", type=bool, required=True)
 
 channelInviteGetInvite = reqparse.RequestParser()
@@ -59,7 +60,12 @@ def checkRTMPAuthIP(requestData):
     else:
         requestIP = requestData.environ["HTTP_X_FORWARDED_FOR"]
 
-    authorizedRTMPServers = settings.rtmpServer.query.all()
+    authorizedRTMPServers = settings.rtmpServer.query.with_entities(
+        settings.rtmpServer.id,
+        settings.rtmpServer.hide,
+        settings.rtmpServer.active,
+        settings.rtmpServer.address,
+    ).all()
 
     receivedIP = requestIP
     ipList = requestIP.split(",")
@@ -114,6 +120,7 @@ class api_1_ListChannels(Resource):
                         args["recordEnabled"],
                         args["chatEnabled"],
                         args["commentsEnabled"],
+                        args["showHome"],
                         args["description"],
                     )
 

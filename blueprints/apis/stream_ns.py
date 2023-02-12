@@ -49,6 +49,10 @@ class api_1_ListStreams(Resource):
             if channelQuery.private != True:
                 rtmpQuery = settings.rtmpServer.query.filter_by(
                     id=stream.rtmpServer
+                ).with_entities(
+                    settings.rtmpServer.id,
+                    settings.rtmpServer.active,
+                    settings.rtmpServer.address
                 ).first()
                 upvotesQueryCount = upvotes.streamUpvotes.query.filter_by(
                     streamID=stream.id
@@ -114,7 +118,10 @@ class api_1_ListStream(Resource):
                         active=True, id=int(streamID)
                     ).first()
                     if streamQuery is not None:
-                        if streamQuery.channel.owningUser == requestAPIKey.userID:
+                        channelQuery = cachedDbCalls.getChannel(
+                            streamQuery.linkedChannel
+                        )
+                        if channelQuery.owningUser == requestAPIKey.userID:
                             args = streamParserPut.parse_args()
                             if "streamName" in args:
                                 if args["streamName"] is not None:
