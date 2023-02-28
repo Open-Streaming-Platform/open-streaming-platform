@@ -947,19 +947,19 @@
              <div class="chatsticker-emoji-picker-group">
                  <div class="chatsticker-emoji-picker-group-title">Default</div>
                  {% for sticker in stickerSelectorList['builtin'] %}
-                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" class="lazy"/></span>
                  {% endfor %}
              </div>
              <div class="chatsticker-emoji-picker-group">
                 <div class="chatsticker-emoji-picker-group-title">Global</div>
                  {% for sticker in stickerSelectorList['global'] %}
-                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" class="lazy"/></span>
                  {% endfor %}
              </div>
              <div class="chatsticker-emoji-picker-group">
                  <div class="chatsticker-emoji-picker-group-title">Channel</div>
                  {% for sticker in stickerSelectorList['channel'] %}
-                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" /></span>
+                <span class="chatsticker-emoji-picker-emoji" title="{{ sticker.name }}"><img src="{{ sticker.file }}" height="32px" alt="{{ sticker.name }}" title="{{ sticker.name }}" class="lazy"/></span>
                  {% endfor %}
              </div>
           </div>
@@ -1708,7 +1708,7 @@
                                 {% for sticker in channel.id | get_channelStickers %}
                                 <div id="sticker-{{ sticker.id }}" class="m-2" style="width:250px;height:250px;">
                                     <div class="mx-auto my-2" style="width:128px;">
-                                        <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" style="width:128px;height:128px;object-fit: scale-down;">
+                                        <img src="/images/stickers/{{ channel.channelLoc }}/{{ sticker.filename }}" class="lazy" style="width:128px;height:128px;object-fit: scale-down;">
                                     </div>
                                     <input type="text" class="form-control w-100" name="sticker-name-{{ sticker.id }}" id="sticker-name-{{ sticker.id }}" value="{{ sticker.name }}" pattern="[A-Za-z0-9_]+">
                                     <div class="mx-auto my-2" style="width:96px;">

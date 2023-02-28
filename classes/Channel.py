@@ -155,6 +155,7 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
+            "subscriptions": self.subscriptions.count(),
             "tags": [obj.id for obj in self.get_tags()],
         }
 
@@ -182,6 +183,7 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
+            "subscriptions": self.subscriptions.count(),
             "tags": [obj.id for obj in self.get_tags()],
         }
 
