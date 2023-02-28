@@ -10,6 +10,7 @@ from classes import subscriptions
 from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
+from functions import channelFunc
 
 from functions.scheduled_tasks import message_tasks
 
@@ -20,7 +21,6 @@ def toggle_chanSub(payload):
     if current_user.is_authenticated:
         sysSettings = cachedDbCalls.getSystemSettings()
         if "channelID" in payload:
-            # channelQuery = Channel.Channel.query.filter_by(id=int(payload['channelID'])).first()
             channelQuery = cachedDbCalls.getChannel(int(payload["channelID"]))
             if channelQuery is not None:
                 currentSubscription = subscriptions.channelSubs.query.filter_by(
@@ -64,6 +64,9 @@ def toggle_chanSub(payload):
                     )
                     db.session.add(newNotification)
                     db.session.commit()
+
+                    # Broadcast new stream event via socket.io in EC_<channelLoc> Namespace
+                    channelFunc.broadcastEventStream(channelQuery.channelLoc, "New Subscription:" + channelQuery.channelLoc + ":" + str(current_user.id) + ":" + current_user.username)
 
                     message_tasks.send_webhook.delay(
                         channelQuery.id,
