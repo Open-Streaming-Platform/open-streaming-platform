@@ -293,6 +293,7 @@ def serializeChannel(channelID):
         "vanityURL": channelData.vanityURL,
         "showHome": channelData.showHome,
         "maxVideoRetention": channelData.maxVideoRetention,
+        "subscriptions": getChannelSubCount(channelID),
         "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
     }
 
@@ -310,7 +311,7 @@ def serializeChannels():
     return returnData
 
 
-@cache.memoize(timeout=60)
+@cache.memoize(timeout=30)
 def getChannelSubCount(channelID):
     SubscriptionQuery = subscriptions.channelSubs.query.filter_by(
         channelID=channelID
