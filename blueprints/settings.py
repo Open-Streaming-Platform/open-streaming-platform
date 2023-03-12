@@ -1734,7 +1734,7 @@ def settings_channels_page():
                     if requestedVanityURL != "":
                         existingChannelQuery = Channel.Channel.query.filter_by(
                             vanityURL=requestedVanityURL
-                        ).first()
+                        ).with_entities(Channel.Channel.id).first()
                         if (
                             existingChannelQuery is None
                             or existingChannelQuery.id == requestedChannel.id
