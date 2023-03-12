@@ -24,17 +24,27 @@ def handle_viewer_total_request(streamData, room=None):
     channelLoc = str(streamData["data"])
 
     viewers = xmpp.getChannelCounts(channelLoc)
-    ChannelUpdateStatement = Channel.Channel.query.filter_by(
-        channelLoc=channelLoc
-    ).update(dict(currentViewers=viewers))
-    channelQuery = (
-        Channel.Channel.query.filter_by(channelLoc=channelLoc)
-        .with_entities(Channel.Channel.id)
-        .first()
-    )
-    StreamUpdateStatement = Stream.Stream.query.filter_by(
-        active=True, linkedChannel=channelQuery.id
-    ).update(dict(currentViewers=viewers))
+    channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+    if channelQuery != None:
+        updateQuery = (
+                update(Channel.Channel)
+                .where(Channel.Channel.channelLoc==channelLoc)
+                .values([
+                        {"currentViewers": viewers}
+                    ]
+                )
+            )
+
+        updateQuery = (
+                    update(Stream.Stream)
+                    .where(Stream.Stream.linkedChannel==channelQuery.id)
+                    .where(Stream.Stream.active==True)
+                    .where(Stream.Stream.complete==False)
+                    .values([
+                            {"currentViewers": viewers}
+                        ]
+                    )
+                )
 
     db.session.commit()
     db.session.close()
@@ -50,18 +60,21 @@ def updateStreamData(message):
     channelLoc = message["channel"]
 
     sysSettings = cachedDbCalls.getSystemSettings()
-    channelQuery = Channel.Channel.query.filter_by(
-        channelLoc=channelLoc, owningUser=current_user.id
-    ).first()
-
-    if channelQuery is not None:
-        StreamQuery = Stream.Stream.query.filter_by(
-            linkedChannel=channelQuery.id, active=True, complete=False
-        ).first()
-        if StreamQuery is not None:
-
-            StreamQuery.streamName = system.strip_html(message["name"])
-            StreamQuery.topic = int(message["topic"])
+    channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+    if channelQuery != None:
+        if channelQuery.owningUser == current_user.id:
+            updateQuery = (
+                update(Stream.Stream)
+                .where(Stream.Stream.linkedChannel==channelQuery.id)
+                .where(Stream.Stream.active==True)
+                .where(Stream.Stream.complete==False)
+                .values(
+                    [
+                        {"streamName": system.strip_html(message["name"])},
+                        {"topic": int(message["topic"])} 
+                    ]
+                )
+            )
             db.session.commit()
 
             if channelQuery.imageLocation is None:
@@ -92,14 +105,14 @@ def updateStreamData(message):
                 channelimage=channelImage,
                 streamer=templateFilters.get_userName(channelQuery.owningUser),
                 channeldescription=str(channelQuery.description),
-                streamname=StreamQuery.streamName,
+                streamname=system.strip_html(message["name"]),
                 streamurl=(
                     sysSettings.siteProtocol
                     + sysSettings.siteAddress
                     + "/view/"
                     + channelQuery.channelLoc
                 ),
-                streamtopic=templateFilters.get_topicName(StreamQuery.topic),
+                streamtopic=templateFilters.get_topicName(int(message["topic"])),
                 streamimage=(
                     sysSettings.siteProtocol
                     + sysSettings.siteAddress
