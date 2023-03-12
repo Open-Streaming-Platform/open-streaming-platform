@@ -634,9 +634,12 @@ class api_1_SearchChannels(Resource):
         Searches Channel Names and Metadata and returns Name and Link
         """
         args = channelSearchPost.parse_args()
-        returnArray = []
+        finalArray = []
         if "term" in args:
             returnArray = cachedDbCalls.searchChannels(args["term"])
-            return {"results": returnArray}
+            for chan in returnArray:
+                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation]
+                finalArray.append(newChanObj)
+            return {"results": finalArray}
         else:
             return {"results": {"message": "Request Error"}}, 400
