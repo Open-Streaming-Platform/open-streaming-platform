@@ -1432,7 +1432,7 @@ def settings_channels_page():
             recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
 
             for vid in recordedVidsQuery:
-                statsViewsRecordedDay = cachedDbCalls.getVideoViewsByDate(vid)
+                statsViewsRecordedDay = cachedDbCalls.getVideoViewsByDate(vid.id)
 
                 for entry in statsViewsRecordedDay:
                     if entry[0] in statsViewsRecordedDayDict:
