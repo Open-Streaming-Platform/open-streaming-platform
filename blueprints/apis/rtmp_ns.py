@@ -113,6 +113,13 @@ class api_1_rtmp_stage1(Resource):
             name = args["name"]
             addr = args["addr"]
             results = rtmpFunc.rtmp_stage1_streamkey_check(name, addr)
+            if results is None:
+                log.error(
+                    {
+                        "level": "error",
+                        "message": "Results not returned from stage 1 check - " + str(name) + "/" + str(addr)
+                    }
+                )
             if results["success"] is True:
                 log.info(
                     {
