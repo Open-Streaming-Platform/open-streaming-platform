@@ -26,25 +26,8 @@ def handle_viewer_total_request(streamData, room=None):
     viewers = xmpp.getChannelCounts(channelLoc)
     channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
     if channelQuery != None:
-        updateQuery = (
-                update(Channel.Channel)
-                .where(Channel.Channel.channelLoc==channelLoc)
-                .values([
-                        {"currentViewers": viewers}
-                    ]
-                )
-            )
-
-        updateQuery = (
-                    update(Stream.Stream)
-                    .where(Stream.Stream.linkedChannel==channelQuery.id)
-                    .where(Stream.Stream.active==True)
-                    .where(Stream.Stream.complete==False)
-                    .values([
-                            {"currentViewers": viewers}
-                        ]
-                    )
-                )
+        updateQuery = Channel.Channel.query.filter_by(channelLoc=channelLoc).update(dict(currentViewers=viewers))
+        updateQuery = Stream.Stream.query.filter_by(linkedChannel=channelQuery.id, active=True, complete=False).update(dict(currentViewers=viewers))
 
     db.session.commit()
     db.session.close()
@@ -63,18 +46,7 @@ def updateStreamData(message):
     channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
     if channelQuery != None:
         if channelQuery.owningUser == current_user.id:
-            updateQuery = (
-                update(Stream.Stream)
-                .where(Stream.Stream.linkedChannel==channelQuery.id)
-                .where(Stream.Stream.active==True)
-                .where(Stream.Stream.complete==False)
-                .values(
-                    [
-                        {"streamName": system.strip_html(message["name"])},
-                        {"topic": int(message["topic"])} 
-                    ]
-                )
-            )
+            updateQuery = Stream.Stream.query.filter_by(linkedChannel=channelQuery.id, active=True, complete=False).update(dict(streamName=system.strip_html(message["name"]), topic=int(message["topic"])))
             db.session.commit()
 
             if channelQuery.imageLocation is None:
