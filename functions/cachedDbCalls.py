@@ -1,4 +1,6 @@
 from sqlalchemy import and_
+from sqlalchemy.sql.expression import func
+import datetime
 
 from classes import settings
 from classes import Channel
@@ -10,6 +12,8 @@ from classes import topics
 from classes import comments
 from classes import panel
 from classes import upvotes
+from classes import views
+from classes.shared import db
 
 from classes.shared import cache
 
@@ -27,6 +31,40 @@ def getOAuthProviders():
     SystemOAuthProviders = settings.oAuthProvider.query.all()
     return SystemOAuthProviders
 
+
+@cache.memoize(timeout=300)
+def getChannelLiveViewsByDate(channelId):
+    liveViewCountQuery = (
+        db.session.query(
+            func.date(views.views.date), func.count(views.views.id)
+        )
+        .filter(views.views.viewType == 0)
+        .filter(views.views.itemID == channelId)
+        .filter(
+            views.views.date
+            > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
+        )
+        .group_by(func.date(views.views.date))
+        .all()
+    )
+    return liveViewCountQuery
+
+@cache.memoize(timeout=600)
+def getVideoViewsByDate(videoId):
+    videoViewCountQuery = (
+        db.session.query(
+            func.date(views.views.date), func.count(views.views.id)
+        )
+        .filter(views.views.viewType == 1)
+        .filter(views.views.itemID == videoId)
+        .filter(
+            views.views.date
+            > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
+        )
+        .group_by(func.date(views.views.date))
+        .all()
+    )
+    return videoViewCountQuery
 
 # Stream Related DB Calls
 @cache.memoize(timeout=60)
