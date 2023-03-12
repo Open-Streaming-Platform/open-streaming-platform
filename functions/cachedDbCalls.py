@@ -51,7 +51,16 @@ def getChannelLiveViewsByDate(channelId):
 
 @cache.memoize(timeout=600)
 def getVideoViewsByDate(videoId):
-    videoViewCountQuery = views.views.query.filter_by(viewType=1, itemID=videoId).filter(views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30))).with_entities(func.date(views.views.date), func.count(views.views.id)).group_by(func.date(views.views.date)).all()
+    videoViewCountQuery = (
+        db.session.query(
+            func.date(views.views.date), func.count(views.views.id)
+        )
+        .filter(views.views.viewType==1)
+        .filter(views.views.itemID==videoId)
+        .filter(views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30)))
+        .group_by(func.date(views.views.date))
+        .all()
+    )
     return videoViewCountQuery
 
 # Stream Related DB Calls
