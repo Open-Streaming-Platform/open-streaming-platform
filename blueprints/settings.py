@@ -721,13 +721,6 @@ def admin_page():
                     systemLogo = "/images/" + filename
                     themes.faviconGenerator(globalvars.videoRoot + "images/" + filename)
 
-            # validAddress = system.formatSiteAddress(serverAddress)
-            # try:
-            #    externalIP = socket.gethostbyname(validAddress)
-            # except socket.gaierror:
-            #    flash("Invalid Server Address/IP", "error")
-            #    return redirect(url_for(".admin_page", page="settings"))
-
             sysSettings.siteName = serverName
             sysSettings.siteProtocol = serverProtocol
             sysSettings.siteAddress = serverAddress
@@ -1427,19 +1420,7 @@ def settings_channels_page():
             # 30 Days Viewer Stats
             viewersTotal = 0
 
-            statsViewsLiveDay = (
-                db.session.query(
-                    func.date(views.views.date), func.count(views.views.id)
-                )
-                .filter(views.views.viewType == 0)
-                .filter(views.views.itemID == channel.id)
-                .filter(
-                    views.views.date
-                    > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
-                )
-                .group_by(func.date(views.views.date))
-                .all()
-            )
+            statsViewsLiveDay = cachedDbCalls.getChannelLiveViewsByDate(channel.id)
             statsViewsLiveDayArray = []
             for entry in statsViewsLiveDay:
                 viewersTotal = viewersTotal + entry[1]
@@ -1451,19 +1432,7 @@ def settings_channels_page():
             recordedVidsQuery = cachedDbCalls.getChannelVideos(channel.id)
 
             for vid in recordedVidsQuery:
-                statsViewsRecordedDay = (
-                    db.session.query(
-                        func.date(views.views.date), func.count(views.views.id)
-                    )
-                    .filter(views.views.viewType == 1)
-                    .filter(views.views.itemID == vid.id)
-                    .filter(
-                        views.views.date
-                        > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
-                    )
-                    .group_by(func.date(views.views.date))
-                    .all()
-                )
+                statsViewsRecordedDay = cachedDbCalls.getVideoViewsByDate(vid)
 
                 for entry in statsViewsRecordedDay:
                     if entry[0] in statsViewsRecordedDayDict:
