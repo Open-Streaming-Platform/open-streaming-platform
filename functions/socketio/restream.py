@@ -28,7 +28,7 @@ def newRestream(message):
                 url=restreamURL,
                 channel=int(restreamChannel),
                 enabled=False,
-            ).first()
+            ).with_entities(Channel.restreamDestinations.id).first()
             restreamID = restreamQuery.id
 
             emit(
@@ -57,17 +57,30 @@ def newRestream(message):
 @socketio.on("toggleRestream")
 def toggleRestream(message):
     restreamID = message["id"]
-    restreamQuery = Channel.restreamDestinations.query.filter_by(
-        id=int(restreamID)
-    ).first()
+    restreamQuery = (
+        Channel.restreamDestinations.query
+        .filter_by(id=int(restreamID))
+        .with_entities(
+            Channel.restreamDestinations.id,
+            Channel.restreamDestinations.channel,
+            Channel.restreamDestinations.enabled
+            )
+        .first()
+    )
     if restreamQuery is not None:
-        if restreamQuery.channelData.owningUser == current_user.id:
-            restreamQuery.enabled = not restreamQuery.enabled
-            db.session.commit()
+        channelQuery = cachedDbCalls.getChannel(restreamQuery.channel)
+        if channelQuery is not None:
+            if channelQuery.owningUser == current_user.id:
+                restreamUpdate = Channel.restreamDestinations.query.filter_by(id=int(restreamID)).update(dict(enabled=not restreamQuery.enabled))
+                db.session.commit()
+            else:
+                db.session.commit()
+                db.session.close()
+                return abort(401)
         else:
             db.session.commit()
             db.session.close()
-            return abort(401)
+            return abort(500)
     else:
         db.session.commit()
         db.session.close()
@@ -80,17 +93,30 @@ def toggleRestream(message):
 @socketio.on("deleteRestream")
 def deleteRestream(message):
     restreamID = message["id"]
-    restreamQuery = Channel.restreamDestinations.query.filter_by(
-        id=int(restreamID)
-    ).first()
+    restreamQuery = (
+        Channel.restreamDestinations.query
+        .filter_by(id=int(restreamID))
+        .with_entities(
+            Channel.restreamDestinations.id,
+            Channel.restreamDestinations.channel,
+            Channel.restreamDestinations.enabled
+            )
+        .first()
+    )
     if restreamQuery is not None:
-        if restreamQuery.channelData.owningUser == current_user.id:
-            db.session.delete(restreamQuery)
-            db.session.commit()
+        channelQuery = cachedDbCalls.getChannel(restreamQuery.channel)
+        if channelQuery is not None:
+            if channelQuery.owningUser == current_user.id:
+                restreamUpdate = Channel.restreamDestinations.query.filter_by(id=int(restreamID)).delete()
+                db.session.commit()
+            else:
+                db.session.commit()
+                db.session.close()
+                return abort(401)
         else:
             db.session.commit()
             db.session.close()
-            return abort(401)
+            return abort(500)
     else:
         db.session.commit()
         db.session.close()
