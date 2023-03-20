@@ -33,7 +33,7 @@ services:
     #  - "traefik.http.routers.ejabberd.tls.certresolver=le"
     #  - "traefik.http.services.ejabberd.loadbalancer.server.port=5280"
     volumes:
-    - "/srv/docker/osp-app/data/ejabberd/database:/home/ejabberd/database"
+    - "/srv/docker/osp-app/data/ejabberd/database:/opt/ejabberd/database"
     networks:
       - osp
       - web

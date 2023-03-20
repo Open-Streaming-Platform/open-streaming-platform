@@ -19,6 +19,10 @@ steps:
       from_secret: docker_password
     repo: deamos/osp-core
     tags: nightly
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
@@ -33,6 +37,10 @@ steps:
       from_secret: docker_password
     repo: deamos/osp-rtmp
     tags: nightly
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
@@ -47,6 +55,10 @@ steps:
       from_secret: docker_password
     repo: deamos/osp-ejabberd
     tags: nightly
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
@@ -103,6 +115,10 @@ steps:
     password:
       from_secret: docker_password
     repo: deamos/osp-core
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
@@ -116,6 +132,10 @@ steps:
     password:
       from_secret: docker_password
     repo: deamos/osp-rtmp
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
@@ -129,6 +149,10 @@ steps:
     password:
       from_secret: docker_password
     repo: deamos/osp-ejabberd
+    platforms:
+      - linux/amd64
+      - linux/arm/v7
+      - linux/arm64
   when:
     event:
       - push
