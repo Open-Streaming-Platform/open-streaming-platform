@@ -2,6 +2,8 @@
 ==============================================
 OSP-Core: Adds Subscription Count to Channel API
 OSP-Core: Adds Lazy Load to Channel and Admin Settings Stickers, Chat Sticker Picker
+OSP-Core: Optimizes page load for My Channels Settings Page
+OSP-Core: Fixes Bug in Channels Search API
 
 0.9.7
 ==============================================
