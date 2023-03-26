@@ -1042,9 +1042,38 @@ def getUserPhotoLocation(userID):
 
 @cache.memoize(timeout=30)
 def getUser(userID):
-    UserQuery = Sec.User.query.filter_by(id=userID).first()
+    returnData = {}
+    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    if UserQuery is not None:
+        OwnedChannels = getChannelsByOwnerId(UserQuery.id)
+        returnData = {
+            "id": str(UserQuery.id),
+            "uuid": UserQuery.uuid,
+            "username": UserQuery.username,
+            "biography": UserQuery.biography,
+            "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "channels": OwnedChannels,
+            "page": "/profile/" + str(UserQuery.username) + "/"
+        }
+    return returnData
     return UserQuery
 
+@cache.memoize(timeout=30)
+def getUserByUsername(username):
+    returnData = {}
+    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    if UserQuery is not None:
+        OwnedChannels = getChannelsByOwnerId(UserQuery.id)
+        returnData = {
+            "id": str(UserQuery.id),
+            "uuid": UserQuery.uuid,
+            "username": UserQuery.username,
+            "biography": UserQuery.biography,
+            "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "channels": OwnedChannels,
+            "page": "/profile/" + str(UserQuery.username) + "/"
+        }
+    return returnData
 
 @cache.memoize(timeout=120)
 def searchUsers(term):
