@@ -1,3 +1,0 @@
-# ignoring /data prevents Dockerfile to copy it into the container
-# we are mounting it anyway, no need to copy (and bloat the image)
-/data
