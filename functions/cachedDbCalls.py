@@ -129,6 +129,8 @@ def getAllChannels():
         Channel.Channel.allowGuestNickChange,
         Channel.Channel.showHome,
         Channel.Channel.maxVideoRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
     ).all()
     return channelQuery
 
@@ -167,6 +169,8 @@ def getChannel(channelID):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(id=channelID)
         .first()
@@ -208,6 +212,8 @@ def getChannelByLoc(channelLoc):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(channelLoc=channelLoc)
         .first()
@@ -249,6 +255,8 @@ def getChannelByStreamKey(StreamKey):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(streamKey=StreamKey)
         .first()
@@ -290,6 +298,8 @@ def getChannelsByOwnerId(OwnerId):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(owningUser=OwnerId)
         .all()
@@ -329,6 +339,8 @@ def serializeChannel(channelID):
         "showHome": channelData.showHome,
         "maxVideoRetention": channelData.maxVideoRetention,
         "subscriptions": getChannelSubCount(channelID),
+        "hubEnabled": channelData.hubEnabled,
+        "hubNSFW": channelData.hubNSFW,
         "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
     }
 
@@ -344,6 +356,23 @@ def serializeChannels():
     for channel in ChannelQuery:
         returnData.append(serializeChannel(channel.id))
     return returnData
+
+@cache.memoize(timeout=30)
+def getLiveChannels(hubCheck=False):
+    streamQuery = Stream.Stream.query.filter_by(active=True, completed=False).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
+    liveChannelIds = []
+    for stream in streamQuery:
+        if stream.linkedChannel not in liveChannelIds:
+            liveChannelIds.append(stream.linkedChannel)
+    liveChannelReturn = []
+    for liveChannelId in liveChannelIds:
+        serializedData = serializeChannel(liveChannelId)
+        if hubCheck is True:
+            if serializedData['hubEnabled'] is True:
+                liveChannelReturn.append(serializedData)
+        else:
+            liveChannelReturn.append(serializeChannel(liveChannelId))
+    return liveChannelReturn
 
 
 @cache.memoize(timeout=30)

@@ -116,6 +116,9 @@ class Channel(db.Model):
         self.private = False
         self.chatFormat = "messenger"
         self.chatHistory = 2
+        self.hubEnabled = False
+        self.hubNSFW = False
+        
 
     def __repr__(self):
         return "<id %r>" % self.id
