@@ -14,7 +14,7 @@ from classes import panel
 from classes import upvotes
 from classes import views
 from classes.shared import db
-
+from classes.shared import Dict2Class
 from classes.shared import cache
 
 # System Settings Related DB Calls
@@ -1055,11 +1055,10 @@ def getUser(userID):
             "channels": OwnedChannels,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
-    return returnData
-    return UserQuery
+    return Dict2Class(returnData)
 
 @cache.memoize(timeout=30)
-def getUserByUsername(username):
+def getUserByUsernameDict(username):
     returnData = {}
     UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
     if UserQuery is not None:
