@@ -1,3 +1,12 @@
+0.9.8
+==============================================
+OSP-Core: Adds Subscription Count to Channel API
+OSP-Core: Adds Lazy Load to Channel and Admin Settings Stickers, Chat Sticker Picker
+OSP-Core: Optimizes page load for My Channels Settings Page
+OSP-Core: Fixes Bug in Channels Search API
+OSP-Core: Optimization of the List User API Call
+OSP-Core: Various Bug Fixes related to calls to non-existant values
+
 0.9.7
 ==============================================
 OSP-Core/OSP-RTMP: Adds WebRTC playback via OvenMediaEngine RTMP Push (*Experimental*). Read more at https://open-streaming-platform.readthedocs.io/en/nightly/usage/streaming.html#osp-web-rtc-playback-experimental

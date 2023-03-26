@@ -158,9 +158,9 @@ class api_1_ListUser(Resource):
         """
         Get Public Info for One User
         """
-        userQuery = Sec.User.query.filter_by(username=username).all()
+        userQuery = cachedDbCalls.getUserByUsernameDict(username)
         db.session.commit()
-        return {"results": [ob.serialize() for ob in userQuery]}
+        return {"results": [userQuery]}
 
 
 @api.route("/role")

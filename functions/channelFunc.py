@@ -3,6 +3,9 @@ import shutil
 import logging
 
 from flask_security import current_user
+from flask_socketio import emit
+
+from classes.shared import db, socketio
 
 from globals import globalvars
 
@@ -97,3 +100,6 @@ def delete_channel(channelID):
 
     db.session.close()
     return True
+
+def broadcastEventStream(channelLoc, message):
+    emit('eventStream', { 'message': message }, namespace="ES_" + channelLoc, broadcast=True)

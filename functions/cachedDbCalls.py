@@ -1,4 +1,6 @@
 from sqlalchemy import and_
+from sqlalchemy.sql.expression import func
+import datetime
 
 from classes import settings
 from classes import Channel
@@ -10,7 +12,9 @@ from classes import topics
 from classes import comments
 from classes import panel
 from classes import upvotes
-
+from classes import views
+from classes.shared import db
+from classes.shared import Dict2Class
 from classes.shared import cache
 
 # System Settings Related DB Calls
@@ -27,6 +31,37 @@ def getOAuthProviders():
     SystemOAuthProviders = settings.oAuthProvider.query.all()
     return SystemOAuthProviders
 
+
+@cache.memoize(timeout=300)
+def getChannelLiveViewsByDate(channelId):
+    liveViewCountQuery = (
+        db.session.query(
+            func.date(views.views.date), func.count(views.views.id)
+        )
+        .filter(views.views.viewType == 0)
+        .filter(views.views.itemID == channelId)
+        .filter(
+            views.views.date
+            > (datetime.datetime.utcnow() - datetime.timedelta(days=30))
+        )
+        .group_by(func.date(views.views.date))
+        .all()
+    )
+    return liveViewCountQuery
+
+@cache.memoize(timeout=600)
+def getVideoViewsByDate(videoId):
+    videoViewCountQuery = (
+        db.session.query(
+            func.date(views.views.date), func.count(views.views.id)
+        )
+        .filter(views.views.viewType==1)
+        .filter(views.views.itemID==videoId)
+        .filter(views.views.date > (datetime.datetime.utcnow() - datetime.timedelta(days=30)))
+        .group_by(func.date(views.views.date))
+        .all()
+    )
+    return videoViewCountQuery
 
 # Stream Related DB Calls
 @cache.memoize(timeout=60)
@@ -293,6 +328,7 @@ def serializeChannel(channelID):
         "vanityURL": channelData.vanityURL,
         "showHome": channelData.showHome,
         "maxVideoRetention": channelData.maxVideoRetention,
+        "subscriptions": getChannelSubCount(channelID),
         "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
     }
 
@@ -310,7 +346,7 @@ def serializeChannels():
     return returnData
 
 
-@cache.memoize(timeout=60)
+@cache.memoize(timeout=30)
 def getChannelSubCount(channelID):
     SubscriptionQuery = subscriptions.channelSubs.query.filter_by(
         channelID=channelID
@@ -1006,9 +1042,37 @@ def getUserPhotoLocation(userID):
 
 @cache.memoize(timeout=30)
 def getUser(userID):
-    UserQuery = Sec.User.query.filter_by(id=userID).first()
-    return UserQuery
+    returnData = {}
+    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    if UserQuery is not None:
+        OwnedChannels = getChannelsByOwnerId(UserQuery.id)
+        returnData = {
+            "id": str(UserQuery.id),
+            "uuid": UserQuery.uuid,
+            "username": UserQuery.username,
+            "biography": UserQuery.biography,
+            "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "channels": OwnedChannels,
+            "page": "/profile/" + str(UserQuery.username) + "/"
+        }
+    return Dict2Class(returnData)
 
+@cache.memoize(timeout=30)
+def getUserByUsernameDict(username):
+    returnData = {}
+    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    if UserQuery is not None:
+        OwnedChannels = getChannelsByOwnerId(UserQuery.id)
+        returnData = {
+            "id": str(UserQuery.id),
+            "uuid": UserQuery.uuid,
+            "username": UserQuery.username,
+            "biography": UserQuery.biography,
+            "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "channels": OwnedChannels,
+            "page": "/profile/" + str(UserQuery.username) + "/"
+        }
+    return returnData
 
 @cache.memoize(timeout=120)
 def searchUsers(term):
