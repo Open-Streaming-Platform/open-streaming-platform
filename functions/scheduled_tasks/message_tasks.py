@@ -26,30 +26,33 @@ def setup_message_tasks(sender, **kwargs):
 
 @celery.task(bind=True)
 def send_email(self, subject, destination, message):
-    sysSettings = cachedDbCalls.getSystemSettings()
-    finalMessage = (
-        message
-        + "<p>If you would like to unsubscribe, click the link below: <br><a href='"
-        + sysSettings.siteProtocol
-        + sysSettings.siteAddress
-        + "/unsubscribe?email="
-        + destination
-        + "'>Unsubscribe</a></p></body></html>"
-    )
-    msg = Message(subject=subject, recipients=[destination])
-    msg.sender = sysSettings.siteName + "<" + config.smtpSendAs + ">"
-    msg.body = finalMessage
-    msg.html = finalMessage
-    email.send(msg)
-    log.info(
-        {
-            "level": "info",
-            "taskID": self.request.id.__str__(),
-            "message": "Email Sent",
-            "subject": subject,
-            "to": destination,
-        }
-    )
+    if destination is not None:
+        sysSettings = cachedDbCalls.getSystemSettings()
+        if message is None:
+            message = ""
+        finalMessage = (
+            message
+            + "<p>If you would like to unsubscribe, click the link below: <br><a href='"
+            + sysSettings.siteProtocol
+            + sysSettings.siteAddress
+            + "/unsubscribe?email="
+            + destination
+            + "'>Unsubscribe</a></p></body></html>"
+        )
+        msg = Message(subject=subject, recipients=[destination])
+        msg.sender = sysSettings.siteName + "<" + config.smtpSendAs + ">"
+        msg.body = finalMessage
+        msg.html = finalMessage
+        email.send(msg)
+        log.info(
+            {
+                "level": "info",
+                "taskID": self.request.id.__str__(),
+                "message": "Email Sent",
+                "subject": subject,
+                "to": destination,
+            }
+        )
     return True
 
 

@@ -332,44 +332,54 @@ def rtmp_record_auth_check(channelLoc):
             if existingStream is not None:
                 streamID = existingStream.id
 
-            newRecording = RecordedVideo.RecordedVideo(
-                userQuery.id,
-                channelRequest.id,
-                channelRequest.channelName,
-                channelRequest.topic,
-                0,
-                "",
-                currentTime,
-                channelRequest.allowComments,
-                False,
-            )
-            newRecording.originalStreamID = streamID
-            db.session.add(newRecording)
-            db.session.commit()
-
-            pendingVideo = (
-                RecordedVideo.RecordedVideo.query.filter_by(
-                    channelID=channelRequest.id, videoLocation="", pending=True
+                newRecording = RecordedVideo.RecordedVideo(
+                    userQuery.id,
+                    channelRequest.id,
+                    channelRequest.channelName,
+                    channelRequest.topic,
+                    0,
+                    "",
+                    currentTime,
+                    channelRequest.allowComments,
+                    False,
                 )
-                .with_entities(RecordedVideo.RecordedVideo.id)
-                .first()
-            )
+                newRecording.originalStreamID = streamID
+                db.session.add(newRecording)
+                db.session.commit()
 
-            StreamQueryUpdate = Stream.Stream.query.filter_by(
-                id=existingStream.id
-            ).update(dict(recordedVideoId=pendingVideo.id))
+                pendingVideo = (
+                    RecordedVideo.RecordedVideo.query.filter_by(
+                        channelID=channelRequest.id, videoLocation="", pending=True
+                    )
+                    .with_entities(RecordedVideo.RecordedVideo.id)
+                    .first()
+                )
 
-            db.session.commit()
+                StreamQueryUpdate = Stream.Stream.query.filter_by(
+                    id=existingStream.id
+                ).update(dict(recordedVideoId=pendingVideo.id))
 
-            returnMessage = {
-                "time": str(currentTime),
-                "request": "RecordCheck",
-                "success": True,
-                "channelLoc": channelRequest.channelLoc,
-                "ipAddress": None,
-                "message": "Success - Starting Recording",
-            }
-            return returnMessage
+                db.session.commit()
+
+                returnMessage = {
+                    "time": str(currentTime),
+                    "request": "RecordCheck",
+                    "success": True,
+                    "channelLoc": channelRequest.channelLoc,
+                    "ipAddress": None,
+                    "message": "Success - Starting Recording",
+                }
+                return returnMessage
+            else:
+                returnMessage = {
+                    "time": str(currentTime),
+                    "request": "RecordCheck",
+                    "success": False,
+                    "channelLoc": channelRequest.channelLoc,
+                    "ipAddress": None,
+                    "message": "Failed - No Existing Stream for Recording",
+                }
+                return returnMessage
         else:
             returnMessage = {
                 "time": str(currentTime),
@@ -581,6 +591,18 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
                 pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
                     channelID=requestedChannel.id, videoLocation="", pending=True
                 ).first()
+            
+            if pendingVideo is None:
+                returnMessage = {
+                    "time": str(currentTime),
+                    "request": "RecordingClose",
+                    "success": False,
+                    "channelLoc": requestedChannel.channelLoc,
+                    "ipAddress": None,
+                    "message": "Failure - No Pending Video Exists to Close",
+                }   
+                db.session.close()
+                return returnMessage
 
             pendingPath = path.replace(
                 "/tmp/", current_app.config["WEB_ROOT"] + "pending/"
