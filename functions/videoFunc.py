@@ -162,7 +162,7 @@ def changeVideoMetadata(
                 sysSettings.siteProtocol
                 + sysSettings.siteAddress
                 + "/channel/"
-                + str(recordedVidQuery.channel.id)
+                + str(channelQuery.id)
             ),
             channeltopic=templateFilters.get_topicName(channelQuery.topic),
             channelimage=channelImage,
