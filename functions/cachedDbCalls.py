@@ -346,12 +346,19 @@ def serializeChannel(channelID):
 
 
 @cache.memoize(timeout=30)
-def serializeChannels():
-    ChannelQuery = (
-        Channel.Channel.query.filter_by(private=False)
-        .with_entities(Channel.Channel.id)
-        .all()
-    )
+def serializeChannels(hubCheck=False):
+    if hubCheck is True:
+        ChannelQuery = (
+            Channel.Channel.query.filter_by(private=False, hubEnabled=True)
+            .with_entities(Channel.Channel.id)
+            .all()
+        )
+    else:
+        ChannelQuery = (
+            Channel.Channel.query.filter_by(private=False)
+            .with_entities(Channel.Channel.id)
+            .all()
+        )
     returnData = []
     for channel in ChannelQuery:
         returnData.append(serializeChannel(channel.id))
@@ -373,6 +380,11 @@ def getLiveChannels(hubCheck=False):
         else:
             liveChannelReturn.append(serializeChannel(liveChannelId))
     return liveChannelReturn
+
+@cache.memoize(timeout=60)
+def getHubChannels():
+    channels = serializeChannels(hubCheck=True)
+    return channels
 
 
 @cache.memoize(timeout=30)

@@ -293,6 +293,17 @@ class api_1_ActiveChannels(Resource):
         sysSettings = cachedDbCalls.getSystemSettings()
         activeChannels = cachedDbCalls.getLiveChannels()
         return  {"results": activeChannels }, 200
+    
+@api.route("/hubChannels")
+class api_1_hubChannels(Resource):
+    @api.doc(responses={200: "Success", 400: "Request Error"})
+    def get(self):
+        """
+        Returns list of Hub Enabled channels
+        """
+        sysSettings = cachedDbCalls.getSystemSettings()
+        channels = cachedDbCalls.getHubChannels()
+        return  {"results": channels }, 200
 
 # Invites Endpoint for a Channel
 @api.route("/<string:channelEndpointID>/streams")
