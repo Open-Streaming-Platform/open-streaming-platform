@@ -359,7 +359,7 @@ def serializeChannels():
 
 @cache.memoize(timeout=30)
 def getLiveChannels(hubCheck=False):
-    streamQuery = Stream.Stream.query.filter_by(active=True, completed=False).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
+    streamQuery = Stream.Stream.query.filter_by(active=True, complete=False).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
     liveChannelIds = []
     for stream in streamQuery:
         if stream.linkedChannel not in liveChannelIds:
