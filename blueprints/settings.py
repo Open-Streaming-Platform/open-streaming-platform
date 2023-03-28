@@ -1309,6 +1309,8 @@ def settings_channels_page():
                 Channel.Channel.showChatJoinLeaveNotification,
                 Channel.Channel.chatFormat,
                 Channel.Channel.chatHistory,
+                Channel.Channel.hubEnabled,
+                Channel.Channel.hubNSFW
             )
             .all()
         )
