@@ -1538,6 +1538,30 @@
                                 </div>
                             </div>
                         </div>
+                        <!--OSP Hub Dropdown-->
+                        <div class="row mt-1">
+                          <div class="col-12">
+                              <div class="row userChannelSettings-dropdownHeader">
+                                  <div class="col-12">
+                                      <a href="javascript:void(0)" onclick="toggleDiv('osphub-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> OSP Hub</b></h5></a>
+                                  </div>
+                              </div>
+                              <div id="osphub-{{channel.id}}" style="display:none;">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <div class="form-check form-switch">
+                                      <label class="form-check-label" for="publishSelect">Publish Channel to OSP Hub</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                      <label class="form-check-label" for="publishSelect">Not Safe for Work (NSFW) Channel</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
                     </div>
                 </div>
             </div>
