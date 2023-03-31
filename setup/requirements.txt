@@ -53,7 +53,7 @@ python-editor==1.0.4
 python-engineio==4.3.1
 python-socketio==5.0.2
 pytz==2022.1
-redis==4.3.3
+redis==4.4.4
 requests==2.28.2
 sentry-sdk==1.12.1
 smmap2==2.0.5
