@@ -104,6 +104,7 @@ def init(context):
     context.jinja_env.filters["get_flaggedForDeletion"] = get_flaggedForDeletion
     context.jinja_env.filters["get_channelData"] = get_channelData
     context.jinja_env.filters["get_channelStickers"] = get_channelStickers
+    context.jinja_env.filters["get_users"] = get_users
 
 
 # ----------------------------------------------------------------------------#

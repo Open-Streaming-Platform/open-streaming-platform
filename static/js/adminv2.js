@@ -49,71 +49,76 @@ var chart = new Chart(ctx, {
     }
 });
 
+
+$(document).ready(function() {
+    $('#channelTransferUsernameSelect').select2();
+});
+
 // Sets the Front Page Panel Layout Object to be Sortable
 var frontPagePanelSortList = document.getElementById('panelOrderList');
 var frontPagePanelSortableObject = Sortable.create(frontPagePanelSortList, {
-  animation: 350
+    animation: 350
 });
 
 $('#maxClipLength').on('input', function() {
-  var sliderValue = $(this).val();
-  if (sliderValue != "") {
-    var maxValue = $(this).attr("max");
-    if (sliderValue != maxValue) {
-      var date = new Date(0);
-      date.setSeconds(sliderValue);
-      var timeString = date.toISOString().substr(11, 8);
-    } else {
-      timeString = "Infinite";
+    var sliderValue = $(this).val();
+    if (sliderValue != "") {
+        var maxValue = $(this).attr("max");
+        if (sliderValue != maxValue) {
+            var date = new Date(0);
+            date.setSeconds(sliderValue);
+            var timeString = date.toISOString().substr(11, 8);
+        } else {
+            timeString = "Infinite";
+        }
+        $(this).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
     }
-    $(this).siblings("h3").find('.rangeSliderValue')[0].innerHTML = timeString;
-  }
 });
 
 // oAuth Related JS
 $(document).on("click", ".edit-oAuth-Button", function () {
-     var oAuthID = $(this).data('id');
-     var oAuthName = $(this).data('name');
-     var oAuthType = $(this).data('authtype');
-     var oAuthFriendlyName = $(this).data('friendlyname');
-     var oAuthDisplayColor = $(this).data('displaycolor');
-     var oAuthClientID = $(this).data('clientid');
-     var oAuthClientSecret = $(this).data('clientsecret');
-     var oAuthAccessTokenURL = $(this).data('accesstokenurl');
-     var oAuthAccessTokenParams = $(this).data('accesstokenparams');
-     var oAuthAuthorizeURL = $(this).data('authorizeurl');
-     var oAuthAuthorizeParams = $(this).data('authorizeparams');
-     var oAuthAPIBaseURL = $(this).data('apibaseurl');
-     var oAuthClientKwargs = $(this).data('clientkwargs');
-     var oAuthProfileEndpoint = $(this).data('profileendpoint');
-     var oAuthIDValue= $(this).data('idvalue');
-     var oAuthUsername = $(this).data('usernamevalue');
-     var oAuthEmail = $(this).data('emailvalue');
-     $("#oAuthID").val( oAuthID );
-     $("#oAuthPreset").val( oAuthType )
-     $("#oAuthName").val( oAuthName );
-     $("#oAuthFriendlyName").val( oAuthFriendlyName );
-     $("#oAuthColor").val( oAuthDisplayColor );
-     $("#oAuthClient_id").val( oAuthClientID );
-     $("#oAuthClient_secret").val( oAuthClientSecret );
-     $("#oAuthAccess_token_url").val( oAuthAccessTokenURL );
-     if (oAuthAccessTokenParams != 'None') {
-         $("#oAuthAccess_token_params").val(JSON.parse(oAuthAccessTokenParams));
-     }
-     $("#oAuthAuthorize_url").val( oAuthAuthorizeURL );
-     if (oAuthAuthorizeParams != 'None') {
-         $("#oAuthAuthorize_params").val(JSON.parse(oAuthAuthorizeParams));
-     }
-     $("#oAuthApi_base_url").val( oAuthAPIBaseURL );
-     if (oAuthClientKwargs != 'None') {
-         $("#oAuthClient_kwargs").val(JSON.parse(oAuthClientKwargs));
-     }
-     $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
-     $("#oAuthIDValue").val( oAuthIDValue );
-     $("#oAuthUsername").val( oAuthUsername );
-     $("#oAuthEmail").val( oAuthEmail );
-     updateOAuthModalWindowLayout();
-     $("#newOauthModal").modal('show');
+    var oAuthID = $(this).data('id');
+    var oAuthName = $(this).data('name');
+    var oAuthType = $(this).data('authtype');
+    var oAuthFriendlyName = $(this).data('friendlyname');
+    var oAuthDisplayColor = $(this).data('displaycolor');
+    var oAuthClientID = $(this).data('clientid');
+    var oAuthClientSecret = $(this).data('clientsecret');
+    var oAuthAccessTokenURL = $(this).data('accesstokenurl');
+    var oAuthAccessTokenParams = $(this).data('accesstokenparams');
+    var oAuthAuthorizeURL = $(this).data('authorizeurl');
+    var oAuthAuthorizeParams = $(this).data('authorizeparams');
+    var oAuthAPIBaseURL = $(this).data('apibaseurl');
+    var oAuthClientKwargs = $(this).data('clientkwargs');
+    var oAuthProfileEndpoint = $(this).data('profileendpoint');
+    var oAuthIDValue= $(this).data('idvalue');
+    var oAuthUsername = $(this).data('usernamevalue');
+    var oAuthEmail = $(this).data('emailvalue');
+    $("#oAuthID").val( oAuthID );
+    $("#oAuthPreset").val( oAuthType )
+    $("#oAuthName").val( oAuthName );
+    $("#oAuthFriendlyName").val( oAuthFriendlyName );
+    $("#oAuthColor").val( oAuthDisplayColor );
+    $("#oAuthClient_id").val( oAuthClientID );
+    $("#oAuthClient_secret").val( oAuthClientSecret );
+    $("#oAuthAccess_token_url").val( oAuthAccessTokenURL );
+    if (oAuthAccessTokenParams != 'None') {
+        $("#oAuthAccess_token_params").val(JSON.parse(oAuthAccessTokenParams));
+    }
+    $("#oAuthAuthorize_url").val( oAuthAuthorizeURL );
+    if (oAuthAuthorizeParams != 'None') {
+        $("#oAuthAuthorize_params").val(JSON.parse(oAuthAuthorizeParams));
+    }
+    $("#oAuthApi_base_url").val( oAuthAPIBaseURL );
+    if (oAuthClientKwargs != 'None') {
+        $("#oAuthClient_kwargs").val(JSON.parse(oAuthClientKwargs));
+    }
+    $("#oAuthProfile_endpoint").val( oAuthProfileEndpoint );
+    $("#oAuthIDValue").val( oAuthIDValue );
+    $("#oAuthUsername").val( oAuthUsername );
+    $("#oAuthEmail").val( oAuthEmail );
+    updateOAuthModalWindowLayout();
+    $("#newOauthModal").modal('show');
 });
 
 // Set Presets for oAuth
