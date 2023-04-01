@@ -49,11 +49,6 @@ var chart = new Chart(ctx, {
     }
 });
 
-
-$(document).ready(function() {
-    $('#channelTransferUsernameSelect').select2();
-});
-
 // Sets the Front Page Panel Layout Object to be Sortable
 var frontPagePanelSortList = document.getElementById('panelOrderList');
 var frontPagePanelSortableObject = Sortable.create(frontPagePanelSortList, {
@@ -766,11 +761,12 @@ function transferChannelModal(channelID) {
 
 function transferChannel() {
     sel = document.getElementById('channelTransferUsernameSelect')
+    updatedUserName = sel.value;
+
     channelId = document.getElementById('transferChannelId').value;
-    newOwner = sel.value;
+    newOwner = document.querySelector("#channelTransferUsernameSelect option[value='"+updatedUserName+"']").dataset.value;
     socket.emit('transferChannelOwner', {channelId: channelId, userId: newOwner});
 
-    updatedUserName = sel.options[sel.selectedIndex].text;
     updatedEntry = document.getElementById('channelCardRow-' + channelId + '-userCol');
     updatedEntry.innerHTML = '<a href="/profile/' + updatedUserName + '">' + updatedUserName + '</a>'
     createNewBSAlert('Channel Transfered to New Owner...', 'success')
