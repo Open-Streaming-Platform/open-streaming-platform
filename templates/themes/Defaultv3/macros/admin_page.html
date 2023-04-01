@@ -881,7 +881,7 @@
                               </div>
                           </td>
                           <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
-                          <td><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                          <td id="channelCardRow-{{channel.id}}-userCol"><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
                           <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
                           <td>{{channel.channelLoc}}</td>
                           <td>{{channel.views}}</td>
@@ -890,7 +890,7 @@
                           <td><span class="badge {% if channel.record == True %} badge-success {% elif channel.record == False %} badge-danger {% endif %}"> {{channel.record}}</span></td>
                           <td><span class="badge {% if channel.allowComments == True %} badge-success {% elif channel.allowComments == False %} badge-danger {% endif %}"> {{channel.allowComments}}</span></td>
                           <td><span class="badge {% if channel.protected == True %} badge-success {% elif channel.protected == False %} badge-danger {% endif %}"> {{channel.protected}}</span></td>
-                          <td><button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="bi bi-trash-fill"></i></button></td>
+                          <td><button class="btn btn-sm btn-warning me-1" type="button" onclick="transferChannelModal('{{channel.id}}')"><i class="bi bi-person-fill-up"></i></button> <button class="btn btn-sm btn-danger" type="button" onclick="deleteChannelModal('{{channel.id}}')"><i class="bi bi-trash-fill"></i></button></td>
                         </tr>
                     {% endfor %}
                 </tbody>

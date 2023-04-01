@@ -752,3 +752,21 @@ function call_celery_task(taskname) {
 function deleteOAuthProvider(providerID) {
     document.getElementById('DeleteOAuthProviderID').value = providerID;
 }
+
+function transferChannelModal(channelID) {
+    document.getElementById('transferChannelId').value = channelID;
+    document.getElementById('channelTransferUsernameSelect').value = '';
+    openModal('transferChannelModal');
+}
+
+function transferChannel() {
+    sel = document.getElementById('channelTransferUsernameSelect')
+    channelId = document.getElementById('transferChannelId').value;
+    newOwner = sel.value;
+    socket.emit('transferChannelOwner', {channelId: channelId, userId: newOwner});
+
+    updatedUserName = sel.options[sel.selectedIndex].text;
+    updatedEntry = document.getElementById('channelCardRow-' + channelId + '-userCol');
+    updatedEntry.innerHTML = '<a href="/profile/' + updatedUserName + '">' + updatedUserName + '</a>'
+    createNewBSAlert('Channel Transfered to New Owner...', 'success')
+}

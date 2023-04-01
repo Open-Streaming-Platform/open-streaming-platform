@@ -1169,3 +1169,7 @@ def get_channelStickers(channelID):
         .all()
     )
     return stickerQuery
+
+def get_users(value):
+    users = cachedDbCalls.getUsers()
+    return users

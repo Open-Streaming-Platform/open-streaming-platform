@@ -1,3 +1,8 @@
+0.9.9
+==============================================
+OSP-Core: Fixes for Channel Level Webhooks Not Displaying
+OSP-Core: Optimizations on Channel Level Webhooks
+
 0.9.8
 ==============================================
 OSP-Core: Adds Subscription Count to Channel API

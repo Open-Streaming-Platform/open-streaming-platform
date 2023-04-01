@@ -1074,6 +1074,11 @@ def getUserByUsernameDict(username):
         }
     return returnData
 
+@cache.memoize(timeout=60)
+def getUsers():
+    UserQuery = Sec.User.query.filter_by(active=True).with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid).all()
+    return UserQuery
+
 @cache.memoize(timeout=120)
 def searchUsers(term):
     if term is not None:
