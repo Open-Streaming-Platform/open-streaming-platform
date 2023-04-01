@@ -1069,7 +1069,7 @@ def getUserByUsernameDict(username):
             "username": UserQuery.username,
             "biography": UserQuery.biography,
             "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
-            "channels": OwnedChannels,
+            "channels": OwnedChannels.__dict__,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
     return returnData
