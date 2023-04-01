@@ -2,6 +2,7 @@
 ==============================================
 OSP-Core: Fixes for Channel Level Webhooks Not Displaying
 OSP-Core: Optimizations on Channel Level Webhooks
+OSP-Core: Fixes to the /user endpoint which causes 500 error on pulling users with channels
 
 0.9.8
 ==============================================
