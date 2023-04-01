@@ -113,6 +113,16 @@ def deleteTopic(message):
         topicsFunc.deleteTopic(topicID, newTopicID)
     return "OK"
 
+@socketio.on('transferChannelOwner')
+def transferChannel(message):
+    if current_user.has_role("Admin"):
+        channelId = int(message["channelId"])
+        userId = int(message["userId"])
+
+        RecordedVideo.RecordedVideo.query.filter_by(channelID=channelId).update(dict(owningUser=userId))
+        Channel.Channel.query.filter_by(id=channelId).update(dict(owningUser=userId))
+        db.session.commit()
+    return "OK"
 
 @socketio.on("getServerResources")
 def get_resource_usage(message):

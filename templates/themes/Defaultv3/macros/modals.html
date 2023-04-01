@@ -2351,3 +2351,32 @@ var tagify_clipTags = new Tagify(clipTags, {
   </div>
 </div>
 {% endmacro %}
+
+{% macro transfer_channel_modal() %}
+<div class="modal fade" id="transferChannelModal" tabindex="-1" role="dialog" aria-labelledby="transferChannelModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="transferChannelModalTitle">Transfer Ownership of a Channel to Another User</h5>
+        <div class="float-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+      </div>
+      <div class="modal-body">
+          Select the Username to Transfer this Channel To:<br>
+          <select class="form-select boxShadow" name="channelTransferUsername" id="channelTransferUsernameSelect">
+            {% set userList = "" | get_users %}
+            {% for user in userList %}
+              <option value="{{user.id}}">{{user.username}}</option>
+            {%- endfor %}
+          </select>
+          <input type="hidden" id="transferChannelId" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+        <button id="transferChannelButton" type="button" class="btn btn-warning" data-bs-dismiss="modal" onclick="transferChannel();">Transfer</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
