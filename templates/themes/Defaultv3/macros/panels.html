@@ -1512,7 +1512,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     {% set channelWebhooks = channel.id | get_channelWebhooks %}
-                                                                    {% for webhook in channel.webhooks %}
+                                                                    {% for webhook in channelWebhooks %}
                                                                     <tr id="webhookTableRow-{{webhook.id}}" class="align-middle">
                                                                         <td id="webhookRowName-{{webhook.id}}">{{webhook.name}}</td>
                                                                         <td id="webhookRowEndpoint-{{webhook.id}}" style="display:none;">{{webhook.endpointURL}}</td>
