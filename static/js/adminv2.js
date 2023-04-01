@@ -764,7 +764,7 @@ function transferChannel() {
     updatedUserName = sel.value;
 
     channelId = document.getElementById('transferChannelId').value;
-    newOwner = document.querySelector("#channelTransferUsernameSelect option[value='"+updatedUserName+"']").dataset.value;
+    newOwner = document.querySelector("#userDataList option[value='"+updatedUserName+"']").dataset.value;
     socket.emit('transferChannelOwner', {channelId: channelId, userId: newOwner});
 
     updatedEntry = document.getElementById('channelCardRow-' + channelId + '-userCol');
