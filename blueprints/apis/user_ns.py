@@ -158,7 +158,7 @@ class api_1_ListUser(Resource):
         """
         Get Public Info for One User
         """
-        userQuery = cachedDbCalls.getUserByUsernameDict(username)
+        userQuery = cachedDbCalls.getUserByUsername(username)
         db.session.commit()
         return {"results": [userQuery]}
 
