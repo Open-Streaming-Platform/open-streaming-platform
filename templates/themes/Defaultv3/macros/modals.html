@@ -2364,12 +2364,13 @@ var tagify_clipTags = new Tagify(clipTags, {
       </div>
       <div class="modal-body">
           Select the Username to Transfer this Channel To:<br>
-          <select class="form-select boxShadow" name="channelTransferUsername" id="channelTransferUsernameSelect">
+          <input class="form-control boxShadow" list="userDataList" name="channelTransferUsername" id="channelTransferUsernameSelect" placeholder="Type to search...">
+          <datalist id="userDataList">
             {% set userList = "" | get_users %}
             {% for user in userList %}
-              <option value="{{user.id}}">{{user.username}}</option>
+              <option data-value="{{user.id}}" value="{{user.username}}">
             {%- endfor %}
-          </select>
+          </datalist>
           <input type="hidden" id="transferChannelId" value="">
       </div>
       <div class="modal-footer">
