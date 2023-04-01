@@ -97,13 +97,12 @@ def addChangeWebhook(message):
 @socketio.on("deleteWebhook")
 def deleteWebhook(message):
     webhookID = int(message["webhookID"])
-    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
-
+    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).with_entities(webhook.webhook.id, webhook.webhook.channelID).first()
     if webhookQuery is not None:
-        channelQuery = webhookQuery.channel
+        channelQuery = cachedDbCalls.getChannel(webhookQuery.channelID)
         if channelQuery is not None:
             if channelQuery.owningUser is current_user.id:
-                db.session.delete(webhookQuery)
+                webhook.webhook.query.filter_by(id=webhookID).delete()
                 db.session.commit()
     db.session.close()
     return "OK"
