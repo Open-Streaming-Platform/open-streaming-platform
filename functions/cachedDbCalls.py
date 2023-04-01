@@ -1065,7 +1065,7 @@ def getUserByUsernameDict(username):
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
         channelsReturn = []
         for channel in OwnedChannels:
-            channelsReturn.append(channel.__dict__)
+            channelsReturn.append(channel.channelLoc)
         returnData = {
             "id": str(UserQuery.id),
             "uuid": UserQuery.uuid,
