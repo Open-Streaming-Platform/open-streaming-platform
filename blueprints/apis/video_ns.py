@@ -31,8 +31,8 @@ class api_1_ListVideos(Resource):
         """
         fullVideoQuery = cachedDbCalls.getAllVideo()
         videoArray = []
-        for id in fullVideoQuery:
-            videoArray.append(cachedDbCalls.getVideoDict(id))
+        for video in fullVideoQuery:
+            videoArray.append(cachedDbCalls.getVideoDict(video.id))
         return {
             "results": videoArray
         }
@@ -46,7 +46,7 @@ class api_1_ListVideo(Resource):
         Returns Info on a Single Recorded Video
         """
         results = []
-        results.append(cachedDbCalls.getVideoDict(id))
+        results.append(cachedDbCalls.getVideoDict(videoID))
 
         return {
             "results": results
