@@ -664,7 +664,7 @@ def render_staticPage(static_page):
 @root_bp.route("/xmpp", methods=["GET","POST","DELETE"])
 def xmpp_proxy():
     sysSettings = cachedDbCalls.getSystemSettings()
-    xmppConnector = "http://" + ejabberdServer +  "/http-bind/"
+    xmppConnector = "http://" + ejabberdServer +  ":5280/bosh"
     if request.method=="GET":
         resp = requests.get(xmppConnector)
         excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
