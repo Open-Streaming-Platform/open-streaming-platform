@@ -1,6 +1,6 @@
 from flask import session
 from flask_security import current_user
-from flask_security.utils import admin_change_password
+from flask_security.changeable import admin_change_password
 import datetime
 import bleach
 import logging
