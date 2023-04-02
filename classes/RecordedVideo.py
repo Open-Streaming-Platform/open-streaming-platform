@@ -1,6 +1,8 @@
 from .shared import db
 from uuid import uuid4
 
+from functions import cachedDbCalls
+
 import os
 from globals import globalvars
 
@@ -28,22 +30,22 @@ class RecordedVideo(db.Model):
         "videoUpvotes",
         backref="recordedVideo",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="noload",
     )
     comments = db.relationship(
         "videoComments",
         backref="recordedVideo",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="noload",
     )
     clips = db.relationship(
-        "Clips", backref="recordedVideo", cascade="all, delete-orphan", lazy="joined"
+        "Clips", backref="recordedVideo", cascade="all, delete-orphan", lazy="noload"
     )
     tags = db.relationship(
         "video_tags",
         backref="recordedVideo",
         cascade="all, delete-orphan",
-        lazy="joined",
+        lazy="noload",
     )
 
     def __init__(
@@ -83,7 +85,13 @@ class RecordedVideo(db.Model):
         return False
 
     def get_upvotes(self):
-        return len(self.upvotes)
+        return cachedDbCalls.getVideoUpvotes(self.id)
+    
+    def get_clips(self):
+        return cachedDbCalls.getClipsForVideo(self.id)
+
+    def get_tags(self):
+        return cachedDbCalls.getVideoTags(self.id)
 
     def serialize(self):
         return {
@@ -101,8 +109,8 @@ class RecordedVideo(db.Model):
             "videoLocation": "/videos/" + self.videoLocation,
             "thumbnailLocation": "/videos/" + self.thumbnailLocation,
             "gifLocation": "/videos/" + self.gifLocation,
-            "ClipIDs": [obj.id for obj in self.clips],
-            "tags": [obj.id for obj in self.tags],
+            "ClipIDs": [obj.id for obj in self.get_clips()],
+            "tags": [obj.id for obj in self.get_tags()],
         }
 
     def remove(self):
