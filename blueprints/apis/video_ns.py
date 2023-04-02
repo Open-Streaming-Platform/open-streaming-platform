@@ -29,14 +29,12 @@ class api_1_ListVideos(Resource):
         """
         Returns a List of All Recorded Videos
         """
-        videoList = RecordedVideo.RecordedVideo.query.filter_by(
-            pending=False, published=True
-        ).all()
-        db.session.commit()
+        fullVideoQuery = cachedDbCalls.getAllVideo()
+        videoArray = []
+        for id in fullVideoQuery:
+            videoArray.append(cachedDbCalls.getVideoDict(id))
         return {
-            "results": [
-                ob.serialize() for ob in videoList if ob.channel.private is False
-            ]
+            "results": videoArray
         }
 
 
@@ -47,14 +45,11 @@ class api_1_ListVideo(Resource):
         """
         Returns Info on a Single Recorded Video
         """
-        videoList = RecordedVideo.RecordedVideo.query.filter_by(
-            id=videoID, published=True
-        ).all()
-        db.session.commit()
+        results = []
+        results.append(cachedDbCalls.getVideoDict(id))
+
         return {
-            "results": [
-                ob.serialize() for ob in videoList if ob.channel.private is False
-            ]
+            "results": results
         }
 
     @api.expect(videoParserPut)

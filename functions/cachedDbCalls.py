@@ -748,6 +748,31 @@ def getAllVideo():
     )
     return recordedVid
 
+cache.memorize(timeout=60)
+def getVideoDict(videoID):
+    videoReturn = getVideo(videoID)
+    if videoReturn != None:
+        return {
+                "id": videoReturn.id,
+                "uuid": videoReturn.uuid,
+                "channelID": videoReturn.channelID,
+                "owningUser": videoReturn.owningUser,
+                "videoDate": str(videoReturn.videoDate),
+                "videoName": videoReturn.channelName,
+                "description": videoReturn.description,
+                "topic": videoReturn.topic,
+                "views": videoReturn.views,
+                "length": videoReturn.length,
+                "upvotes": getVideoUpvotes(videoReturn.id),
+                "videoLocation": "/videos/" + videoReturn.videoLocation,
+                "thumbnailLocation": "/videos/" + videoReturn.thumbnailLocation,
+                "gifLocation": "/videos/" + videoReturn.gifLocation,
+                "ClipIDs": [obj.id for obj in getClipsForVideo(videoReturn.id)],
+                "tags": [obj.id for obj in getVideoTags(videoReturn.id)],
+        }
+    else:
+        return {}
+
 @cache.memoize(timeout=30)
 def getVideoUpvotes(videoID):
     VideoUpvotes = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).count()
