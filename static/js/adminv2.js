@@ -774,5 +774,5 @@ function transferChannel() {
 
 function resetPassword(userId) {
     socket.emit('admin_password_reset', {userId: userId})
-    createNewBSAlert("Forced Password Reset Sent")
+    createNewBSAlert("Forced Password Reset Sent", 'success')
 }
