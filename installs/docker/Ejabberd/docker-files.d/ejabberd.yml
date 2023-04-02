@@ -57,6 +57,7 @@ listen:
     module: ejabberd_http
     request_handlers:
       /http-bind: mod_bosh
+      /bosh: mod_bosh
       /ws: ejabberd_http_ws
       /.well-known/acme-challenge: ejabberd_acme
   -
