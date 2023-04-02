@@ -886,7 +886,7 @@ def getClipChannelID(clipID):
                 return ChannelQuery.id
     return None
 
-@cache.memoize(timeout=30):
+@cache.memoize(timeout=30)
 def getClipsForVideo(videoID):
     ClipQuery = (
         RecordedVideo.Clips.query.filter_by(parentVideo=videoID)
