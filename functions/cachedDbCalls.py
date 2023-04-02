@@ -748,7 +748,7 @@ def getAllVideo():
     )
     return recordedVid
 
-cache.memorize(timeout=60)
+cache.memoize(timeout=60)
 def getVideoDict(videoID):
     videoReturn = getVideo(videoID)
     if videoReturn != None:
