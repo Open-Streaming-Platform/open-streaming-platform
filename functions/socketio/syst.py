@@ -26,6 +26,7 @@ from functions import cachedDbCalls
 from functions import topicsFunc
 from functions import videoFunc
 from functions import channelFunc
+from functions import securityFunc
 from functions.scheduled_tasks import video_tasks
 
 from app import user_datastore
@@ -711,6 +712,14 @@ def add_edit_static_page(message):
                     db.session.close()
                     cache.delete_memoized(cachedDbCalls.getStaticPages)
                     cache.delete_memoized(cachedDbCalls.getStaticPage, oldname)
+    return "OK"
+
+@socketio.on("admin_password_reset")
+def admin_password_reset(message):
+    if current_user.is_authenticated:
+        if current_user.has_role("Admin"):
+            userId = message['userId']
+            result = securityFunc.admin_force_reset(int(userId))
     return "OK"
 
 

@@ -771,3 +771,8 @@ function transferChannel() {
     updatedEntry.innerHTML = '<a href="/profile/' + updatedUserName + '">' + updatedUserName + '</a>'
     createNewBSAlert('Channel Transfered to New Owner...', 'success')
 }
+
+function resetPassword(userId) {
+    socket.emit('admin_password_reset', {userId: userId})
+    createNewBSAlert("Forced Password Reset Sent")
+}

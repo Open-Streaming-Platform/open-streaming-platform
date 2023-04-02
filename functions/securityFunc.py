@@ -1,8 +1,10 @@
 from flask import session
 from flask_security import current_user
+from flask_security.utils import admin_change_password
 import datetime
 import bleach
 import logging
+import secrets
 
 from classes.shared import db, limiter, cache
 from classes import Channel
@@ -202,3 +204,13 @@ def delete_user(userID):
 def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.
     return bleach.clean(identity, strip=True)
+
+def admin_force_reset(userId):
+    UserQuery = Sec.User.query.filter_by(id=userId).first()
+    if UserQuery != None:
+        randomPass = secrets.token_urlsafe(32)
+        admin_change_password(UserQuery, randomPass, notify=True)
+        db.session.commit()
+        return True
+    db.session.commit()
+    return False
