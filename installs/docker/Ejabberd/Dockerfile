@@ -1,4 +1,4 @@
-FROM ghcr.io/processone/ejabberd:master
+FROM ejabberd/ecs:20.04
 MAINTAINER David Lockwood
 
 # OSP Customized EJABBERD Docker Container
@@ -41,7 +41,7 @@ RUN apk add supervisor
 RUN mkdir -p /var/log/supervisor
 COPY docker-files.d/supervisord.conf /run/supervisord.conf
 
-USER ejabberd
+USER root
 
 RUN mkdir /opt/ejabberd/run
 COPY docker-files.d/ejabberd.yml /opt/ejabberd/run/ejabberd.yml
