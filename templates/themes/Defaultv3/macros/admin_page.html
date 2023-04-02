@@ -799,7 +799,7 @@
                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                         </div>
                         <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});" {% if user.tf_primary_method == None %}disabled{% endif %}><i class="bi bi-shield-slash-fill"></i></button>
-                        <button id="forcepw-reset-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Force Reset Password" onclick="resetPassword({{ user.id }});"><i class="fa-solid fa-key"></i></button>
+                        <button id="forcepw-reset-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Force Reset Password" onclick="resetPassword({{ user.id }});" {% if user.authType != 0 %}disabled{% endif %}><i class="fa-solid fa-key"></i></button>
                         <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="bi bi-person-plus-fill"></i></a>
                         <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="bi bi-trash-fill"></i></a>
                       </td>
