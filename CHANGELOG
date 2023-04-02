@@ -6,6 +6,7 @@ OSP-Core: Fixes to the /user endpoint which causes 500 error on pulling users wi
 OSP-Core: Added Ability for Admins to Transfer a Channel to Another User
 OSP-Core: Adds Ability for Admins to Force Reset a User Password
 OSP-Core: Optimized /video API routes on all videos and individual video
+OSP-Core: Optmized Updating of Channel Chat Settings
 OSP-Core/Ejabberd: Removed the requirement for configuring external Ejabberd access.  OSP will now act as a reverse proxy to Ejabberd's BOSH connection
 
 0.9.8
