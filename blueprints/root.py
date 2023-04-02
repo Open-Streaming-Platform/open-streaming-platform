@@ -13,6 +13,9 @@ from flask import (
 from flask_security import current_user, login_required
 from sqlalchemy.sql.expression import func
 import re
+import requests
+
+from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
 
 from classes.shared import db
 from classes import Sec
@@ -646,8 +649,6 @@ def proxy_adaptive_subfolder_redirect(channelLoc, file):
 
 
 # Static Page Redirect
-
-
 @root_bp.route("/p/<static_page>")
 def render_staticPage(static_page):
     sanitized_page_string = re.sub(r"[^a-zA-Z0-9]+", "", static_page)
@@ -659,3 +660,24 @@ def render_staticPage(static_page):
 
     flash("Invalid Page URL", "error")
     return redirect(url_for("root.main_page"))
+
+@root_bp.route("/xmpp", methods=["GET","POST","DELETE"])
+def xmpp_proxy():
+    sysSettings = cachedDbCalls.getSystemSettings()
+    xmppConnector = "http://" + ejabberdServer +  "/http-bind/"
+    if request.method=="GET":
+        resp = requests.get(xmppConnector)
+        excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+        headers = [(name, value) for (name, value) in  resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = Response(resp.content, resp.status_code, headers)
+        return response
+    elif request.method=="POST":
+        resp = requests.post(xmppConnector, json=request.get_json())
+        excluded_headers = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+        headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+        response = Response(resp.content, resp.status_code, headers)
+        return response
+    elif request.method=="DELETE":
+        resp = requests.delete(xmppConnector).content
+        response = Response(resp.content, resp.status_code, headers)
+        return response
