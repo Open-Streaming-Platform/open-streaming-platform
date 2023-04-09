@@ -127,6 +127,12 @@ socket.on('connect', function() {
     get_all_osp_component_status();
 });
 
+socket.on('osp-hub-addAck', function(msg) {
+    document.getElementById('hubStatusInfo-identifier-data').innerHTML = msg['serverUUID'];
+    document.getElementById('hubStatusInfo-status-data').innerHTML = '<i class="text-success fas fa-check" title="Successfully Connected"></i>';
+    createNewBSAlert('Successfully Added to OSP Hub', 'success');
+})
+
 socket.on('admin_osp_component_status_update', function (msg) {
     var componentStatusName = msg['component'];
     var status = msg['status'];
@@ -779,10 +785,32 @@ function resetPassword(userId) {
 
 function updateHubURL() {
     socket.emit('updateHubURL', {hubURL: document.getElementById('hubURL').value});
+    createNewBSAlert("OSP Hub URL Updated", "success")
 }
 function addServerToHub() {
     socket.emit('addServerToHub',{})
 }
 function removeServerFromHub() {
     socket.emit('deleteServerFromHub', {})
+    document.getElementById('hubStatusInfo-identifier-data').innerHTML = '';
+    document.getElementById('hubStatusInfo-status-data').innerHTML = '<i class="text-danger fas fa-times" title="Not Added to OSP Hub"></i>';
+    createNewBSAlert("Request to Remove from OSP Hub Sent", "success")
+}
+
+async function updateHubStatus(url) {
+    const response = await fetch(url);
+    
+    // Storing data in form of JSON
+    var data = await response.json();
+    if (response) {
+        if (data['results'].length > 0) {
+            if (data['results'][0]['serverActive'] === true) {
+                document.getElementById('hubStatusInfo-status-data').innerHTML = '<i class="text-success fas fa-check" title="Successfully Connected"></i>';
+            } else {
+                document.getElementById('hubStatusInfo-status-data').innerHTML = '<i class="text-warning fas fa-exclamation-triangle" title="OSP Hub Showing Server As Unreachable"></i>';
+            }
+        } else {
+            document.getElementById('hubStatusInfo-status-data').innerHTML = '<i class="text-danger fas fa-times" title="Server Id not in OSP Hub"></i>';
+        } 
+    }
 }

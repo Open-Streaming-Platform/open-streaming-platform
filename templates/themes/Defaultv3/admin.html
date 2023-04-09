@@ -254,6 +254,12 @@
                 { 'orderable': false, 'targets': [1, 2, 3, 4, 5, 6] }
             ]
         });
+        {%- if ospHub.hubUUID %}
+        
+        const hubApi = '{{sysSettings.hubURL}}/api/server/{{sysSettings.hubUUID}}';
+        updateHubStatus(hubApi);
+        
+        {%- endif %}
     });
 </script>
 
