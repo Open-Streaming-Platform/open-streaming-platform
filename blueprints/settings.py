@@ -1867,9 +1867,7 @@ def settings_channels_chat_page():
         from app import ejabberd
 
         channelLoc = system.strip_html(request.form["channelLoc"])
-        channelQuery = Channel.Channel.query.filter_by(
-            channelLoc=request.form["channelLoc"]
-        ).first()
+        channelQuery = cachedDbCalls.getChannelByLoc(request.form["channelLoc"])
         if channelQuery is not None and current_user.id == channelQuery.owningUser:
             roomTitle = request.form["roomTitle"]
             roomDescr = system.strip_html(request.form["roomDescr"])
@@ -1883,9 +1881,9 @@ def settings_channels_chat_page():
                 roomDescr,
             )
 
-            channelQuery.chatFormat = request.form["chatFormat"]
+            chatFormat = request.form["chatFormat"]
 
-            channelQuery.chatHistory = request.form["chatHistory"]
+            chatHistory = request.form["chatHistory"]
 
             if "moderatedSelect" in request.form:
                 ejabberd.change_room_option(
@@ -1931,14 +1929,26 @@ def settings_channels_chat_page():
                     "members_by_default",
                     "false",
                 )
+            
+            allowGuestNickChange = False
             if "allowGuestsNickChange" in request.form:
-                channelQuery.allowGuestNickChange = True
-            else:
-                channelQuery.allowGuestNickChange = False
+                allowGuestNickChange = True
+
+            showChatJoinLeaveNotification = False
             if "showJoinPartMsg" in request.form:
-                channelQuery.showChatJoinLeaveNotification = True
-            else:
-                channelQuery.showChatJoinLeaveNotification = False
+                showChatJoinLeaveNotification = True
+            
+            channelUpdate = (
+                Channel.Channel.query.filter_by(id=channelQuery.id)
+                .update(
+                    dict(
+                        allowGuestNickChange=allowGuestNickChange,
+                        showChatJoinLeaveNotification=showChatJoinLeaveNotification,
+                        chatFormat=chatFormat,
+                        chatHistory=chatHistory
+                    )
+                )
+            )
             db.session.commit()
             cachedDbCalls.invalidateChannelCache(channelQuery.id)
 

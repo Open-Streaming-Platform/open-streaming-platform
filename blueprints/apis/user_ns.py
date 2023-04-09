@@ -160,7 +160,10 @@ class api_1_ListUser(Resource):
         """
         userQuery = cachedDbCalls.getUserByUsernameDict(username)
         db.session.commit()
-        return {"results": [userQuery]}
+        if userQuery != {}:
+            return {"results": [userQuery]}
+        else:
+            return {"results": []}
 
 
 @api.route("/role")

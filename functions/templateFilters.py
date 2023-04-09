@@ -104,6 +104,7 @@ def init(context):
     context.jinja_env.filters["get_flaggedForDeletion"] = get_flaggedForDeletion
     context.jinja_env.filters["get_channelData"] = get_channelData
     context.jinja_env.filters["get_channelStickers"] = get_channelStickers
+    context.jinja_env.filters["get_users"] = get_users
 
 
 # ----------------------------------------------------------------------------#
@@ -1093,7 +1094,20 @@ def get_channelRestreamDestinations(channelID):
 
 
 def get_channelWebhooks(channelID):
-    webhookQuery = webhook.webhook.query.filter_by(channelID=channelID).all()
+    webhookQuery = (
+        webhook.webhook.query.filter_by(channelID=channelID)
+        .with_entities(
+            webhook.webhook.id,
+            webhook.webhook.name,
+            webhook.webhook.channelID,
+            webhook.webhook.endpointURL,
+            webhook.webhook.requestHeader,
+            webhook.webhook.requestPayload,
+            webhook.webhook.requestType,
+            webhook.webhook.requestTrigger
+        )
+        .all()
+    )
     return webhookQuery
 
 
@@ -1156,3 +1170,7 @@ def get_channelStickers(channelID):
         .all()
     )
     return stickerQuery
+
+def get_users(value):
+    users = cachedDbCalls.getUsers()
+    return users

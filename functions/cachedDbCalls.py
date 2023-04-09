@@ -789,6 +789,41 @@ def getAllVideo():
     )
     return recordedVid
 
+cache.memoize(timeout=60)
+def getVideoDict(videoID):
+    videoReturn = getVideo(videoID)
+    if videoReturn != None:
+        return {
+                "id": videoReturn.id,
+                "uuid": videoReturn.uuid,
+                "channelID": videoReturn.channelID,
+                "owningUser": videoReturn.owningUser,
+                "videoDate": str(videoReturn.videoDate),
+                "videoName": videoReturn.channelName,
+                "description": videoReturn.description,
+                "topic": videoReturn.topic,
+                "views": videoReturn.views,
+                "length": videoReturn.length,
+                "upvotes": getVideoUpvotes(videoReturn.id),
+                "videoLocation": "/videos/" + videoReturn.videoLocation,
+                "thumbnailLocation": "/videos/" + videoReturn.thumbnailLocation,
+                "gifLocation": "/videos/" + videoReturn.gifLocation,
+                "ClipIDs": [obj.id for obj in getClipsForVideo(videoReturn.id)],
+                "tags": [obj.id for obj in getVideoTags(videoReturn.id)],
+        }
+    else:
+        return {}
+
+@cache.memoize(timeout=30)
+def getVideoUpvotes(videoID):
+    VideoUpvotes = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).count()
+    return VideoUpvotes
+
+@cache.memoize(timeout=30)
+def getVideoTags(videoID):
+    TagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoID).with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name).all()
+    return TagQuery
+
 
 @cache.memoize(timeout=60)
 def getVideoCommentCount(videoID):
@@ -917,6 +952,27 @@ def getClipChannelID(clipID):
                 return ChannelQuery.id
     return None
 
+@cache.memoize(timeout=30)
+def getClipsForVideo(videoID):
+    ClipQuery = (
+        RecordedVideo.Clips.query.filter_by(parentVideo=videoID)
+        .with_entities(
+            RecordedVideo.Clips.id,
+            RecordedVideo.Clips.uuid,
+            RecordedVideo.Clips.parentVideo,
+            RecordedVideo.Clips.startTime,
+            RecordedVideo.Clips.endTime,
+            RecordedVideo.Clips.length,
+            RecordedVideo.Clips.views,
+            RecordedVideo.Clips.clipName,
+            RecordedVideo.Clips.videoLocation,
+            RecordedVideo.Clips.description,
+            RecordedVideo.Clips.thumbnailLocation,
+            RecordedVideo.Clips.gifLocation,
+            RecordedVideo.Clips.published
+        ).all()
+    )
+    return ClipQuery
 
 @cache.memoize(timeout=60)
 def getAllClipsForChannel_View(channelID):
@@ -1104,16 +1160,24 @@ def getUserByUsernameDict(username):
     UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
     if UserQuery is not None:
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
+        channelsReturn = []
+        for channel in OwnedChannels:
+            channelsReturn.append(channel.channelLoc)
         returnData = {
             "id": str(UserQuery.id),
             "uuid": UserQuery.uuid,
             "username": UserQuery.username,
             "biography": UserQuery.biography,
             "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
-            "channels": OwnedChannels,
+            "channels": channelsReturn,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
     return returnData
+
+@cache.memoize(timeout=60)
+def getUsers():
+    UserQuery = Sec.User.query.filter_by(active=True).with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid).all()
+    return UserQuery
 
 @cache.memoize(timeout=120)
 def searchUsers(term):

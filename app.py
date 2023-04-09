@@ -89,8 +89,6 @@ except:
 
     if os.getenv("OSP_EJABBERD_RPCHOST") is not None:
         config.ejabberdServer = os.getenv("OSP_EJABBERD_RPCHOST")
-    if os.getenv("OSP_EJABBERD_BOSHDOMAIN") is not None:
-        config.ejabberdServerHttpBindFQDN = os.getenv("OSP_EJABBERD_BOSHDOMAIN")
     if os.getenv("OSP_RECAPTCHA_ENABLED") is not None:
         config.RECAPTCHA_ENABLED = os.getenv("OSP_RECAPTCHA_ENABLED").lower() in (
             "true",
@@ -466,8 +464,6 @@ ejabberd = None
 
 if hasattr(config, "ejabberdServer"):
     globalvars.ejabberdServer = config.ejabberdServer
-if hasattr(config, "ejabberdServerHttpBindFQDN"):
-    globalvars.ejabberdServerHttpBindFQDN = config.ejabberdServerHttpBindFQDN
 
 try:
     ejabberd = ejabberdctl(
