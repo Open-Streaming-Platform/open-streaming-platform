@@ -294,6 +294,9 @@ def comments_vid_page(videoID):
             comment = system.strip_html(request.form["commentText"])
             currentUser = current_user.id
 
+            if len(comment) > 2048:
+                comment = comment[:2048]
+
             newComment = comments.videoComments(currentUser, comment, recordedVid.id)
             db.session.add(newComment)
             db.session.commit()
