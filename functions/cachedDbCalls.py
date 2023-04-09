@@ -341,7 +341,7 @@ def serializeChannel(channelID):
         "subscriptions": getChannelSubCount(channelID),
         "hubEnabled": channelData.hubEnabled,
         "hubNSFW": channelData.hubNSFW,
-        "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
+        "tags": [getChannelTagName(obj.id) for obj in getChannelTagIds(channelData.id)],
     }
 
 
@@ -430,6 +430,15 @@ def getChannelTagIds(channelID):
         .all()
     )
     return tagQuery
+
+@cache.memoize(timeout=240)
+def getChannelTagName(tagId):
+    tagQuery = (
+        Channel.channel_tags.query.filter_by(id=tagId)
+        .with_entities(Channel.channel_tags.name)
+        .first()
+    )
+    return str(tagQuery.name)
 
 
 @cache.memoize(timeout=10)
