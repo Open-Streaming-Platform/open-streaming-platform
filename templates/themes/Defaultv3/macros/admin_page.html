@@ -1074,3 +1074,33 @@
     </div>
 </div>
 {% endmacro %}
+
+<!--OSP Hub Settings Panels-->
+{% macro osphub_settings_panel(sysSettings, ospHub) %}
+<div class="info-panel-box system-settings-box">
+    <div class="info-panel-box-header boxShadow textShadow">
+        <b>OSP Hub Settings</b>
+    </div>
+    <div class="info-panel-box-body boxShadow">
+        <div class="row my-3">
+            <div class="col-6">
+                <label for="hubURL" class="form-label">OSP Hub Server Address</label>
+                <div class="input-group mb-3">
+                    <input type="text" id="hubURL" class="form-control boxShadow" value="{{ sysSettings.hubURL }}">
+                    <button class="btn btn-primary" type="button" onclick="updateHubURL();">Save</button>
+                </div>
+                <div id="hubStatusInfo">
+                    <div id="hubStatusInfo-status">Current Hub Status: <span id="hubStatusInfo-status-data"></span></div>
+                    <div id="hubStatusInfo-identifier">Hub Identifier: <span id="hubStatusInfo-identifier-data">{{ospHub.hubUUID}}</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-6">
+                <button class="btn btn-success boxShadow mx-2" onclick="addServerToHub();">Add to Hub</button>
+                <button class="btn btn-danger boxShadow mx-2" onclick="removeServerFromHub();">Remove from Hub</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}

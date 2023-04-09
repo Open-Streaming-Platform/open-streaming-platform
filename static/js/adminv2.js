@@ -776,3 +776,13 @@ function resetPassword(userId) {
     socket.emit('admin_password_reset', {userId: userId})
     createNewBSAlert("Forced Password Reset Sent", 'success')
 }
+
+function updateHubURL() {
+    socket.emit('updateHubURL', {hubURL: document.getElementById('hubURL').value});
+}
+function addServerToHub() {
+    socket.emit('addServerToHub',{})
+}
+function removeServerFromHub() {
+    socket.emit('deleteServerFromHub', {})
+}

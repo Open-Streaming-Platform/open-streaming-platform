@@ -54,6 +54,7 @@ from classes import logs
 from classes import subscriptions
 from classes import stickers
 from classes import panel
+from classes import hub
 from classes.shared import cache
 
 from functions import system
@@ -602,6 +603,8 @@ def admin_page():
             "claimed": claimed,
         }
 
+        ospHub = hub.hub.query.first() 
+
         return render_template(
             themes.checkOverride("admin.html"),
             appDBVer=appDBVer,
@@ -630,6 +633,7 @@ def admin_page():
             schedulerList=schedulerList,
             globalPanelList=globalPanelList,
             mainPagePanelMapping=mainPagePanelMappingSort,
+            ospHub=ospHub
         )
     elif request.method == "POST":
 
