@@ -23,11 +23,8 @@ def addChangeWebhook(message):
     invalidTriggers = [20]
 
     channelID = int(message["webhookChannelID"])
-
-    channelQuery = Channel.Channel.query.filter_by(
-        id=channelID, owningUser=current_user.id
-    ).first()
-    if channelQuery is not None:
+    channelQuery = cachedDbCalls.getChannel(channelID)
+    if channelQuery is not None and channelQuery.owningUser == current_user.id:
         webhookName = message["webhookName"]
         webhookEndpoint = message["webhookEndpoint"]
         webhookTrigger = int(message["webhookTrigger"])
@@ -64,30 +61,34 @@ def addChangeWebhook(message):
                 broadcast=False,
             )
         elif webhookInputAction == "edit" and webhookTrigger not in invalidTriggers:
-            existingWebhookQuery = webhook.webhook.query.filter_by(
-                channelID=channelID, id=int(webhookInputID)
-            ).first()
-            if existingWebhookQuery is not None:
-                existingWebhookQuery.name = webhookName
-                existingWebhookQuery.endpointURL = webhookEndpoint
-                existingWebhookQuery.requestHeader = webhookHeader
-                existingWebhookQuery.requestPayload = webhookPayload
-                existingWebhookQuery.requestType = webhookReqType
-                existingWebhookQuery.requestTrigger = webhookTrigger
-                emit(
-                    "changeWebhookAck",
-                    {
-                        "webhookName": webhookName,
-                        "requestURL": webhookEndpoint,
-                        "requestHeader": webhookHeader,
-                        "requestPayload": webhookPayload,
-                        "requestType": webhookReqType,
-                        "requestTrigger": webhookTrigger,
-                        "requestID": existingWebhookQuery.id,
-                        "channelID": channelID,
-                    },
-                    broadcast=False,
+            existingWebhookQuery = (
+                webhook.webhook.query.filter_by(channelID=channelID, id=int(webhookInputID))
+                .update(
+                    dict(
+                        name = webhookName,
+                        endpointURL = webhookEndpoint,
+                        requestHeader = webhookHeader,
+                        requestPayload = webhookPayload,
+                        requestType = webhookReqType,
+                        requestTrigger = webhookTrigger
+                    )
                 )
+            )
+
+            emit(
+                "changeWebhookAck",
+                {
+                    "webhookName": webhookName,
+                    "requestURL": webhookEndpoint,
+                    "requestHeader": webhookHeader,
+                    "requestPayload": webhookPayload,
+                    "requestType": webhookReqType,
+                    "requestTrigger": webhookTrigger,
+                    "requestID": existingWebhookQuery.id,
+                    "channelID": channelID,
+                },
+                broadcast=False,
+            )
     db.session.commit()
     db.session.close()
     return "OK"
@@ -96,13 +97,12 @@ def addChangeWebhook(message):
 @socketio.on("deleteWebhook")
 def deleteWebhook(message):
     webhookID = int(message["webhookID"])
-    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
-
+    webhookQuery = webhook.webhook.query.filter_by(id=webhookID).with_entities(webhook.webhook.id, webhook.webhook.channelID).first()
     if webhookQuery is not None:
-        channelQuery = webhookQuery.channel
+        channelQuery = cachedDbCalls.getChannel(webhookQuery.channelID)
         if channelQuery is not None:
             if channelQuery.owningUser is current_user.id:
-                db.session.delete(webhookQuery)
+                webhook.webhook.query.filter_by(id=webhookID).delete()
                 db.session.commit()
     db.session.close()
     return "OK"
@@ -146,29 +146,33 @@ def addChangeGlobalWebhook(message):
                 broadcast=False,
             )
         elif webhookInputAction == "edit":
-            existingWebhookQuery = webhook.globalWebhook.query.filter_by(
-                id=int(webhookInputID)
-            ).first()
-            if existingWebhookQuery is not None:
-                existingWebhookQuery.name = webhookName
-                existingWebhookQuery.endpointURL = webhookEndpoint
-                existingWebhookQuery.requestHeader = webhookHeader
-                existingWebhookQuery.requestPayload = webhookPayload
-                existingWebhookQuery.requestType = webhookReqType
-                existingWebhookQuery.requestTrigger = webhookTrigger
-                emit(
-                    "changeGlobalWebhookAck",
-                    {
-                        "webhookName": webhookName,
-                        "requestURL": webhookEndpoint,
-                        "requestHeader": webhookHeader,
-                        "requestPayload": webhookPayload,
-                        "requestType": webhookReqType,
-                        "requestTrigger": webhookTrigger,
-                        "requestID": existingWebhookQuery.id,
-                    },
-                    broadcast=False,
+            existingWebhookQuery = (
+                webhook.globalWebhook.query.filter_by(id=int(webhookInputID))
+                .update(
+                    dict(
+                        name = webhookName,
+                        endpointURL = webhookEndpoint,
+                        requestHeader = webhookHeader,
+                        requestPayload = webhookPayload,
+                        requestType = webhookReqType,
+                        requestTrigger = webhookTrigger
+                    )
                 )
+            )
+
+            emit(
+                "changeGlobalWebhookAck",
+                {
+                    "webhookName": webhookName,
+                    "requestURL": webhookEndpoint,
+                    "requestHeader": webhookHeader,
+                    "requestPayload": webhookPayload,
+                    "requestType": webhookReqType,
+                    "requestTrigger": webhookTrigger,
+                    "requestID": existingWebhookQuery.id,
+                },
+                broadcast=False,
+            )
     db.session.commit()
     db.session.close()
     return "OK"
@@ -177,12 +181,11 @@ def addChangeGlobalWebhook(message):
 @socketio.on("deleteGlobalWebhook")
 def deleteGlobalWebhook(message):
     webhookID = int(message["webhookID"])
-    webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).first()
 
-    if webhookQuery is not None:
-        if current_user.has_role("Admin"):
-            db.session.delete(webhookQuery)
-            db.session.commit()
+    if current_user.has_role("Admin"):
+        webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).delete()
+        db.session.delete(webhookQuery)
+        db.session.commit()
     db.session.close()
     return "OK"
 
@@ -203,12 +206,13 @@ def testWebhook(message):
         # Acquire a Channel to Test With
         channelQuery = None
         if channelID is not None:
-            channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
+            channelQuery = cachedDbCalls.getChannel(channelID)
         else:
-            channelQuery = Channel.Channel.query.order_by(func.rand()).first()
+            randomChannelIDQuery = Channel.Channel.query.order_by(func.rand()).with_entities(Channel.Channel.id).first()
+            channelQuery = cachedDbCalls.getChannel(randomChannelIDQuery.id)
 
         # Acquire a Topic to Test With
-        topic = topics.topics.query.order_by(func.rand()).first()
+        topic = topics.topics.query.order_by(func.rand()).with_entities(topics.topics.id).first()
 
         # Retrieve Current Picture
         pictureLocation = current_user.pictureLocation
@@ -238,10 +242,10 @@ def testWebhook(message):
                 if current_user.has_role("Admin"):
                     webhookQuery = webhook.globalWebhook.query.filter_by(
                         id=webhookID
-                    ).first()
+                    ).with_entities(webhook.globalWebhook.id).first()
 
             elif webhookType == "channel":
-                webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
+                webhookQuery = webhook.webhook.query.filter_by(id=webhookID).with_entities(webhook.webhook.id).first()
                 if webhookQuery is not None:
                     if webhookQuery.channel.id != current_user.id:
                         webhookQuery = None

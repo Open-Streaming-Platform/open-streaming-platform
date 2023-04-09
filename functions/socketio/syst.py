@@ -26,6 +26,7 @@ from functions import cachedDbCalls
 from functions import topicsFunc
 from functions import videoFunc
 from functions import channelFunc
+from functions import securityFunc
 from functions.scheduled_tasks import video_tasks
 
 from app import user_datastore
@@ -113,6 +114,16 @@ def deleteTopic(message):
         topicsFunc.deleteTopic(topicID, newTopicID)
     return "OK"
 
+@socketio.on('transferChannelOwner')
+def transferChannel(message):
+    if current_user.has_role("Admin"):
+        channelId = int(message["channelId"])
+        userId = int(message["userId"])
+
+        RecordedVideo.RecordedVideo.query.filter_by(channelID=channelId).update(dict(owningUser=userId))
+        Channel.Channel.query.filter_by(id=channelId).update(dict(owningUser=userId))
+        db.session.commit()
+    return "OK"
 
 @socketio.on("getServerResources")
 def get_resource_usage(message):
@@ -701,6 +712,14 @@ def add_edit_static_page(message):
                     db.session.close()
                     cache.delete_memoized(cachedDbCalls.getStaticPages)
                     cache.delete_memoized(cachedDbCalls.getStaticPage, oldname)
+    return "OK"
+
+@socketio.on("admin_password_reset")
+def admin_password_reset(message):
+    if current_user.is_authenticated:
+        if current_user.has_role("Admin"):
+            userId = message['userId']
+            result = securityFunc.admin_force_reset(int(userId))
     return "OK"
 
 
