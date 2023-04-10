@@ -7,9 +7,14 @@ trigger:
   event:
     - push
 
+platform:
+  os: linux
+  arch: amd64
+
 steps:
 - name: build-nightly-core
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-core/
     dockerfile: ./osp-core/Dockerfile
@@ -27,7 +32,8 @@ steps:
     event:
       - push
 - name: build-nightly-rtmp
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-rtmp/
     dockerfile: ./osp-rtmp/Dockerfile
@@ -45,7 +51,8 @@ steps:
     event:
       - push
 - name: build-nightly-ejabberd
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-ejabberd/
     dockerfile: ./osp-ejabberd/Dockerfile
@@ -97,6 +104,11 @@ trigger:
     - master
   event:
     - push
+
+platform:
+  os: linux
+  arch: amd64
+
 steps:
 - name: send-tags-to-tags-file
   image: node
@@ -106,7 +118,8 @@ steps:
   commands:
     - echo -n "$(cat version), latest" > .tags
 - name: build-core
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-core/
     dockerfile: ./osp-core/Dockerfile
@@ -123,7 +136,8 @@ steps:
     event:
       - push
 - name: build-rtmp
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-rtmp/
     dockerfile: ./osp-rtmp/Dockerfile
@@ -140,7 +154,8 @@ steps:
     event:
       - push
 - name: build-ejabberd
-  image: plugins/docker
+  image: thegeeklab/drone-docker-buildx
+  privileged: true
   settings:
     context: ./osp-ejabberd/
     dockerfile: ./osp-ejabberd/Dockerfile
