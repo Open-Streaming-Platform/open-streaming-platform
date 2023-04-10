@@ -129,6 +129,8 @@ def getAllChannels():
         Channel.Channel.allowGuestNickChange,
         Channel.Channel.showHome,
         Channel.Channel.maxVideoRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
     ).all()
     return channelQuery
 
@@ -167,6 +169,8 @@ def getChannel(channelID):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(id=channelID)
         .first()
@@ -208,6 +212,8 @@ def getChannelByLoc(channelLoc):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(channelLoc=channelLoc)
         .first()
@@ -249,6 +255,8 @@ def getChannelByStreamKey(StreamKey):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(streamKey=StreamKey)
         .first()
@@ -290,6 +298,8 @@ def getChannelsByOwnerId(OwnerId):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.hubEnabled,
+            Channel.Channel.hubNSFW
         )
         .filter_by(owningUser=OwnerId)
         .all()
@@ -311,6 +321,7 @@ def serializeChannel(channelID):
         "channelEndpointID": channelData.channelLoc,
         "owningUser": channelData.owningUser,
         "owningUsername": getUser(channelData.owningUser).username,
+        "owningUserImage": getUserPhotoLocation(channelData.owningUser),
         "channelName": channelData.channelName,
         "description": channelData.description,
         "channelImage": "/images/" + str(channelData.imageLocation),
@@ -329,21 +340,52 @@ def serializeChannel(channelID):
         "showHome": channelData.showHome,
         "maxVideoRetention": channelData.maxVideoRetention,
         "subscriptions": getChannelSubCount(channelID),
-        "tags": [obj.id for obj in getChannelTagIds(channelData.id)],
+        "hubEnabled": channelData.hubEnabled,
+        "hubNSFW": channelData.hubNSFW,
+        "tags": [getChannelTagName(obj.id) for obj in getChannelTagIds(channelData.id)],
     }
 
 
 @cache.memoize(timeout=30)
-def serializeChannels():
-    ChannelQuery = (
-        Channel.Channel.query.filter_by(private=False)
-        .with_entities(Channel.Channel.id)
-        .all()
-    )
+def serializeChannels(hubCheck=False):
+    if hubCheck is True:
+        ChannelQuery = (
+            Channel.Channel.query.filter_by(private=False, hubEnabled=True)
+            .with_entities(Channel.Channel.id)
+            .all()
+        )
+    else:
+        ChannelQuery = (
+            Channel.Channel.query.filter_by(private=False)
+            .with_entities(Channel.Channel.id)
+            .all()
+        )
     returnData = []
     for channel in ChannelQuery:
         returnData.append(serializeChannel(channel.id))
     return returnData
+
+@cache.memoize(timeout=30)
+def getLiveChannels(hubCheck=False):
+    streamQuery = Stream.Stream.query.filter_by(active=True, complete=False).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
+    liveChannelIds = []
+    for stream in streamQuery:
+        if stream.linkedChannel not in liveChannelIds:
+            liveChannelIds.append(stream.linkedChannel)
+    liveChannelReturn = []
+    for liveChannelId in liveChannelIds:
+        serializedData = serializeChannel(liveChannelId)
+        if hubCheck is True:
+            if serializedData['hubEnabled'] is True:
+                liveChannelReturn.append(serializedData)
+        else:
+            liveChannelReturn.append(serializeChannel(liveChannelId))
+    return liveChannelReturn
+
+@cache.memoize(timeout=60)
+def getHubChannels():
+    channels = serializeChannels(hubCheck=True)
+    return channels
 
 
 @cache.memoize(timeout=30)
@@ -389,6 +431,15 @@ def getChannelTagIds(channelID):
         .all()
     )
     return tagQuery
+
+@cache.memoize(timeout=240)
+def getChannelTagName(tagId):
+    tagQuery = (
+        Channel.channel_tags.query.filter_by(id=tagId)
+        .with_entities(Channel.channel_tags.name)
+        .first()
+    )
+    return str(tagQuery.name)
 
 
 @cache.memoize(timeout=10)
