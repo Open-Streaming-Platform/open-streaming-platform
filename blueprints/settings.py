@@ -54,6 +54,7 @@ from classes import logs
 from classes import subscriptions
 from classes import stickers
 from classes import panel
+from classes import hub
 from classes.shared import cache
 
 from functions import system
@@ -602,6 +603,8 @@ def admin_page():
             "claimed": claimed,
         }
 
+        ospHub = hub.hub.query.first() 
+
         return render_template(
             themes.checkOverride("admin.html"),
             appDBVer=appDBVer,
@@ -630,6 +633,7 @@ def admin_page():
             schedulerList=schedulerList,
             globalPanelList=globalPanelList,
             mainPagePanelMapping=mainPagePanelMappingSort,
+            ospHub=ospHub
         )
     elif request.method == "POST":
 
@@ -1309,6 +1313,8 @@ def settings_channels_page():
                 Channel.Channel.showChatJoinLeaveNotification,
                 Channel.Channel.chatFormat,
                 Channel.Channel.chatHistory,
+                Channel.Channel.hubEnabled,
+                Channel.Channel.hubNSFW
             )
             .all()
         )
@@ -1613,6 +1619,14 @@ def settings_channels_page():
         if "private" in request.form:
             private = True
 
+        hubPublish = False
+        if "hubPublishSelect" in request.form:
+            hubPublish = True
+        
+        hubNSFW = False
+        if "hubNSFWSelect" in request.form:
+            hubNSFW = True
+
         if requestType == "new":
             # Check Maximum Channel Limit
             if (
@@ -1745,6 +1759,7 @@ def settings_channels_page():
                                 "Short link not saved. Link with same name exists!",
                                 "error",
                             )
+                
 
                 updateDict = dict(
                     channelName=channelName,
@@ -1760,6 +1775,8 @@ def settings_channels_page():
                     autoPublish=autoPublish,
                     private=private,
                     vanityURL=vanityURL,
+                    hubEnabled = hubPublish,
+                    hubNSFW = hubNSFW
                 )
 
                 from app import ejabberd
