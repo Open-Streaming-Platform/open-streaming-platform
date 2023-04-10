@@ -321,6 +321,7 @@ def serializeChannel(channelID):
         "channelEndpointID": channelData.channelLoc,
         "owningUser": channelData.owningUser,
         "owningUsername": getUser(channelData.owningUser).username,
+        "owningUserImage": getUserPhotoLocation(channelData.owningUser),
         "channelName": channelData.channelName,
         "description": channelData.description,
         "channelImage": "/images/" + str(channelData.imageLocation),
