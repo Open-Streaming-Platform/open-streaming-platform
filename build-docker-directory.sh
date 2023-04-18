@@ -55,7 +55,6 @@ cp -R installs/docker/OSP-RTMP/docker-files.d $BUILDDIR/osp-rtmp
 # Build OSP-Ejabberd $BUILDDIR Directory
 mkdir -p $BUILDDIR/osp-ejabberd/installs
 cp -R installs/ejabberd $BUILDDIR/osp-ejabberd/installs
-cp -R installs/nginx-core $BUILDDIR/osp-ejabberd/installs
 
 cp installs/docker/Ejabberd/Dockerfile $BUILDDIR/osp-ejabberd
 cp -R installs/docker/Ejabberd/docker-files.d $BUILDDIR/osp-ejabberd
