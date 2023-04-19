@@ -26,7 +26,6 @@ steps:
     tags: nightly
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
@@ -45,7 +44,6 @@ steps:
     tags: nightly
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
@@ -64,7 +62,6 @@ steps:
     tags: nightly
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
@@ -130,7 +127,6 @@ steps:
     repo: deamos/osp-core
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
@@ -148,7 +144,6 @@ steps:
     repo: deamos/osp-rtmp
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
@@ -166,7 +161,6 @@ steps:
     repo: deamos/osp-ejabberd
     platforms:
       - linux/amd64
-      - linux/arm/v7
       - linux/arm64
   when:
     event:
