@@ -6,6 +6,7 @@ OSP-Core: Updated RTMP Ingest Labels !386
 OSP-Core: Truncates Video Comments > 2048 Characters
 OSP-Core: Fixes to Chat Popout Window
 OSP-Core: Fixes for HTML returns on Deleted Users
+OSP-Core: Adds User Notification on Video Processing Start and Completion
 
 0.9.9
 ==============================================
