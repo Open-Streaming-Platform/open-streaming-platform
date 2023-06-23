@@ -162,6 +162,10 @@ def dbFixes():
     if sysSettings.maxVideoRetention is None:
         sysSettings.maxVideoRetention = 0
         db.session.commit()
+    # Sets maxClipRetention if none to 0
+    if sysSettings.maxClipRetention is None:
+        sysSettings.maxClipRetention = 0
+        db.session.commit()
     # Sets maxVideoUploadFileSize if none to 4096 MiB (4 GiB)
     if sysSettings.maxVideoUploadFileSize is None:
         sysSettings.maxVideoUploadFileSize = 4096
@@ -215,6 +219,10 @@ def dbFixes():
     channelQuery = Channel.Channel.query.filter_by(maxVideoRetention=None).all()
     for chan in channelQuery:
         chan.maxVideoRetention = 0
+        db.session.commit()
+    channelQuery = Channel.Channel.query.filter_by(maxClipRetention=None).all()
+    for chan in channelQuery:
+        chan.maxClipRetention = 0
         db.session.commit()
     channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
     for chan in channelQuery:

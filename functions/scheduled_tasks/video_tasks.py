@@ -27,7 +27,7 @@ def setup_video_tasks(sender, **kwargs):
         3600, check_video_thumbnails.s(), name="Check Video Thumbnails"
     )
     sender.add_periodic_task(
-        3600, check_video_retention.s(), name="Check Video Retention and Cleanup"
+        3600, check_video_retention.s(checkVideos=True, checkClips=True), name="Check Video + Clip Retention and Cleanup"
     )
     sender.add_periodic_task(
         21600, check_video_published_exists.s(), name="Check Video Health"
@@ -51,6 +51,22 @@ def delete_video(self, videoID):
             "level": "info",
             "taskID": self.request.id.__str__(),
             "message": "Video Deleted: " + str(videoID),
+        }
+    )
+    return True
+
+
+@celery.task(bind=True)
+def delete_clip(self, clipID):
+    """
+    Task to delete a video
+    """
+    results = videoFunc.deleteClip(clipID)
+    log.info(
+        {
+            "level": "info",
+            "taskID": self.request.id.__str__(),
+            "message": "Clip Deleted: " + str(clipID),
         }
     )
     return True
@@ -134,51 +150,99 @@ def check_video_thumbnails(self):
 
 
 @celery.task(bind=True)
-def check_video_retention(self):
+def check_video_retention(self, checkVideos=True, checkClips=False):
     """
-    Checks if Server Retention or Channel Retention of Videos has been met and delete videos exceeding the lower of the two
+    Checks if Server Retention or Channel Retention of Videos/Clips has been met and delete videos/clips exceeding the lower of the two
     """
+    if not (checkVideos or checkClips):
+        return "Invalid check_video_retention call. Must check videos or clips, or both."
+
     currentTime = datetime.datetime.utcnow()
     sysSettings = cachedDbCalls.getSystemSettings()
     videoCount = 0
-    if sysSettings != None:
-        channelQuery = Channel.Channel.query.with_entities(
-            Channel.Channel.id, Channel.Channel.maxVideoRetention
-        ).all()
-        for channel in channelQuery:
-            if sysSettings.maxVideoRetention > 0 or channel.maxVideoRetention > 0:
-                setRetentionArray = []
-                if sysSettings.maxVideoRetention > 0:
-                    setRetentionArray.append(sysSettings.maxVideoRetention)
-                if channel.maxVideoRetention > 0:
-                    setRetentionArray.append(channel.maxVideoRetention)
-                setRetention = min(setRetentionArray)
-                VideoQuery = (
-                    RecordedVideo.RecordedVideo.query.filter_by(channelID=channel.id)
+    clipCount = 0
+
+    if sysSettings == None:
+        return "Could not get system settings"
+
+    globalMVR = sysSettings.maxVideoRetention
+    globalMCR = sysSettings.maxClipRetention
+
+    channelQuery = Channel.Channel.query.with_entities(
+        Channel.Channel.id, Channel.Channel.maxVideoRetention, Channel.Channel.maxClipRetention
+    ).all()
+    for channel in channelQuery:
+        if checkClips and (globalMCR > 0 or channel.maxClipRetention > 0):
+            finalClipRetention = globalMCR
+            if globalMCR > 0 and channel.maxClipRetention > 0:
+                finalClipRetention = min(globalMCR, channel.maxClipRetention)
+            elif channel.maxClipRetention > 0:
+                finalClipRetention = channel.maxClipRetention
+
+            if finalClipRetention > 0:
+                clipQuery = (
+                    RecordedVideo.Clips.query.filter(
+                        RecordedVideo.Clips.channelID == channel.id,
+                        RecordedVideo.Clips.clipDate < currentTime - datetime.timedelta(days=finalClipRetention)
+                    )
                     .with_entities(
-                        RecordedVideo.RecordedVideo.id,
-                        RecordedVideo.RecordedVideo.videoDate,
+                        RecordedVideo.Clips.id
+                    )
+                    .all()
+                )
+                for clip in clipQuery:
+                    results = subtask(
+                        "functions.scheduled_tasks.video_tasks.delete_clip",
+                        args=(clip.id,)
+                    ).apply_async()
+                    clipCount = clipCount + 1
+        if checkVideos and (globalMVR > 0 or channel.maxVideoRetention > 0):
+            finalVideoRetention = globalMVR
+            if globalMVR > 0 and channel.maxVideoRetention > 0:
+                finalVideoRetention = min(globalMVR, channel.maxVideoRetention)
+            elif channel.maxVideoRetention > 0:
+                finalVideoRetention = channel.maxVideoRetention
+
+            if finalVideoRetention > 0:
+                VideoQuery = (
+                    RecordedVideo.RecordedVideo.query.filter(
+                        RecordedVideo.RecordedVideo.channelID == channel.id,
+                        RecordedVideo.RecordedVideo.videoDate < currentTime - datetime.timedelta(days=finalVideoRetention)
+                    )
+                    .with_entities(
+                        RecordedVideo.RecordedVideo.id
                     )
                     .all()
                 )
                 for video in VideoQuery:
-                    if (
-                        currentTime - datetime.timedelta(days=setRetention)
-                        > video.videoDate
-                    ):
-                        results = subtask(
-                            "functions.scheduled_tasks.video_tasks.delete_video",
-                            args=(video.id,)
-                        ).apply_async()
-                        videoCount = videoCount + 1
-    log.info(
-        {
-            "level": "info",
-            "taskID": self.request.id.__str__(),
-            "message": "Video Retention Check Performed.  Removed: " + str(videoCount),
-        }
-    )
-    return "Removed Videos " + str(videoCount)
+                    results = subtask(
+                        "functions.scheduled_tasks.video_tasks.delete_video",
+                        args=(video.id,)
+                    ).apply_async()
+                    videoCount = videoCount + 1
+
+    if checkVideos:
+        log.info(
+            {
+                "level": "info",
+                "taskID": self.request.id.__str__(),
+                "message": "Video Retention Check Performed.  Removed: " + str(videoCount),
+            }
+        )
+    if checkClips:
+        log.info(
+            {
+                "level": "info",
+                "taskID": self.request.id.__str__(),
+                "message": "Clip Retention Check Performed.  Removed: " + str(clipCount),
+            }
+        )
+
+    if checkVideos and checkClips:
+        return f"Removed {str(videoCount)} Videos and {str(clipCount)} Clips"
+    if checkClips:
+        return f"Removed {str(clipCount)} Clips"
+    return f"Removed {str(videoCount)} Videos"
 
 
 @celery.task(bind=True)

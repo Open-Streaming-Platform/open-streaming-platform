@@ -785,7 +785,9 @@ def admin_page():
             if "limitMaxChannels" in request.form:
                 sysSettings.limitMaxChannels = int(request.form["limitMaxChannels"])
             if "maxVideoRetention" in request.form:
-                sysSettings.maxVideoRetention = int(request.form["maxVideoRetention"])
+                sysSettings.maxVideoRetention = max(0, int(request.form["maxVideoRetention"]))
+            if "maxClipRetention" in request.form:
+                sysSettings.maxClipRetention = max(0, int(request.form["maxClipRetention"]))
             if "maxVideoUploadFileSize" in request.form:
                 sysSettings.maxVideoUploadFileSize = int(request.form["maxVideoUploadFileSize"])
             if "maxThumbnailUploadFileSize" in request.form:
@@ -1300,6 +1302,10 @@ def run_task(task):
         result = video_tasks.check_video_published_exists.delay()
     elif task == "check_video_retention":
         result = video_tasks.check_video_retention.delay()
+    elif task == "check_clip_retention":
+        result = video_tasks.check_video_retention.delay(checkVideos=False, checkClips=True)
+    elif task == "check_video_and_clip_retention":
+        result = video_tasks.check_video_retention.delay(checkVideos=True, checkClips=True)
     elif task == "check_video_thumbnails":
         result = video_tasks.check_video_thumbnails.delay()
     else:
@@ -1368,6 +1374,7 @@ def settings_channels_page():
                 Channel.Channel.imageLocation,
                 Channel.Channel.vanityURL,
                 Channel.Channel.maxVideoRetention,
+                Channel.Channel.maxClipRetention,
                 Channel.Channel.defaultStreamName,
                 Channel.Channel.allowGuestNickChange,
                 Channel.Channel.showChatJoinLeaveNotification,
@@ -1849,6 +1856,9 @@ def settings_channels_page():
 
                 if 'maxVideoRetention' in request.form:
                     updateDict['maxVideoRetention'] = max(0, int(request.form['maxVideoRetention']))
+
+                if 'maxClipRetention' in request.form:
+                    updateDict['maxClipRetention'] = max(0, int(request.form['maxClipRetention']))
 
                 from app import ejabberd
 

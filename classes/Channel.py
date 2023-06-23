@@ -36,6 +36,7 @@ class Channel(db.Model):
     allowGuestNickChange = db.Column(db.Boolean)
     showHome = db.Column(db.Boolean)
     maxVideoRetention = db.Column(db.Integer)
+    maxClipRetention = db.Column(db.Integer)
     hubEnabled = db.Column(db.Boolean)
     hubNSFW = db.Column(db.Boolean)
     stream = db.relationship(
@@ -115,6 +116,7 @@ class Channel(db.Model):
         self.allowGuestNickChange = True
         self.showHome = showHome
         self.maxVideoRetention = 0
+        self.maxClipRetention = 0
         self.private = False
         self.chatFormat = "messenger"
         self.chatHistory = 2
@@ -160,6 +162,7 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
+            "maxClipRetention": self.maxClipRetention,
             "subscriptions": self.subscriptions.count(),
             "tags": [obj.id for obj in self.get_tags()],
         }
@@ -188,6 +191,7 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
+            "maxClipRetention": self.maxClipRetention,
             "subscriptions": self.subscriptions.count(),
             "tags": [obj.id for obj in self.get_tags()],
         }

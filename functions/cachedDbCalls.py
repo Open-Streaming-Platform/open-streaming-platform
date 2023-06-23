@@ -129,6 +129,7 @@ def getAllChannels():
         Channel.Channel.allowGuestNickChange,
         Channel.Channel.showHome,
         Channel.Channel.maxVideoRetention,
+        Channel.Channel.maxClipRetention,
         Channel.Channel.hubEnabled,
         Channel.Channel.hubNSFW
     ).all()
@@ -169,6 +170,7 @@ def getChannel(channelID):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.maxClipRetention,
             Channel.Channel.hubEnabled,
             Channel.Channel.hubNSFW
         )
@@ -212,6 +214,7 @@ def getChannelByLoc(channelLoc):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.maxClipRetention,
             Channel.Channel.hubEnabled,
             Channel.Channel.hubNSFW
         )
@@ -255,6 +258,7 @@ def getChannelByStreamKey(StreamKey):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.maxClipRetention,
             Channel.Channel.hubEnabled,
             Channel.Channel.hubNSFW
         )
@@ -298,6 +302,7 @@ def getChannelsByOwnerId(OwnerId):
             Channel.Channel.allowGuestNickChange,
             Channel.Channel.showHome,
             Channel.Channel.maxVideoRetention,
+            Channel.Channel.maxClipRetention,
             Channel.Channel.hubEnabled,
             Channel.Channel.hubNSFW
         )
@@ -339,6 +344,7 @@ def serializeChannel(channelID):
         "vanityURL": channelData.vanityURL,
         "showHome": channelData.showHome,
         "maxVideoRetention": channelData.maxVideoRetention,
+        "maxClipRetention": channelData.maxClipRetention,
         "subscriptions": getChannelSubCount(channelID),
         "hubEnabled": channelData.hubEnabled,
         "hubNSFW": channelData.hubNSFW,
