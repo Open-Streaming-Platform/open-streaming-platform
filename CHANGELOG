@@ -7,6 +7,7 @@ OSP-Core: Truncates Video Comments > 2048 Characters
 OSP-Core: Fixes to Chat Popout Window
 OSP-Core: Fixes for HTML returns on Deleted Users
 OSP-Core: Adds User Notification on Video Processing Start and Completion
+OSP-Installer: Added check to ensure required SMTP values are present
 
 0.9.9
 ==============================================
