@@ -618,6 +618,8 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             channelTuple = (requestedChannel.id, requestedChannel.channelLoc)
             db.session.commit()
 
+            notifications.userNotification(f"{pendingVideo.channelName} has started processing.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+
             results = videoFunc.processStreamVideo(fileName, channelTuple[1])
 
             # If File does not exist in expected destination, Raise Task Failure
@@ -654,8 +656,10 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
 
             if requestedChannel.autoPublish is True:
                 pendingVideo.published = True
+                notifications.userNotification(f"{pendingVideo.channelName} has finished processing and has been published.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
             else:
                 pendingVideo.published = False
+                notifications.userNotification(f"{pendingVideo.channelName} has finished processing and is available in the Channel Settings Page.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             db.session.commit()
 

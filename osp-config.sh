@@ -56,22 +56,24 @@ config_smtp() {
   smtpEncryption=""
 exec 3>&1
   # Store data to $VALUES variable
-dialog --separate-widget $'\n' --ok-label "Save" \
-          --title "Configure SMTP Settings" \
-          --form "Please Configure your SMTP Settings (Required)" \
-20 70 0 \
-        "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
-        "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
-        "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
-        "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
-        "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
-2>&1 1>&3 | {
-  read -r smtpSendAs
-  read -r smtpServerAddress
-  read -r smtpServerPort
-  read -r smtpUsername
-  read -r smtpPassword
-
+while [[ -z $smtpSendAs || -z $smtpServerAddress || -z $smtpServerPort ]];
+do   
+  dialog --separate-widget $'\n' --ok-label "Save" \
+            --title "Configure SMTP Settings" \
+            --form "Please Configure your SMTP Settings (Required)" \
+  20 70 0 \
+          "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
+          "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
+          "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
+          "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
+          "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
+  2>&1 1>&3 | {
+    read -r smtpSendAs
+    read -r smtpServerAddress
+    read -r smtpServerPort
+    read -r smtpUsername
+    read -r smtpPassword
+done
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
 
@@ -156,7 +158,7 @@ reset_ejabberd() {
   sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+         --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
   echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
@@ -476,7 +478,7 @@ install_ejabberd() {
   if [ -z "$OSP_EJABBERD_SITE_ADDRESS" ]; then
     user_input=$(\
     dialog --nocancel --title "Setting up eJabberd" \
-           --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+           --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
     3>&1 1>&2 2>&3 3>&-)
   else
     user_input="$OSP_EJABBERD_SITE_ADDRESS"
