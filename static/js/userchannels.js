@@ -426,6 +426,21 @@ uploadthumbnaildropper.on('error', function (file, response) {
 });
 
 // Functions
+function secondsToTimeHMS(seconds) {
+    var secondString = (seconds % 60).toString().padStart(2,'0');
+    if (seconds < 60) {
+        return `0:00:${secondString}`;
+    }
+
+    var minuteString = (Math.floor(seconds / 60) % 60).toString().padStart(2,'0');
+    if (seconds < 3600) {
+        return `0:${minuteString}:${secondString}`;
+    }
+
+    var hourString = Math.floor(seconds / 3600).toString();
+    return `${hourString}:${minuteString}:${secondString}`;
+}
+
 function guid() {
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
@@ -552,30 +567,43 @@ function togglePublishedClip(clipID) {
 }
 
 function checkClipConstraints() {
-    var startTime = document.getElementById('clipStartTime').value;
-    var stopTime = document.getElementById('clipStopTime').value;
+    var startTime = parseInt(document.getElementById('clipStartTime').value);
+    var stopTime = parseInt(document.getElementById('clipStopTime').value);
     var systemMaxClipLength = maxClipLength;
     var clipErrorDiv = document.getElementById('clipError');
     var clipSubmitButton = document.getElementById('clipSubmitButton');
 
-    if (systemMaxClipLength < 301) {
-          if ((startTime != "") && (stopTime != "")) {
-                var clipLength = stopTime - startTime;
-                if (clipLength > systemMaxClipLength) {
-                  clipErrorDiv.innerHTML = "Clip is longer than the maximum allowed length of " + systemMaxClipLength + " seconds!";
-                  clipErrorDiv.style.display = "block";
-                  clipSubmitButton.disabled = true;
-                } else if (startTime > stopTime) {
-                  clipErrorDiv.innerHTML = "Stop Time can not be before Start Time";
-                  clipErrorDiv.style.display = "block";
-                  clipSubmitButton.disabled = true;
-                } else {
-                  clipErrorDiv.innerHTML = "";
-                  clipErrorDiv.style.display = "none";
-                  clipSubmitButton.disabled = false;
+    var clipCurrentLengthSpan = document.getElementById('clipCurrentLength');
 
-                }
-          }
+    if (isNaN(startTime) || isNaN(stopTime)) {
+        clipErrorDiv.innerHTML = "";
+        clipErrorDiv.style.display = "none";
+        clipSubmitButton.disabled = true;
+        clipCurrentLengthSpan.innerText = '';
+        return;
+    }
+
+    try {
+        if (startTime >= stopTime) {
+            clipCurrentLengthSpan.innerText = '';
+            throw new Error("Start Time must be less than End Time");
+        }
+
+        var clipLength = stopTime - startTime;
+        clipCurrentLengthSpan.innerText = secondsToTimeHMS(clipLength);
+        if (systemMaxClipLength < 301) {
+            if (clipLength > systemMaxClipLength) {
+                throw new Error(`Clip is longer than the maximum allowed length of ${secondsToTimeHMS(systemMaxClipLength)}!`);
+            }
+        }
+
+        clipErrorDiv.innerHTML = "";
+        clipErrorDiv.style.display = "none";
+        clipSubmitButton.disabled = false;
+    } catch (err) {
+        clipErrorDiv.innerHTML = err.message;
+        clipErrorDiv.style.display = "block";
+        clipSubmitButton.disabled = true;
     }
 }
 
@@ -587,8 +615,21 @@ function openClipModal(videoID,videoLocation) {
     stopInput.value = null;
     var clipName = document.getElementById('clipName');
     clipName.value = null;
+    var clipCurrentLengthSpan = document.getElementById('clipCurrentLength');
+    clipCurrentLengthSpan.innerText = null;
+    var clipErrorDiv = document.getElementById('clipError');
+    clipErrorDiv.innerHTML = "";
+    clipErrorDiv.style.display = "none";
     clipplayer.src(videoLocation);
     document.getElementById("clipVideoID").value = videoID;
+
+    var clipMaxLengthSpan = document.getElementById('clipMaxLength');
+    if (maxClipLength > 300) {
+      clipMaxLengthSpan.innerText = 'Infinite';
+    } else {
+      clipMaxLengthSpan.innerText = secondsToTimeHMS(maxClipLength);
+    }
+
     $("#videoClipModal").modal();
     var clipDescriptionInput = document.getElementById('clipDescription');
     clipDescriptionInput.value = null;
@@ -596,15 +637,27 @@ function openClipModal(videoID,videoLocation) {
     easymdeVideoClip.codemirror.refresh();
 }
 
+function clipStartGoTo() {
+  var startInputValue = parseInt(document.getElementById('clipStartTime').value);
+  if (isNaN(startInputValue)) return;
+  clipplayer.currentTime(startInputValue);
+}
+
+function clipStopGoTo() {
+  var stopInputValue = parseInt(document.getElementById('clipStopTime').value);
+  if (isNaN(stopInputValue)) return;
+  clipplayer.currentTime(stopInputValue);
+}
+
 function setClipStart() {
     var startInput = document.getElementById('clipStartTime');
-    startInput.value = clipplayer.currentTime();
+    startInput.value = parseInt(clipplayer.currentTime());
     checkClipConstraints();
 }
 
 function setClipStop() {
     var stopInput = document.getElementById('clipStopTime');
-    stopInput.value = clipplayer.currentTime();
+    stopInput.value = parseInt(clipplayer.currentTime());
     checkClipConstraints();
 }
 

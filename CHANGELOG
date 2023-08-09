@@ -1,3 +1,14 @@
+0.9.10
+==============================================
+OSP: Added Beta Support for OSP-Hub (hub.openstreamingplatform.com)
+OSP-Core: Improvement and Fixes to Video Clipping !388
+OSP-Core: Updated RTMP Ingest Labels !386
+OSP-Core: Truncates Video Comments > 2048 Characters
+OSP-Core: Fixes to Chat Popout Window
+OSP-Core: Fixes for HTML returns on Deleted Users
+OSP-Core: Adds User Notification on Video Processing Start and Completion
+OSP-Installer: Added check to ensure required SMTP values are present
+
 0.9.9
 ==============================================
 OSP-Core: Fixes for Channel Level Webhooks Not Displaying
