@@ -468,9 +468,9 @@ function onMessage(msg) {
               tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp.format('hh:mm A');
               tempNode.id = messageId;
               if (Strophe.getResourceFromJid(from) == 'SERVER') {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + sanitize(Strophe.getResourceFromJid(from)) + '</span>';
               } else {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + sanitize(Strophe.getResourceFromJid(from)) + '</a></span>';
               }
 
               msg = format_msg(msg)
