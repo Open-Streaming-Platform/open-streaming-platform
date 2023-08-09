@@ -73,6 +73,7 @@ do
     read -r smtpServerPort
     read -r smtpUsername
     read -r smtpPassword
+  }
 done
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
@@ -104,7 +105,7 @@ sudo sed -i "s/smtpUsername=\"\"/smtpUsername=\"$smtpUsername\"/" /opt/osp/conf/
 sudo sed -i "s/smtpPassword=\"\"/smtpPassword=\"$smtpPassword\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 sudo sed -i "s/smtpEncryption=\"none\"/smtpEncryption=\"$smtpEncryption\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 
-}
+
 exec 3>&-
 
 }
