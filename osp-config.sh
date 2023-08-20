@@ -4,10 +4,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
-NGINX_BUILD_VERSION=1.22.0
-NGINX_RTMP_VERSION=1.2.10
-NGINX_ZLIB_VERSION=1.2.13
-EJABBERD_VERSION=20.12
+NGINX_BUILD_VERSION="1.22.1"
+NGINX_RTMP_VERSION="1.2.11"
+NGINX_ZLIB_VERSION="1.3"
+EJABBERD_VERSION="23.04"
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
@@ -137,11 +137,13 @@ reset_ejabberd() {
   sudo systemctl stop ejabberd >> $OSPLOG 2>&1
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
+  sudo rm -rf /opt/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
-  sudo /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
@@ -152,24 +154,24 @@ reset_ejabberd() {
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
   sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
   echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
-  sudo mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
-  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
+  sudo mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
+  sudo cp /opt/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
          --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
   echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
   echo 90 | dialog --title "Reset eJabberd Configuration" --gauge "Setting eJabberd Local Admin" 10 70 0
-  sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
   echo 95 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting OSP" 10 70 0
   sudo systemctl restart osp.target >> $OSPLOG 2>&1
 }
@@ -465,16 +467,17 @@ install_ejabberd() {
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
-  /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
-  mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
+  mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1cd
+  sudo cp $DIR/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
+  sudo cp /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   # If we don't have the site address, prompt the user
   if [ -z "$OSP_EJABBERD_SITE_ADDRESS" ]; then
     user_input=$(\
@@ -485,7 +488,7 @@ install_ejabberd() {
     user_input="$OSP_EJABBERD_SITE_ADDRESS"
   fi
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
@@ -497,9 +500,9 @@ install_ejabberd() {
 generate_ejabberd_admin() {
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
   sudo systemctl restart ejabberd
 }
 
@@ -674,7 +677,7 @@ upgrade_rtmp() {
 }
 
 upgrade_ejabberd() {
-  sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
 }
 
@@ -935,7 +938,7 @@ upgrade_menu() {
         sudo systemctl restart ejabberd >> $OSPLOG 2>&1
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
-        result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
+        result=$(echo "eJabberd Upgrade Completed! You will need to edit /opt/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
       7)
