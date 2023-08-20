@@ -136,12 +136,14 @@ reset_ejabberd() {
   echo 5 | dialog --title "Reset eJabberd Configuration" --gauge "Stopping eJabberd" 10 70 0
   sudo systemctl stop ejabberd >> $OSPLOG 2>&1
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
+  sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
   sudo rm -rf /opt/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
   sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
-  sudo /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet --target /opt/ejabberd >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
@@ -468,7 +470,8 @@ install_ejabberd() {
   sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
-  /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet --target /opt/ejabberd >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
