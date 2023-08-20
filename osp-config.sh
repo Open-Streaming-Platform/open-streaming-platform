@@ -4,10 +4,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
-NGINX_BUILD_VERSION=1.25.2
-NGINX_RTMP_VERSION=1.2.11
-NGINX_ZLIB_VERSION=1.3
-EJABBERD_VERSION=23.04
+NGINX_BUILD_VERSION="1.25.2"
+NGINX_RTMP_VERSION="1.2.11"
+NGINX_ZLIB_VERSION="1.3"
+EJABBERD_VERSION="23.04-1"
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
@@ -138,6 +138,7 @@ reset_ejabberd() {
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
+                                                               "https://www.process-one.net/downloads/downloads-action.php?file=/23.04/ejabberd-23.04-1-linux-x64.run"
   sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
