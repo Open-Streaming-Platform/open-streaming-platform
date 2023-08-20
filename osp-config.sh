@@ -138,7 +138,7 @@ reset_ejabberd() {
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /opt/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
   sudo /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /opt/ejabberd --cluster 0 >> $OSPLOG 2>&1
@@ -465,7 +465,7 @@ install_ejabberd() {
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION-1/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /opt/ejabberd --cluster 0 >> $OSPLOG 2>&1
