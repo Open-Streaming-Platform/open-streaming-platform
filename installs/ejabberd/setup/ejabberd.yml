@@ -178,7 +178,7 @@ shaper_rules:
 
 auth_use_cache: false
 auth_password_format: scram
-extauth_program: "/usr/bin/python3 /usr/local/ejabberd/conf/auth_osp.py"
+extauth_program: "/usr/bin/python3 /opt/ejabberd/conf/auth_osp.py"
 
 host_config:
    "CHANGEME":
