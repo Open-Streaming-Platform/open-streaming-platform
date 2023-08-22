@@ -192,11 +192,11 @@ upgrade_db() {
 install_prereq() {
     echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
     # Get Deb Dependencies
+    sudo apt-get update
     sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
     # Setup Python
     echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
     sudo apt-get install python3 python3-pip python3-venv uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
-    sudo pip3 install wheel >> $OSPLOG 2>&1
 }
 
 install_ffmpeg() {
@@ -656,17 +656,20 @@ install_celery_flower() {
 }
 
 upgrade_celery() {
+  install_prereq
   install_celery
   sudo systemctl restart osp-celery >> $OSPLOG 2>&1
 }
 
 upgrade_celery_beat() {
+  install_prereq
   install_celery_beat
   sudo systemctl restart osp-celery-beat >> $OSPLOG 2>&1
 }
 
 upgrade_osp() {
    UPGRADELOG="/opt/osp/logs/upgrade.log"
+   install_prereq
    if cd /opt/osp
    then
      echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
@@ -700,7 +703,7 @@ upgrade_osp() {
 }
 
 upgrade_proxy() {
-  
+  install_prereq
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
@@ -712,6 +715,7 @@ upgrade_proxy() {
 }
 
 upgrade_rtmp() {
+  install_prereq
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
@@ -727,6 +731,7 @@ upgrade_ejabberd() {
 }
 
 upgrade_edge() {
+  install_prereq
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
