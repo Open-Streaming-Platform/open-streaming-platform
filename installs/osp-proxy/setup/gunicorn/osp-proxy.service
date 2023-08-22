@@ -6,7 +6,8 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/osp-proxy
-ExecStart=/usr/local/bin/gunicorn app:app -k gevent -w 4 --threads 4 --bind 127.0.0.1:6999 --reload
+Environment="PATH=/opt/osp-proxy/venv/bin"
+ExecStart=/opt/osp-proxy/venv/bin/gunicorn app:app -k gevent -w 4 --threads 4 --bind 127.0.0.1:6999 --reload
 
 [Install]
 WantedBy=multi-user.target

@@ -195,7 +195,7 @@ install_prereq() {
     sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
     # Setup Python
     echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
-    sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
+    sudo apt-get install python3 python3-pip python3-venv uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
     sudo pip3 install wheel >> $OSPLOG 2>&1
 }
 
@@ -324,27 +324,38 @@ install_nginx_core() {
 
 }
 
+install_osp_rtmp_venv() {
+  cd /opt/osp-rtmp
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
+}
+
 install_osp_rtmp() {
   echo 10 | dialog --title "Installing OSP-RTMP" --gauge "Intalling Prereqs" 10 70 0
   install_prereq
-  echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
-  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
 
-  echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
+  echo 20 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/custom/osp-rtmp-* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
-  echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Install OSP-RTMP Application" 10 70 0
+  # Create OSP-RTMP Folder
+  echo 30 | dialog --title "Installing OSP-RTMP" --gauge "Create OSP-RTMP Folder" 10 70 0
   sudo mkdir /opt/osp-rtmp >> $OSPLOG 2>&1
 
-  # Setup Nginx-RTMP Socket Directory
+  echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
+  install_osp_rtmp_venv
+
+  # Copy OSP-RTMP Data
+  echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Installing OSP-RTMP Application" 10 70 0
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
   sudo mkdir /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
 
-echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
+  echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
@@ -356,6 +367,14 @@ install_redis() {
   sudo apt-get install redis -y >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing Redis" --gauge "Configuring Redis" 10 70 0
   sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf >> $OSPLOG 2>&1
+}
+
+install_osp_proxy_venv() {
+  cd /opt/osp-proxy
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
 }
 
 install_osp_proxy() {
@@ -371,17 +390,17 @@ install_osp_proxy() {
   sudo cp $DIR/installs/osp-proxy/setup/nginx/cors.conf /usr/local/nginx/conf/cors.conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/custom/osp-proxy-custom* /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
-  # Setup OSP Proxy Directory
-  echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
-  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
-
   # Install OSP Proxy
-  echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
   sudo mkdir /opt/osp-proxy >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
   sudo cp /opt/osp-proxy/conf/config.py.dist /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
   sudo chmod +x /opt/osp-proxy/updateUpstream.sh >> $OSPLOG 2>&1
   sudo mkdir -p /var/cache/nginx/osp_cache_temp >> $OSPLOG 2>&1
+
+  # Setup OSP Proxy Directory
+  echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  install_osp_proxy_venv
 
   # Setup Configuration with IP
   echo 75 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
@@ -460,9 +479,16 @@ install_osp_edge () {
   sudo systemctl restart nginx-osp.service >> $OSPLOG 2>&1
 }
 
+install_ejabberd_venv() {
+  cd /opt/ejabberd
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 install -r requests >> $OSPLOG 2>&1
+  deactivate
+}
+
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  install_prereq
   sudo pip3 install requests >> $OSPLOG 2>&1
 
   # Install ejabberd
@@ -506,6 +532,15 @@ generate_ejabberd_admin() {
   sudo systemctl restart ejabberd
 }
 
+install_osp_venv() {
+  cd /opt/osp
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
+}
+
 install_osp() {
   cwd=$PWD
 
@@ -513,8 +548,6 @@ install_osp() {
   echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   install_prereq
-  sudo pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
 
   # Setup OSP Directory
   echo 20 | dialog --title "Installing OSP" --gauge "Setting up OSP Directory" 10 70 0
@@ -522,7 +555,10 @@ install_osp() {
   sudo cp -rf -R $DIR/* /opt/osp >> $OSPLOG 2>&1
   sudo cp -rf -R $DIR/.git /opt/osp >> $OSPLOG 2>&1
 
-  echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn SystemD" 10 70 0
+  echo 35 | dialog --title "Installing OSP" --gauge "Setting up OSP Virtual Environment" 10 70 0
+  install_osp_venv
+
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn Systemd" 10 70 0
   if cd $DIR/setup/gunicorn
   then
           sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
@@ -641,12 +677,15 @@ upgrade_osp() {
      echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
      sudo systemctl stop nginx-osp >> $UPGRADELOG 2>&1
      echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
-     sudo pip3 uninstall -r /opt/osp/setup/remove_requirements.txt -y >> $UPGRADELOG 2>&1
-     sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
+     install_osp_venv 
      echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp-worker@.service /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo systemctl daemon-reload >> $OSPLOG 2>&1
+     sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      flask db upgrade >> $UPGRADELOG 2>&1
@@ -661,19 +700,25 @@ upgrade_osp() {
 }
 
 upgrade_proxy() {
-  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/gunicorn/osp-proxy.service /etc/systemd/system/osp-proxy.service >> $OSPLOG 2>&1
+  install_osp_proxy_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-proxy.service >> $OSPLOG 2>&1
 }
 
 upgrade_rtmp() {
-  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
+  install_osp_rtmp_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
 }
 
 upgrade_ejabberd() {
