@@ -328,8 +328,8 @@ install_osp_rtmp_venv() {
   cd /opt/osp-rtmp
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
   deactivate
 }
 
@@ -355,7 +355,7 @@ install_osp_rtmp() {
   sudo mkdir /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
 
-echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
+  echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
@@ -373,7 +373,7 @@ install_osp_proxy_venv() {
   cd /opt/osp-proxy
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
   deactivate
 }
 
@@ -483,13 +483,13 @@ install_ejabberd_venv() {
   cd /opt/ejabberd
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  sudo pip3 install -r requests >> $OSPLOG 2>&1
+  pip3 install -r requests >> $OSPLOG 2>&1
   deactivate
 }
 
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  install_prereq
+  sudo pip3 install requests >> $OSPLOG 2>&1
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
@@ -500,7 +500,6 @@ install_ejabberd() {
   sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
-  install_ejabberd_venv
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1cd
   sudo cp $DIR/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
@@ -537,8 +536,8 @@ install_osp_venv() {
   cd /opt/osp
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  sudo pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
   deactivate
 }
 
@@ -683,6 +682,10 @@ upgrade_osp() {
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp-worker@.service /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo systemctl daemon-reload >> $OSPLOG 2>&1
+     sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      flask db upgrade >> $UPGRADELOG 2>&1
@@ -697,18 +700,25 @@ upgrade_osp() {
 }
 
 upgrade_proxy() {
-  install_osp_proxy_venv
+  
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/gunicorn/osp-proxy.service /etc/systemd/system/osp-proxy.service >> $OSPLOG 2>&1
+  install_osp_proxy_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-proxy.service >> $OSPLOG 2>&1
 }
 
 upgrade_rtmp() {
-  install_osp_rtmp_venv
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
+  install_osp_rtmp_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
 }
 
 upgrade_ejabberd() {

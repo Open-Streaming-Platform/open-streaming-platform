@@ -8,10 +8,9 @@ Requires=redis.service
 User=www-data
 Group=www-data
 EnvironmentFile=/etc/default/celery
+Environment="PATH=/opt/osp/venv/bin"
 WorkingDirectory=/opt/osp
-ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP worker \
-    --logfile=${CELERYD_LOG_FILE} \
-    --loglevel="${CELERYD_LOG_LEVEL}" $CELERYD_OPTS'
+ExecStart=/opt/osp/venv/bin/celery -A $CELERY_APP worker --logfile=${CELERYD_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL} $CELERYD_OPTS
 Restart=always
 
 [Install]
