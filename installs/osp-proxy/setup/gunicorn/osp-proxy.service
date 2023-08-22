@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/opt/osp-proxy/venv
+WorkingDirectory=/opt/osp-proxy
 Environment="PATH=/opt/osp-proxy/venv/bin"
 ExecStart=/opt/osp-proxy/venv/bin/gunicorn app:app -k gevent -w 4 --threads 4 --bind 127.0.0.1:6999 --reload
 

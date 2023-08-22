@@ -9,7 +9,7 @@ User=www-data
 Group=www-data
 EnvironmentFile=/etc/default/celery-flower
 Environment="PATH=/opt/osp/venv/bin"
-WorkingDirectory=/opt/osp/venv
+WorkingDirectory=/opt/osp
 ExecStart=/opt/osp/venv/bin/celery -A $CELERY_APP flower --basic_auth=${CELERY_FLOWER_USER}:${CELERY_FLOWER_PASSWORD} --loglevel=info --port=5572'
 Restart=always
 
