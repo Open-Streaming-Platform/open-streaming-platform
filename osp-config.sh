@@ -355,7 +355,7 @@ install_osp_rtmp() {
   sudo mkdir /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
 
-echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
+  echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
@@ -683,6 +683,10 @@ upgrade_osp() {
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp-worker@.service /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo systemctl daemon-reload >> $OSPLOG 2>&1
+     sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      flask db upgrade >> $UPGRADELOG 2>&1
@@ -702,6 +706,9 @@ upgrade_proxy() {
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/gunicorn/osp-proxy.service /etc/systemd/system/osp-proxy.service >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-proxy.service >> $OSPLOG 2>&1
 }
 
 upgrade_rtmp() {
@@ -709,6 +716,9 @@ upgrade_rtmp() {
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
 }
 
 upgrade_ejabberd() {

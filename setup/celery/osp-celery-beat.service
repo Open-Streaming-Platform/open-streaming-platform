@@ -8,8 +8,9 @@ Requires=osp-celery.service
 User=www-data
 Group=www-data
 EnvironmentFile=/etc/default/celery
-WorkingDirectory=/opt/osp
-ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP beat'
+Environment="PATH=/opt/osp/venv/bin"
+WorkingDirectory=/opt/osp/venv
+ExecStart=/opt/osp/venv/bin/celery -A $CELERY_APP beat'
 Restart=always
 
 [Install]
