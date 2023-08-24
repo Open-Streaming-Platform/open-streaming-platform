@@ -118,17 +118,15 @@
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
-
-      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-
-        <input type="radio" class="btn-check sort" name="btnradio" id="btnradio1" autocomplete="off" data-sort="list-videoName" checked>
-        <label class="btn btn-outline-primary" for="btnradio1">Name</label>
-
-        <input type="radio" class="btn-check sort {% if order == 0 %} desc {% endif %}" name="btnradio" id="btnradio2" autocomplete="off" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}>
-        <label class="btn btn-outline-primary" for="btnradio2">Views</label>
-
-        <input type="radio" class="btn-check sort {% if order == 1 %} desc {% endif %}" name="btnradio" id="btnradio3" autocomplete="off" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}>
-        <label class="btn btn-outline-primary" for="btnradio3">Date</label>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Sort By
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item sort" href="#" data-sort="list-videoName">Name</a></li>
+          <li><a class="dropdown-item sort {% if order == 0 %} desc {% endif %}" href="#" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}>Views</a></li>
+          <li><a class="dropdown-item sort {% if order == 1 %} desc {% endif %}" href="#" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}>Date</a></li>
+        </ul>
       </div>
     </div>
   </div>
