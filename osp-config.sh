@@ -192,7 +192,7 @@ upgrade_db() {
 install_prereq() {
     echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
     # Get Deb Dependencies
-    sudo apt-get update
+    sudo apt-get update >> $OSPLOG 2>&1
     sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
     # Setup Python
     echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0

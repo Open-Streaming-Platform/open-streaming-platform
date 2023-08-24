@@ -1,6 +1,7 @@
 0.9.10
 ==============================================
 OSP: Added Beta Support for OSP-Hub (hub.openstreamingplatform.com)
+OSP: OSP-Core, OSP-RTMP, and OSP-Proxy Python Dependencies have been moved to VirtualEnvironment. Will be migrated on upgrades
 OSP-Core: Improvement and Fixes to Video Clipping !388
 OSP-Core: Updated RTMP Ingest Labels !386
 OSP-Core: Truncates Video Comments > 2048 Characters
@@ -9,6 +10,9 @@ OSP-Core: Fixes for HTML returns on Deleted Users
 OSP-Core: Adds User Notification on Video Processing Start and Completion
 OSP-Core: Fixes a possible JS xss vulnerability in the chat system.
 OSP-Installer: Added check to ensure required SMTP values are present
+OSP-Installer: Moves Default Nginx Install to 1.22.1
+OSP-Installer: Moves Default Ejabberd Install to 23.04
+OSP-Installer: Moves Default ZLib Install to 1.3
 
 0.9.9
 ==============================================
