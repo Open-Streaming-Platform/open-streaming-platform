@@ -118,10 +118,18 @@
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
-      <span class="mr-1">Sort:</span>
-      <span class="sort mr-1" data-sort="list-videoName"><a href="#">Name</a></span>
-      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
-      <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
+
+      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+        <input type="radio" class="btn-check sort" name="btnradio" id="btnradio1" autocomplete="off" data-sort="list-videoName" checked>
+        <label class="btn btn-outline-primary" for="btnradio1">Name</label>
+
+        <input type="radio" class="btn-check sort {% if order == 0 %} desc {% endif %}" name="btnradio" id="btnradio2" autocomplete="off" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}>
+        <label class="btn btn-outline-primary" for="btnradio2">Views</label>
+
+        <input type="radio" class="btn-check sort {% if order == 1 %} desc {% endif %}" name="btnradio" id="btnradio3" autocomplete="off" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}>
+        <label class="btn btn-outline-primary" for="btnradio3">Date</label>
+      </div>
     </div>
   </div>
   <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
