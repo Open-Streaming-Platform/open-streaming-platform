@@ -7,6 +7,7 @@ import socket
 import xmltodict
 import re
 import pytz
+import bleach
 
 import requests
 from flask import (
@@ -117,7 +118,7 @@ def user_page():
     elif request.method == "POST":
 
         biography = request.form["biography"]
-        current_user.biography = biography
+        current_user.biography = bleach.clean(biography)
 
         if "emailVideo" in request.form:
             current_user.emailVideo = True
@@ -1583,7 +1584,7 @@ def settings_channels_page():
 
         channelName = system.strip_html(request.form["channelName"])
         topic = request.form["channeltopic"]
-        description = system.strip_html(request.form["description"])
+        description = bleach.clean(system.strip_html(request.form["description"]))
 
         record = False
 
