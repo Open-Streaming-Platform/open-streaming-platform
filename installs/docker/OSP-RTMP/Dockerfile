@@ -5,7 +5,7 @@ ARG OSP_VERSION=0.9.10
 ARG OSP_GIT_BRANCH=build/0.9.x
 
 ARG NGINX_VERSION=1.22.1
-ARG NGINX_RTMP_VERSION=1.2.10
+ARG NGINX_RTMP_VERSION=1.2.11
 ARG NGINX_ZLIB_VERSION=1.3
 
 ARG DEFAULT_API=http://127.0.0.1:5010
@@ -73,8 +73,8 @@ RUN cd /tmp && \
   tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
 
 # Inline Patch NGINX-RTMP
-RUN cp /opt/osp-rtmp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
-RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
+#RUN cp /opt/osp-rtmp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
+#RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
 
 RUN cd /tmp && \
   wget "https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/master.tar.gz" && \

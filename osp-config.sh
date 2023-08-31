@@ -254,8 +254,8 @@ install_nginx_core() {
           echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
           if cd nginx-http-flv-module-$NGINX_RTMP_VERSION
           then
-            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
-            sudo patch -s -p 1 < 1158.patch
+          #  sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
+          #  sudo patch -s -p 1 < 1158.patch
             cd ..
           else
               echo "Unable to Access Nginx-RTMP Module Source"
