@@ -182,7 +182,9 @@ upgrade_db() {
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  source venv/bin/activate >> $OSPLOG 2>&1
   flask db upgrade >> $OSPLOG 2>&1
+  deactivate >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
@@ -691,7 +693,9 @@ upgrade_osp() {
      sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     flask db upgrade >> $UPGRADELOG 2>&1
+     source venv/bin/activate >> $OSPLOG 2>&1
+     flask db upgrade >> $OSPLOG 2>&1
+     deactivate  >> $OSPLOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
      sudo systemctl start osp.target >> $UPGRADELOG 2>&1
      echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
