@@ -56,22 +56,24 @@ config_smtp() {
   smtpEncryption=""
 exec 3>&1
   # Store data to $VALUES variable
-  dialog --separate-widget $'\n' --ok-label "Save" \
+  VALUES=$(dialog --separate-widget $'\n' --ok-label "Save" \
             --title "Configure SMTP Settings" \
             --form "Please Configure your SMTP Settings (Required)" \
   20 70 0 \
-          "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
-          "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
-          "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
+          "Send Email As: (*)"          1 1   "$smtpSendAs"           1 25 40 0 \
+          "SMTP Server Address: (*)"    2 1   "$smtpServerAddress"    2 25 40 0 \
+          "SMTP Server Port: (*)"       3 1   "$smtpServerPort"           3 25 5 0 \
           "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
           "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
-  2>&1 1>&3 | {
-    read -r smtpSendAs
-    read -r smtpServerAddress
-    read -r smtpServerPort
-    read -r smtpUsername
-    read -r smtpPassword
-  }
+  2>&1 1>&3)
+
+echo "$VALUES" > /tmp/o.txt
+smtpSendAs=$(cat /tmp/o.txt | head -1)
+smtpServerAddress=$(cat /tmp/o.txt | head -2 | tail -1)
+smtpServerPort=$(cat /tmp/o.txt | head -3 | tail -1)
+smtpUsername=$(cat /tmp/o.txt | head -4 | tail -1)
+smtpPassword=$(cat /tmp/o.txt | head -5 | tail -1)
+rm /tmp/o.txt
 
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
