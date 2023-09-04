@@ -56,8 +56,6 @@ config_smtp() {
   smtpEncryption=""
 exec 3>&1
   # Store data to $VALUES variable
-while [[ -z $smtpSendAs || -z $smtpServerAddress || -z $smtpServerPort ]];
-do   
   dialog --separate-widget $'\n' --ok-label "Save" \
             --title "Configure SMTP Settings" \
             --form "Please Configure your SMTP Settings (Required)" \
@@ -74,7 +72,7 @@ do
     read -r smtpUsername
     read -r smtpPassword
   }
-done
+
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
 
