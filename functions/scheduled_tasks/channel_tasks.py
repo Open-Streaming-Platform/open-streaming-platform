@@ -11,7 +11,7 @@ log = logging.getLogger("app.functions.scheduler.channel_tasks")
 
 
 def setup_channel_tasks(sender, **kwargs):
-    # sender.add_periodic_task(120, update_channel_counts.s(), name='Check Live Channel Counts')
+    #sender.add_periodic_task(120, update_channel_counts.s(), name='Check Live Channel Counts')
     pass
 
 
@@ -56,3 +56,13 @@ def update_channel_count(self, streamId, channelId):
             + " to "
             + str(count)
         )
+
+@celery.task(bind=True)
+def check_channel_stream_time(self, streamId):
+    activeStreamQuery = Stream.Stream.query.filer_by(id=streamId, active=True).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel, Stream.Stream.startTimestamp).first()
+    if activeStreamQuery is not None:
+        channelId = activeStreamQuery.linkedChannel
+        channelQuery = cachedDbCalls.getChannel(channelId)
+        if channelQuery != None:
+            streamTime = (datetime.datetime.utcnow() - activeStreamQuery.startTimeStamp)
+            streamTimeMins = streamTime.total_seconds() / 60.0
