@@ -157,7 +157,6 @@ reset_ejabberd() {
   sudo mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp /opt/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
@@ -165,6 +164,7 @@ reset_ejabberd() {
   3>&1 1>&2 2>&3 3>&-)
   echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
@@ -503,7 +503,6 @@ install_ejabberd() {
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1cd
   sudo cp $DIR/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
   sudo cp /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   # If we don't have the site address, prompt the user
@@ -518,6 +517,7 @@ install_ejabberd() {
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
+  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
