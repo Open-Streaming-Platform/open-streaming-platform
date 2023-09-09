@@ -28,6 +28,13 @@ from classes.shared import celery
 
 log = logging.getLogger("app.functions.system")
 
+def getProcessPath(processName):
+    processPath = subprocess.check_output(["which", processName])
+    if processPath != "":
+        return processPath
+    else:
+        return None
+
 
 def asynch(func):
     @wraps(func)
@@ -191,7 +198,7 @@ def systemFixes(app):
         clip.videoLocation = clipVideoLocation
         clipVideo = subprocess.run(
             [
-                "/usr/bin/ffmpeg",
+                getProcessPath('ffmpeg'),
                 "-ss",
                 str(clip.startTime),
                 "-i",
