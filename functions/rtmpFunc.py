@@ -154,7 +154,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
     if requestedChannel is not None:
         authedStream = Stream.Stream.query.filter_by(
             pending=True, streamKey=requestedChannel.streamKey
-        ).with_entities(Stream.Stream.id).first()
+        ).with_entities(Stream.Stream.id, Stream.Stream.streamName, Stream.Stream.topic).first()
 
         if authedStream is not None:
 
