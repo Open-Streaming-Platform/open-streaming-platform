@@ -6,7 +6,7 @@ from flask import Blueprint, request, redirect, current_app, abort
 from globals import globalvars
 
 def getProcessPath(processName):
-    processPath = subprocess.check_output(["which", processName])
+    processPath = subprocess.check_output(["/usr/bin/which", processName])
     if processPath != "":
         return processPath
     else:
