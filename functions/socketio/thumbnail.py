@@ -69,7 +69,7 @@ def newScreenShot(message):
             pass
         result = subprocess.call(
             [
-                system.getProcessPath('ffmpeg'),
+                "ffmpeg",
                 "-ss",
                 str(timeStamp),
                 "-i",
@@ -145,7 +145,7 @@ def setScreenShot(message):
                 pass
             result = subprocess.call(
                 [
-                    system.getProcessPath('ffmpeg'),
+                    "ffmpeg",
                     "-ss",
                     str(timeStamp),
                     "-i",
@@ -182,7 +182,7 @@ def setScreenShot(message):
 
             gifresult = subprocess.call(
                 [
-                    system.getProcessPath('ffmpeg'),
+                    "ffmpeg",
                     "-ss",
                     str(timeStamp),
                     "-t",

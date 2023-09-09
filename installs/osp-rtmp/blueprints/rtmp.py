@@ -5,13 +5,6 @@ from flask import Blueprint, request, redirect, current_app, abort
 
 from globals import globalvars
 
-def getProcessPath(processName):
-    processPath = subprocess.check_output(["/usr/bin/which", processName])
-    if processPath != "":
-        return processPath
-    else:
-        return None
-
 rtmp_bp = Blueprint("rtmp", __name__)
 
 
@@ -102,7 +95,7 @@ def user_auth_check():
                         if destination["enabled"] is True:
                             p = subprocess.Popen(
                                 [
-                                    getProcessPath('ffmpeg'),
+                                    "ffmpeg",
                                     "-i",
                                     inputLocation,
                                     "-c",
@@ -151,7 +144,7 @@ def user_auth_check():
                             != sysSettingsResults["results"]["siteAddress"]
                         ):
                             subprocessConstructor = [
-                                getProcessPath('ffmpeg'),
+                                "ffmpeg",
                                 "-i",
                                 inputLocation,
                                 "-c",
