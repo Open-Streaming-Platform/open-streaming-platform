@@ -29,7 +29,7 @@ from classes.shared import celery
 log = logging.getLogger("app.functions.system")
 
 def getProcessPath(processName):
-    processPath = subprocess.check_output(["which", processName])
+    processPath = subprocess.check_output(["/usr/bin/which", processName])
     if processPath != "":
         return processPath
     else:
