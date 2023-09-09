@@ -8,7 +8,8 @@ OSP-Core: Truncates Video Comments > 2048 Characters
 OSP-Core: Fixes to Chat Popout Window
 OSP-Core: Fixes for HTML returns on Deleted Users
 OSP-Core: Adds User Notification on Video Processing Start and Completion
-OSP-Core: Fixes a possible JS xss vulnerability in the chat system.
+OSP-Core: Fixes a possible JS xss vulnerability in the chat and profile system.
+OSP-Core: Formatting Change on Sort By Button
 OSP-Installer: Added check to ensure required SMTP values are present
 OSP-Installer: Moves Default Nginx Install to 1.22.1
 OSP-Installer: Moves Default Ejabberd Install to 23.04

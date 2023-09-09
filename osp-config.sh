@@ -56,25 +56,25 @@ config_smtp() {
   smtpEncryption=""
 exec 3>&1
   # Store data to $VALUES variable
-while [[ -z $smtpSendAs || -z $smtpServerAddress || -z $smtpServerPort ]];
-do   
-  dialog --separate-widget $'\n' --ok-label "Save" \
+  VALUES=$(dialog --separate-widget $'\n' --ok-label "Save" \
             --title "Configure SMTP Settings" \
             --form "Please Configure your SMTP Settings (Required)" \
   20 70 0 \
-          "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
-          "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
-          "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
+          "Send Email As: (*)"          1 1   "$smtpSendAs"           1 25 40 0 \
+          "SMTP Server Address: (*)"    2 1   "$smtpServerAddress"    2 25 40 0 \
+          "SMTP Server Port: (*)"       3 1   "$smtpServerPort"           3 25 5 0 \
           "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
           "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
-  2>&1 1>&3 | {
-    read -r smtpSendAs
-    read -r smtpServerAddress
-    read -r smtpServerPort
-    read -r smtpUsername
-    read -r smtpPassword
-  }
-done
+  2>&1 1>&3)
+
+echo "$VALUES" > /tmp/o.txt
+smtpSendAs=$(cat /tmp/o.txt | head -1)
+smtpServerAddress=$(cat /tmp/o.txt | head -2 | tail -1)
+smtpServerPort=$(cat /tmp/o.txt | head -3 | tail -1)
+smtpUsername=$(cat /tmp/o.txt | head -4 | tail -1)
+smtpPassword=$(cat /tmp/o.txt | head -5 | tail -1)
+rm /tmp/o.txt
+
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
 
@@ -157,7 +157,6 @@ reset_ejabberd() {
   sudo mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   sudo cp /opt/osp/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp /opt/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
@@ -165,6 +164,7 @@ reset_ejabberd() {
   3>&1 1>&2 2>&3 3>&-)
   echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
@@ -182,7 +182,9 @@ upgrade_db() {
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  source venv/bin/activate >> $OSPLOG 2>&1
   flask db upgrade >> $OSPLOG 2>&1
+  deactivate >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
@@ -254,8 +256,8 @@ install_nginx_core() {
           echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
           if cd nginx-http-flv-module-$NGINX_RTMP_VERSION
           then
-            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
-            sudo patch -s -p 1 < 1158.patch
+          #  sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
+          #  sudo patch -s -p 1 < 1158.patch
             cd ..
           else
               echo "Unable to Access Nginx-RTMP Module Source"
@@ -501,7 +503,6 @@ install_ejabberd() {
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
   mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1cd
   sudo cp $DIR/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
   sudo cp /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   # If we don't have the site address, prompt the user
@@ -516,6 +517,7 @@ install_ejabberd() {
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
   sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
+  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
@@ -691,7 +693,9 @@ upgrade_osp() {
      sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     flask db upgrade >> $UPGRADELOG 2>&1
+     source venv/bin/activate >> $OSPLOG 2>&1
+     flask db upgrade >> $OSPLOG 2>&1
+     deactivate  >> $OSPLOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
      sudo systemctl start osp.target >> $UPGRADELOG 2>&1
      echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0

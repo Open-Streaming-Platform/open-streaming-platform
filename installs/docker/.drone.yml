@@ -6,6 +6,7 @@ trigger:
     - nightly
   event:
     - push
+    - custom
 
 platform:
   os: linux
@@ -30,6 +31,7 @@ steps:
   when:
     event:
       - push
+      - custom
 - name: build-nightly-rtmp
   image: thegeeklab/drone-docker-buildx
   privileged: true
@@ -48,6 +50,7 @@ steps:
   when:
     event:
       - push
+      - custom
 - name: build-nightly-ejabberd
   image: thegeeklab/drone-docker-buildx
   privileged: true
@@ -66,6 +69,7 @@ steps:
   when:
     event:
       - push
+      - custom
 - name: discord notification
   image: appleboy/drone-discord
   settings:
@@ -92,6 +96,7 @@ steps:
   when:
     event:
       - push
+      - custom
 ---
 kind: pipeline
 name: prod-build
@@ -101,6 +106,7 @@ trigger:
     - master
   event:
     - push
+    - custom
 
 platform:
   os: linux
@@ -112,6 +118,7 @@ steps:
   when:
     event:
       - push
+      - custom
   commands:
     - echo -n "$(cat version), latest" > .tags
 - name: build-core
@@ -131,6 +138,7 @@ steps:
   when:
     event:
       - push
+      - custom
 - name: build-rtmp
   image: thegeeklab/drone-docker-buildx
   privileged: true
@@ -148,6 +156,8 @@ steps:
   when:
     event:
       - push
+      - custom
+      
 - name: build-ejabberd
   image: thegeeklab/drone-docker-buildx
   privileged: true
@@ -165,6 +175,7 @@ steps:
   when:
     event:
       - push
+      - custom
 - name: discord notification
   image: appleboy/drone-discord
   settings:
