@@ -8,6 +8,7 @@ monkey.patch_all(thread=True)
 import sys
 import logging
 import os
+import uuid
 
 # Import 3rd Party Libraries
 from flask import Flask, redirect, request, abort, flash
@@ -17,6 +18,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 # Import Paths
 cwp = sys.path[0]
 sys.path.append(cwp)
+
+version = "0.9.10-nightly"
 
 # ----------------------------------------------------------------------------#
 # Configuration Imports
@@ -65,6 +68,33 @@ logger = logging.getLogger("gunicorn.error").handlers
 # ----------------------------------------------------------------------------#
 # Begin App Initialization
 # ----------------------------------------------------------------------------#
+
+####### Sentry.IO Metrics and Error Logging (Disabled by Default) #######
+if hasattr(config, "sentryIO_Enabled") and hasattr(config, "sentryIO_DSN"):
+    if config.sentryIO_Enabled:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+
+        sentryEnv = "Not Specified"
+        if hasattr(config, "sentryIO_Environment"):
+            sentryEnv = config.sentryIO_Environment
+
+        sentry_sdk.init(
+            dsn=config.sentryIO_DSN,
+            integrations=[
+                FlaskIntegration()
+            ],
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0,
+            release=version,
+            environment=sentryEnv,
+            server_name="osp_rtmp" + str(uuid.uuid4),
+            _experiments={
+                "profiles_sample_rate": 1.0,
+            }
+        )
 
 # Initialize Flask-CORS Config
 cors = CORS(app, resources={r"/apiv1/*": {"origins": "*"}})
