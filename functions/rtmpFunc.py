@@ -154,20 +154,18 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
     if requestedChannel is not None:
         authedStream = Stream.Stream.query.filter_by(
             pending=True, streamKey=requestedChannel.streamKey
-        ).first()
+        ).with_entities(Stream.Stream.id).first()
 
         if authedStream is not None:
-            if authorizedRTMP is not None:
-                authedStream.rtmpServer = authorizedRTMP
 
-            authedStream.currentViewers = int(
+            currentViewers = int(
                 xmpp.getChannelCounts(requestedChannel.channelLoc)
             )
-            authedStream.totalViewers = int(
+            totalViewers = int(
                 xmpp.getChannelCounts(requestedChannel.channelLoc)
             )
-            authedStream.active = True
-            authedStream.pending = False
+
+            authedStreamUpdate = Stream.Stream.query.filter_by(id=authedStream.id).update(dict(currentViewers=currentViewers, totalViewers=totalViewers, active=True, pending=False, rtmpServer=authorizedRTMP))
             db.session.commit()
 
             if requestedChannel.imageLocation is None:
