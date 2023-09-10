@@ -37,7 +37,7 @@ log = logging.getLogger("app.functions.database")
 def getVidLength(input_video):
     result = subprocess.check_output(
         [
-            "ffprobe",
+            "/usr/bin/ffprobe",
             "-i",
             input_video,
             "-show_entries",
@@ -414,7 +414,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             # processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
             gifprocessResult = subprocess.call(
                 [
-                    "ffmpeg",
+                    "/usr/bin/ffmpeg",
                     "-ss",
                     str(clipStart),
                     "-t",
@@ -592,7 +592,7 @@ def setVideoThumbnail(videoID, timeStamp):
             pass
         result = subprocess.call(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-ss",
                 str(timeStamp),
                 "-i",
@@ -606,7 +606,7 @@ def setVideoThumbnail(videoID, timeStamp):
         )
         gifresult = subprocess.call(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-ss",
                 str(timeStamp),
                 "-t",
@@ -713,7 +713,7 @@ def processVideoUpload(
 
         subprocess.call(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-ss",
                 "00:00:01",
                 "-i",
@@ -737,7 +737,7 @@ def processVideoUpload(
     )
     gifresult = subprocess.call(
         [
-            "ffmpeg",
+            "/usr/bin/ffmpeg",
             "-ss",
             "00:00:01",
             "-t",
@@ -790,7 +790,7 @@ def processFLVUpload(path):
 
     processedStreamVideo = subprocess.call(
         [
-            "ffmpeg",
+            "/usr/bin/ffmpeg",
             "-y",
             "-i",
             path,
@@ -821,7 +821,7 @@ def processStreamVideo(path, channelLoc):
 
     processedStreamVideo = subprocess.call(
         [
-            "ffmpeg",
+            "/usr/bin/ffmpeg",
             "-y",
             "-i",
             inputPath,

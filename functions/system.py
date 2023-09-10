@@ -193,7 +193,7 @@ def systemFixes(app):
         clip.videoLocation = clipVideoLocation
         clipVideo = subprocess.run(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-ss",
                 str(clip.startTime),
                 "-i",

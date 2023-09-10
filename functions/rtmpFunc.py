@@ -148,7 +148,6 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
 
     currentTime = datetime.datetime.utcnow()
 
-    # requestedChannel = Channel.Channel.query.filter_by(channelLoc=channelLoc).first()
     requestedChannel = cachedDbCalls.getChannelByLoc(channelLoc)
 
     if requestedChannel is not None:
@@ -168,101 +167,101 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
             authedStreamUpdate = Stream.Stream.query.filter_by(id=authedStream.id).update(dict(currentViewers=currentViewers, totalViewers=totalViewers, active=True, pending=False, rtmpServer=authorizedRTMP))
             db.session.commit()
 
-            #if requestedChannel.imageLocation is None:
-            #    channelImage = (
-            #        sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/static/img/video-placeholder.jpg"
-            #    )
-            #else:
-            #    channelImage = (
-            #        sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/images/"
-            #        + requestedChannel.imageLocation
-            #    )
-#
-            #message_tasks.send_webhook.delay(
-            #    requestedChannel.id,
-            #    0,
-            #    channelname=requestedChannel.channelName,
-            #    channelurl=(
-            #        sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/channel/"
-            #        + str(requestedChannel.id)
-            #    ),
-            #    channeltopic=requestedChannel.topic,
-            #    channelimage=channelImage,
-            #    streamer=templateFilters.get_userName(requestedChannel.owningUser),
-            #    channeldescription=str(requestedChannel.description),
-            #    streamname=authedStream.streamName,
-            #    streamurl=(
-            #        sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/view/"
-            #        + requestedChannel.channelLoc
-            #    ),
-            #    streamtopic=templateFilters.get_topicName(authedStream.topic),
-            #    streamimage=(
-            #        sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/stream-thumb/"
-            #        + requestedChannel.channelLoc
-            #        + ".png"
-            #    ),
-            #)
-#
-            #subscriptionQuery = (
-            #    subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id)
-            #    .with_entities(
-            #        subscriptions.channelSubs.id, subscriptions.channelSubs.userID
-            #    )
-            #    .all()
-            #)
-            #for sub in subscriptionQuery:
-            #    # Create Notification for Channel Subs
-            #    newNotification = notifications.userNotification(
-            #        templateFilters.get_userName(requestedChannel.owningUser)
-            #        + " has started a live stream in "
-            #        + requestedChannel.channelName,
-            #        "/view/" + str(requestedChannel.channelLoc),
-            #        "/images/"
-            #        + str(
-            #            templateFilters.get_pictureLocation(requestedChannel.owningUser)
-            #        ),
-            #        sub.userID,
-            #    )
-            #    db.session.add(newNotification)
-            #db.session.commit()
-#
-            #try:
-            #    subsFunc.processSubscriptions(
-            #        requestedChannel.id,
-            #        sysSettings.siteName
-            #        + " - "
-            #        + requestedChannel.channelName
-            #        + " has started a stream",
-            #        "<html><body><img src='"
-            #        + sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + sysSettings.systemLogo
-            #        + "'><p>Channel "
-            #        + requestedChannel.channelName
-            #        + " has started a new video stream.</p><p>Click this link to watch<br><a href='"
-            #        + sysSettings.siteProtocol
-            #        + sysSettings.siteAddress
-            #        + "/view/"
-            #        + str(requestedChannel.channelLoc)
-            #        + "'>"
-            #        + requestedChannel.channelName
-            #        + "</a></p>",
-            #        "stream",
-            #    )
-            #except:
-            #    system.newLog(
-            #        0, "Subscriptions Failed due to possible misconfiguration"
-            #    )
+            if requestedChannel.imageLocation is None:
+                channelImage = (
+                    sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/static/img/video-placeholder.jpg"
+                )
+            else:
+                channelImage = (
+                    sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/images/"
+                    + requestedChannel.imageLocation
+                )
+
+            message_tasks.send_webhook.delay(
+                requestedChannel.id,
+                0,
+                channelname=requestedChannel.channelName,
+                channelurl=(
+                    sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/channel/"
+                    + str(requestedChannel.id)
+                ),
+                channeltopic=requestedChannel.topic,
+                channelimage=channelImage,
+                streamer=templateFilters.get_userName(requestedChannel.owningUser),
+                channeldescription=str(requestedChannel.description),
+                streamname=authedStream.streamName,
+                streamurl=(
+                    sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/view/"
+                    + requestedChannel.channelLoc
+                ),
+                streamtopic=templateFilters.get_topicName(authedStream.topic),
+                streamimage=(
+                    sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/stream-thumb/"
+                    + requestedChannel.channelLoc
+                    + ".png"
+                ),
+            )
+
+            subscriptionQuery = (
+                subscriptions.channelSubs.query.filter_by(channelID=requestedChannel.id)
+                .with_entities(
+                    subscriptions.channelSubs.id, subscriptions.channelSubs.userID
+                )
+                .all()
+            )
+            for sub in subscriptionQuery:
+                # Create Notification for Channel Subs
+                newNotification = notifications.userNotification(
+                    templateFilters.get_userName(requestedChannel.owningUser)
+                    + " has started a live stream in "
+                    + requestedChannel.channelName,
+                    "/view/" + str(requestedChannel.channelLoc),
+                    "/images/"
+                    + str(
+                        templateFilters.get_pictureLocation(requestedChannel.owningUser)
+                    ),
+                    sub.userID,
+                )
+                db.session.add(newNotification)
+            db.session.commit()
+
+            try:
+                subsFunc.processSubscriptions(
+                    requestedChannel.id,
+                    sysSettings.siteName
+                    + " - "
+                    + requestedChannel.channelName
+                    + " has started a stream",
+                    "<html><body><img src='"
+                    + sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + sysSettings.systemLogo
+                    + "'><p>Channel "
+                    + requestedChannel.channelName
+                    + " has started a new video stream.</p><p>Click this link to watch<br><a href='"
+                    + sysSettings.siteProtocol
+                    + sysSettings.siteAddress
+                    + "/view/"
+                    + str(requestedChannel.channelLoc)
+                    + "'>"
+                    + requestedChannel.channelName
+                    + "</a></p>",
+                    "stream",
+                )
+            except:
+                system.newLog(
+                    0, "Subscriptions Failed due to possible misconfiguration"
+                )
 
             returnMessage = {
                 "time": str(currentTime),
