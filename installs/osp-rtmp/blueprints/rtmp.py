@@ -95,7 +95,7 @@ def user_auth_check():
                         if destination["enabled"] is True:
                             p = subprocess.Popen(
                                 [
-                                    "ffmpeg",
+                                    "/usr/bin/ffmpeg",
                                     "-i",
                                     inputLocation,
                                     "-c",
@@ -144,7 +144,7 @@ def user_auth_check():
                             != sysSettingsResults["results"]["siteAddress"]
                         ):
                             subprocessConstructor = [
-                                "ffmpeg",
+                                "/usr/bin/ffmpeg",
                                 "-i",
                                 inputLocation,
                                 "-c",
