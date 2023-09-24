@@ -1,4 +1,4 @@
-version = "0.9.10-nightly"
+version = "0.9.10"
 appDBVersion = 0.90
 processUUID = None
 
