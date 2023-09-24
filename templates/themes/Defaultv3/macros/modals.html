@@ -1295,17 +1295,33 @@
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()">A</button>
+                    <button class="btn btn-primary" title="Set Clip Start from Video Playhead" type="button" id="clipStartTimeButton" onclick="setClipStart()">Set Start Time</button>
                   </div>
                   <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly required>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" onclick="clipStartGoTo()" data-toggle="tooltip" data-placement="top" title="Go to Time in Video" id="clipStartTimeGoTo">Go To</button>
+                  </div>
                 </div>
               </div>
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()">B</button>
+                    <button class="btn btn-danger" title="Set Clip Stop from Video Playhead" type="button" id="clipStopTimeButton" onclick="setClipStop()">Set End Time</button>
                   </div>
                   <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly required>
+                  <div class="input-group-append">
+                    <button class="btn btn-danger" type="button" onclick="clipStopGoTo()" data-toggle="tooltip" data-placement="top" title="Go to Time in Video" id="clipStopTimeGoTo">Go To</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="clipTimeDisplay" class="mt-2">
+              <div class="row">
+                <div class="col-6 d-flex flex-column flex-sm-row justify-content-start justify-content-sm-end align-items-end gap-sm-2">
+                  Length: <span id="clipCurrentLength"></span>
+                </div>
+                <div class="col-6 d-flex flex-column flex-sm-row justify-content-start align-items-start gap-sm-2">
+                  Max. Length: <span id="clipMaxLength"></span>
                 </div>
               </div>
             </div>
@@ -1317,7 +1333,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-          <button id="clipSubmitButton" type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="createClip();">Create</button>
+          <button id="clipSubmitButton" type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="createClip();" disabled>Create</button>
         </div>
       </form>
     </div>
@@ -1357,17 +1373,33 @@
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()" data-toggle="tooltip" data-placement="top" title="Set Clip Start">A</button>
+                    <button class="btn btn-primary" type="button" id="clipStartTimeButton" onclick="setClipStart()" data-toggle="tooltip" data-placement="top" title="Set Clip Start">Set Start Time</button>
                   </div>
                   <input type="number" id="clipStartTime" name="clipStartTime" class="form-control" placeholder="Start Time" readonly required>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" onclick="clipStartGoTo()" data-toggle="tooltip" data-placement="top" title="Go to Time in Video" id="clipStartTimeGoTo">Go To</button>
+                  </div>
                 </div>
               </div>
               <div class="col-12 col-md-6">
                 <div class="input-group">
                   <div class="input-group-prepend">
-                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()" data-toggle="tooltip" data-placement="top" title="Set Clip Stop">B</button>
+                    <button class="btn btn-danger" type="button" id="clipStopTimeButton" onclick="setClipStop()" data-toggle="tooltip" data-placement="top" title="Set Clip Stop">Set End Time</button>
                   </div>
                   <input type="number" id="clipStopTime" name="clipStopTime" class="form-control" placeholder="Stop Time" readonly required>
+                  <div class="input-group-append">
+                    <button class="btn btn-danger" type="button" onclick="clipStopGoTo()" data-toggle="tooltip" data-placement="top" title="Go to Time in Video" id="clipStopTimeGoTo">Go To</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="clipTimeDisplay" class="mt-2">
+              <div class="row">
+                <div class="col-6 d-flex flex-column flex-sm-row justify-content-start justify-content-sm-end align-items-end gap-sm-2">
+                  Length: <span id="clipCurrentLength"></span>
+                </div>
+                <div class="col-6 d-flex flex-column flex-sm-row justify-content-start align-items-start gap-sm-2">
+                  Max. Length: <span id="clipMaxLength"></span>
                 </div>
               </div>
             </div>
@@ -1379,7 +1411,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary boxShadow" data-bs-dismiss="modal">Cancel</button>
-          <button id="clipSubmitButton"  type="button" class="btn btn-success boxShadow" data-bs-dismiss="modal" onclick="createVideoClipSubmit();">Create</button>
+          <button id="clipSubmitButton"  type="button" class="btn btn-success boxShadow" data-bs-dismiss="modal" onclick="createVideoClipSubmit();" disabled>Create</button>
         </div>
     </div>
   </div>

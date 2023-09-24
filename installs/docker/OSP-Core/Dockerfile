@@ -1,12 +1,12 @@
 FROM ubuntu:22.04
 MAINTAINER David Lockwood
 
-ARG OSP_VERSION=0.9.0
+ARG OSP_VERSION=0.9.10
 ARG OSP_GIT_BRANCH=build/0.9.x
 
-ARG NGINX_VERSION=1.22.0
-ARG NGINX_RTMP_VERSION=1.2.10
-ARG NGINX_ZLIB_VERSION=1.2.13
+ARG NGINX_VERSION=1.22.1
+ARG NGINX_RTMP_VERSION=1.2.11
+ARG NGINX_ZLIB_VERSION=1.3
 
 ARG DEFAULT_DB_URL=mysql+pymysql://osp:password@db/osp?charset=utf8mb4
 ARG DEFAULT_REDIS_HOST=redis
@@ -116,8 +116,8 @@ RUN cd /tmp && \
 # Inline Patch NGINX-RTMP
 #RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION}/1158.patch
 #RUN cd /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
-RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
-RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
+#RUN cp /opt/osp/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION}/1158.patch
+#RUN cd /tmp/nginx-http-flv-module-${NGINX_RTMP_VERSION} && patch -s -p 1 < 1158.patch
 
 
 RUN cd /tmp && \

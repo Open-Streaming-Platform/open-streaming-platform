@@ -36,6 +36,8 @@ class Channel(db.Model):
     allowGuestNickChange = db.Column(db.Boolean)
     showHome = db.Column(db.Boolean)
     maxVideoRetention = db.Column(db.Integer)
+    hubEnabled = db.Column(db.Boolean)
+    hubNSFW = db.Column(db.Boolean)
     stream = db.relationship(
         "Stream", backref="channel", cascade="all, delete-orphan", lazy="joined"
     )
@@ -116,6 +118,9 @@ class Channel(db.Model):
         self.private = False
         self.chatFormat = "messenger"
         self.chatHistory = 2
+        self.hubEnabled = False
+        self.hubNSFW = False
+
 
     def __repr__(self):
         return "<id %r>" % self.id

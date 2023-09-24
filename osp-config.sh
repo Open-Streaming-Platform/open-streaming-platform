@@ -4,10 +4,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 OSPLOG="/var/log/osp/installer.log"
 VERSION=$(<version)
 
-NGINX_BUILD_VERSION=1.22.0
-NGINX_RTMP_VERSION=1.2.10
-NGINX_ZLIB_VERSION=1.2.13
-EJABBERD_VERSION=20.12
+NGINX_BUILD_VERSION="1.22.1"
+NGINX_RTMP_VERSION="1.2.11"
+NGINX_ZLIB_VERSION="1.3"
+EJABBERD_VERSION="23.04"
 
 DIALOG_CANCEL=1
 DIALOG_ESC=255
@@ -56,21 +56,24 @@ config_smtp() {
   smtpEncryption=""
 exec 3>&1
   # Store data to $VALUES variable
-dialog --separate-widget $'\n' --ok-label "Save" \
-          --title "Configure SMTP Settings" \
-          --form "Please Configure your SMTP Settings (Required)" \
-20 70 0 \
-        "Send Email As:"          1 1   "$smtpSendAs"           1 25 40 0 \
-        "SMTP Server Address:"    2 1   "$smtpServerAddress"    2 25 40 0 \
-        "SMTP Server Port:"       3 1   "$smtpServerPort"           3 25 5 0 \
-        "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
-        "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
-2>&1 1>&3 | {
-  read -r smtpSendAs
-  read -r smtpServerAddress
-  read -r smtpServerPort
-  read -r smtpUsername
-  read -r smtpPassword
+  VALUES=$(dialog --separate-widget $'\n' --ok-label "Save" \
+            --title "Configure SMTP Settings" \
+            --form "Please Configure your SMTP Settings (Required)" \
+  20 70 0 \
+          "Send Email As: (*)"          1 1   "$smtpSendAs"           1 25 40 0 \
+          "SMTP Server Address: (*)"    2 1   "$smtpServerAddress"    2 25 40 0 \
+          "SMTP Server Port: (*)"       3 1   "$smtpServerPort"           3 25 5 0 \
+          "Username:"               4 1   "$smtpUsername"               4 25 40 0 \
+          "Password:"               5 1   "$smtpPassword"               5 25 40 0 \
+  2>&1 1>&3)
+
+echo "$VALUES" > /tmp/o.txt
+smtpSendAs=$(cat /tmp/o.txt | head -1)
+smtpServerAddress=$(cat /tmp/o.txt | head -2 | tail -1)
+smtpServerPort=$(cat /tmp/o.txt | head -3 | tail -1)
+smtpUsername=$(cat /tmp/o.txt | head -4 | tail -1)
+smtpPassword=$(cat /tmp/o.txt | head -5 | tail -1)
+rm /tmp/o.txt
 
 cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server Encryption": 20 70 0 1 "None" on  2 "TLS" off 3 "SSL" off
 )
@@ -102,7 +105,7 @@ sudo sed -i "s/smtpUsername=\"\"/smtpUsername=\"$smtpUsername\"/" /opt/osp/conf/
 sudo sed -i "s/smtpPassword=\"\"/smtpPassword=\"$smtpPassword\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 sudo sed -i "s/smtpEncryption=\"none\"/smtpEncryption=\"$smtpEncryption\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 
-}
+
 exec 3>&-
 
 }
@@ -134,11 +137,13 @@ reset_ejabberd() {
   sudo systemctl stop ejabberd >> $OSPLOG 2>&1
   echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
   sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
+  sudo rm -rf /opt/ejabberd >> $OSPLOG 2>&1
   echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
-  sudo /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
@@ -149,24 +154,24 @@ reset_ejabberd() {
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
   sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
   echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
-  sudo mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
-  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
+  sudo mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
+  sudo cp /opt/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   user_input=$(\
   dialog --nocancel --title "Setting up eJabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+         --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
   3>&1 1>&2 2>&3 3>&-)
   echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
   echo 90 | dialog --title "Reset eJabberd Configuration" --gauge "Setting eJabberd Local Admin" 10 70 0
-  sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
   echo 95 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting OSP" 10 70 0
   sudo systemctl restart osp.target >> $OSPLOG 2>&1
 }
@@ -177,7 +182,9 @@ upgrade_db() {
   sudo systemctl stop osp.target >> $OSPLOG 2>&1
   cd /opt/osp
   echo 50 | dialog --title "Upgrading Database" --gauge "Upgrading Database" 10 70 0
+  source venv/bin/activate >> $OSPLOG 2>&1
   flask db upgrade >> $OSPLOG 2>&1
+  deactivate >> $OSPLOG 2>&1
   echo 75 | dialog --title "Upgrading Database" --gauge "Starting OSP" 10 70 0
   sudo systemctl start osp.target >> $OSPLOG 2>&1
   echo 100 | dialog --title "Upgrading Database" --gauge "Complete" 10 70 0
@@ -187,11 +194,11 @@ upgrade_db() {
 install_prereq() {
     echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
     # Get Deb Dependencies
+    sudo apt-get update >> $OSPLOG 2>&1
     sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
     # Setup Python
     echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
-    sudo apt-get install python3 python3-pip uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
-    sudo pip3 install wheel >> $OSPLOG 2>&1
+    sudo apt-get install python3 python3-pip python3-venv uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
 }
 
 install_ffmpeg() {
@@ -249,8 +256,8 @@ install_nginx_core() {
           echo 31 | dialog --title "Installing Nginx-Core" --gauge "Applying Precompile Patches" 10 70 0
           if cd nginx-http-flv-module-$NGINX_RTMP_VERSION
           then
-            sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
-            sudo patch -s -p 1 < 1158.patch
+          #  sudo cp $DIR/installs/nginx-core/patches/mr-1158/1158.patch /tmp/nginx-http-flv-module-$NGINX_RTMP_VERSION/1158.patch >> $OSPLOG 2>&1
+          #  sudo patch -s -p 1 < 1158.patch
             cd ..
           else
               echo "Unable to Access Nginx-RTMP Module Source"
@@ -319,27 +326,38 @@ install_nginx_core() {
 
 }
 
+install_osp_rtmp_venv() {
+  cd /opt/osp-rtmp
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
+}
+
 install_osp_rtmp() {
   echo 10 | dialog --title "Installing OSP-RTMP" --gauge "Intalling Prereqs" 10 70 0
   install_prereq
-  echo 25 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
-  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
 
-  echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
+  echo 20 | dialog --title "Installing OSP-RTMP" --gauge "Setting Up Nginx Configs" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-rtmp/setup/nginx/custom/osp-rtmp-* /usr/local/nginx/conf/custom >> $OSPLOG 2>&1
 
-  echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Install OSP-RTMP Application" 10 70 0
+  # Create OSP-RTMP Folder
+  echo 30 | dialog --title "Installing OSP-RTMP" --gauge "Create OSP-RTMP Folder" 10 70 0
   sudo mkdir /opt/osp-rtmp >> $OSPLOG 2>&1
 
-  # Setup Nginx-RTMP Socket Directory
+  echo 40 | dialog --title "Installing OSP-RTMP" --gauge "Installing Requirements.txt" 10 70 0
+  install_osp_rtmp_venv
+
+  # Copy OSP-RTMP Data
+  echo 50 | dialog --title "Installing OSP-RTMP" --gauge "Installing OSP-RTMP Application" 10 70 0
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
   sudo mkdir /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
 
-echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
+  echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
@@ -351,6 +369,14 @@ install_redis() {
   sudo apt-get install redis -y >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing Redis" --gauge "Configuring Redis" 10 70 0
   sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf >> $OSPLOG 2>&1
+}
+
+install_osp_proxy_venv() {
+  cd /opt/osp-proxy
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
 }
 
 install_osp_proxy() {
@@ -366,17 +392,17 @@ install_osp_proxy() {
   sudo cp $DIR/installs/osp-proxy/setup/nginx/cors.conf /usr/local/nginx/conf/cors.conf >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/custom/osp-proxy-custom* /usr/local/nginx/conf/custom/ >> $OSPLOG 2>&1
 
-  # Setup OSP Proxy Directory
-  echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
-  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
-
   # Install OSP Proxy
-  echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  echo 25 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
   sudo mkdir /opt/osp-proxy >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
   sudo cp /opt/osp-proxy/conf/config.py.dist /opt/osp-proxy/conf/config.py >> $OSPLOG 2>&1
   sudo chmod +x /opt/osp-proxy/updateUpstream.sh >> $OSPLOG 2>&1
   sudo mkdir -p /var/cache/nginx/osp_cache_temp >> $OSPLOG 2>&1
+
+  # Setup OSP Proxy Directory
+  echo 50 | dialog --title "Installing OSP-Proxy" --gauge "Installing OSP-Proxy Application Prereqs" 10 70 0
+  install_osp_proxy_venv
 
   # Setup Configuration with IP
   echo 75 | dialog --title "Installing OSP-Proxy" --gauge "Installing Configuration Files" 10 70 0
@@ -455,35 +481,43 @@ install_osp_edge () {
   sudo systemctl restart nginx-osp.service >> $OSPLOG 2>&1
 }
 
+install_ejabberd_venv() {
+  cd /opt/ejabberd
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 install -r requests >> $OSPLOG 2>&1
+  deactivate
+}
+
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  install_prereq
   sudo pip3 install requests >> $OSPLOG 2>&1
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
-  /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run ----unattendedmodeui none --mode unattended --prefix /usr/local/ejabberd --cluster 0 >> $OSPLOG 2>&1
+  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
+  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
   echo 35 | dialog --title "Installing ejabberd" --gauge "Installing Configuration Files" 10 70 0
-  mkdir /usr/local/ejabberd/conf >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
-  sudo cp $DIR/installs/ejabberd/setup/inetrc /usr/local/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /usr/local/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
+  mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
+  sudo cp /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
   # If we don't have the site address, prompt the user
   if [ -z "$OSP_EJABBERD_SITE_ADDRESS" ]; then
     user_input=$(\
     dialog --nocancel --title "Setting up eJabberd" \
-           --inputbox "Enter your Site Address (Must match FQDN):" 8 80 \
+           --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
     3>&1 1>&2 2>&3 3>&-)
   else
     user_input="$OSP_EJABBERD_SITE_ADDRESS"
   fi
   echo 65 | dialog --title "Installing ejabberd" --gauge "Setting Up ejabberd Configuration" 10 70 0
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   echo 85 | dialog --title "Installing ejabberd" --gauge "Starting ejabberd" 10 70 0
+  sudo cp $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
   sudo systemctl enable ejabberd >> $OSPLOG 2>&1
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
@@ -494,10 +528,19 @@ install_ejabberd() {
 generate_ejabberd_admin() {
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
   sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
-  sudo sed -i "s/CHANGEME/$user_input/g" /usr/local/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  sudo /usr/local/ejabberd/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
   sudo systemctl restart ejabberd
+}
+
+install_osp_venv() {
+  cd /opt/osp
+  sudo python3 -m venv venv >> $OSPLOG 2>&1
+  source venv/bin/activate >> $OSPLOG 2>&1
+  pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
+  pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
+  deactivate
 }
 
 install_osp() {
@@ -507,8 +550,6 @@ install_osp() {
   echo 0 | dialog --title "Installing OSP" --gauge "Installing Linux Dependencies" 10 70 0
 
   install_prereq
-  sudo pip3 uninstall -r $DIR/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/setup/requirements.txt >> $OSPLOG 2>&1
 
   # Setup OSP Directory
   echo 20 | dialog --title "Installing OSP" --gauge "Setting up OSP Directory" 10 70 0
@@ -516,7 +557,10 @@ install_osp() {
   sudo cp -rf -R $DIR/* /opt/osp >> $OSPLOG 2>&1
   sudo cp -rf -R $DIR/.git /opt/osp >> $OSPLOG 2>&1
 
-  echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn SystemD" 10 70 0
+  echo 35 | dialog --title "Installing OSP" --gauge "Setting up OSP Virtual Environment" 10 70 0
+  install_osp_venv
+
+  echo 50 | dialog --title "Installing OSP" --gauge "Setting up Gunicorn Systemd" 10 70 0
   if cd $DIR/setup/gunicorn
   then
           sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
@@ -614,17 +658,20 @@ install_celery_flower() {
 }
 
 upgrade_celery() {
+  install_prereq
   install_celery
   sudo systemctl restart osp-celery >> $OSPLOG 2>&1
 }
 
 upgrade_celery_beat() {
+  install_prereq
   install_celery_beat
   sudo systemctl restart osp-celery-beat >> $OSPLOG 2>&1
 }
 
 upgrade_osp() {
    UPGRADELOG="/opt/osp/logs/upgrade.log"
+   install_prereq
    if cd /opt/osp
    then
      echo 0 | dialog --title "Upgrading OSP" --gauge "Pulling Git Repo" 10 70 0
@@ -635,15 +682,20 @@ upgrade_osp() {
      echo 30 | dialog --title "Upgrading OSP" --gauge "Stopping Nginx" 10 70 0
      sudo systemctl stop nginx-osp >> $UPGRADELOG 2>&1
      echo 35 | dialog --title "Upgrading OSP" --gauge "Installing Python Dependencies" 10 70 0
-     sudo pip3 uninstall -r /opt/osp/setup/remove_requirements.txt -y >> $UPGRADELOG 2>&1
-     sudo pip3 install -r /opt/osp/setup/requirements.txt >> $UPGRADELOG 2>&1
+     install_osp_venv 
      echo 45 | dialog --title "Upgrading OSP" --gauge "Upgrading Nginx-RTMP Configurations" 10 70 0
      sudo cp -rf /opt/osp/setup/nginx/locations/* /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
      sudo cp -rf /opt/osp/setup/nginx/upstream/osp-edge.conf /usr/local/nginx/conf/upstream >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp.target /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo cp $DIR/setup/gunicorn/osp-worker@.service /etc/systemd/system/ >> $OSPLOG 2>&1
+     sudo systemctl daemon-reload >> $OSPLOG 2>&1
+     sudo systemctl enable osp.target >> $OSPLOG 2>&1
      echo 50 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
      echo 65 | dialog --title "Upgrading OSP" --gauge "Upgrading Database" 10 70 0
-     flask db upgrade >> $UPGRADELOG 2>&1
+     source venv/bin/activate >> $OSPLOG 2>&1
+     flask db upgrade >> $OSPLOG 2>&1
+     deactivate  >> $OSPLOG 2>&1
      echo 75 | dialog --title "Upgrading OSP" --gauge "Starting OSP" 10 70 0
      sudo systemctl start osp.target >> $UPGRADELOG 2>&1
      echo 90 | dialog --title "Upgrading OSP" --gauge "Starting Nginx" 10 70 0
@@ -655,27 +707,35 @@ upgrade_osp() {
 }
 
 upgrade_proxy() {
-  sudo pip3 install -r $DIR/installs/osp-proxy/setup/requirements.txt >> $OSPLOG 2>&1
+  install_prereq
   sudo cp $DIR/installs/osp-proxy/setup/nginx/locations/*.conf /usr/local/nginx/conf/locations >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp $DIR/installs/osp-proxy/setup/nginx/nginx.conf /usr/local/nginx/conf/nginx.conf >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-proxy/* /opt/osp-proxy >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-proxy/setup/gunicorn/osp-proxy.service /etc/systemd/system/osp-proxy.service >> $OSPLOG 2>&1
+  install_osp_proxy_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-proxy.service >> $OSPLOG 2>&1
 }
 
 upgrade_rtmp() {
-  sudo pip3 uninstall -r $DIR/installs/osp-rtmp/setup/remove_requirements.txt -y >> $OSPLOG 2>&1
-  sudo pip3 install -r $DIR/installs/osp-rtmp/setup/requirements.txt >> $OSPLOG 2>&1
+  install_prereq
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/servers/*.conf /usr/local/nginx/conf/servers >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-rtmp/setup/nginx/services/*.conf /usr/local/nginx/conf/services >> $OSPLOG 2>&1
   sudo cp -R $DIR/installs/osp-rtmp/* /opt/osp-rtmp >> $OSPLOG 2>&1
+  sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
+  install_osp_rtmp_venv
+  sudo systemctl daemon-reload >> $OSPLOG 2>&1
+  sudo systemctl enable osp-rtmp.service >> $OSPLOG 2>&1
 }
 
 upgrade_ejabberd() {
-  sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /usr/local/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
+  sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
 }
 
 upgrade_edge() {
+  install_prereq
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/services/osp-edge-rtmp.conf /usr/local/nginx/conf/services/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/locations/osp-edge-redirects.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/osp-edge/setup/nginx/servers/osp-edge-servers.conf /usr/local/nginx/conf/servers/ >> $OSPLOG 2>&1
@@ -932,7 +992,7 @@ upgrade_menu() {
         sudo systemctl restart ejabberd >> $OSPLOG 2>&1
         echo 75 | dialog --title "Upgrade OSP" --gauge "Restarting Nginx Core" 10 70 0
         sudo systemctl restart nginx-osp >> $OSPLOG 2>&1
-        result=$(echo "eJabberd Upgrade Completed! You will need to edit /usr/local/ejabberd/conf/auth_osp.py again")
+        result=$(echo "eJabberd Upgrade Completed! You will need to edit /opt/ejabberd/conf/auth_osp.py again")
         display_result "Upgrade OSP"
         ;;
       7)

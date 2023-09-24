@@ -1,0 +1,18 @@
+[project]
+name = "Open Streaming Platform"
+authors = [{name = "Deamos", email = "contact@openstreamingplatform.com"}]
+version = "0.9.10"
+description = "Open Source Video Streaming Server"
+readme = "README.md"
+requires-python = ">=3.09"
+license = {file = "LICENSE"}
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["setup/requirements.txt"]}
+
+[project.urls]
+homepage = "https://openstreamingplatform.com"
+documentation = "https://open-streaming-platform.readthedocs.io/"
+repository = "https://gitlab.com/osp-group/flask-nginx-rtmp-manager"
+changelog = "https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/blob/master/CHANGELOG?ref_type=heads"

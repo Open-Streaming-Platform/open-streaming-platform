@@ -5,3 +5,8 @@ secretKey="CHANGEME"
 debugMode = False
 
 ospCoreAPI = "http://127.0.0.1:5010"
+
+# Sentry.io Debug Logging and Tracing
+# sentryIO_Enabled = False
+# sentryIO_DSN = "https://subdomain.ingest.sentry.io/0"
+# sentryIO_Environment = "Dev"

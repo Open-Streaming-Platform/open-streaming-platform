@@ -6,7 +6,8 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/osp-rtmp
-ExecStart=/usr/local/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:5099 --reload
+Environment="PATH=/opt/osp-rtmp/venv/bin"
+ExecStart=/opt/osp-rtmp/venv/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:5099 --reload
 
 [Install]
 WantedBy=multi-user.target

@@ -118,10 +118,16 @@
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
-      <span class="mr-1">Sort:</span>
-      <span class="sort mr-1" data-sort="list-videoName"><a href="#">Name</a></span>
-      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
-      <span class="sort {% if order == 1 %} desc {% endif %} mr-1" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}><a href="#">Date</a></span>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Sort By
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item sort" href="#" data-sort="list-videoName">Name</a></li>
+          <li><a class="dropdown-item sort {% if order == 0 %} desc {% endif %}" href="#" data-sort="list-videoViews" {% if order == 0 %} data-default-order="desc" {% endif %}>Views</a></li>
+          <li><a class="dropdown-item sort {% if order == 1 %} desc {% endif %}" href="#" data-sort="list-videoDate" {% if order == 1 %} data-default-order="desc" {% endif %}>Date</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <ul id="videoList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
@@ -159,9 +165,15 @@
       <span class="h3 textShadow"><b>{{ title }}</b></span>
     </div>
     <div class="col-12 col-lg-5 px-0 text-end mt-auto">
-      <span class="mr-1">Sort:</span>
-      <span class="sort mr-1" data-sort="list-clipName"><a href="#">Name</a></span>
-      <span class="sort {% if order == 0 %} desc {% endif %} mr-1" data-sort="list-clipViews" {% if order==0 %} data-default-order="desc" {% endif %}><a href="#">Views</a></span>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Sort By
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item sort" href="#" data-sort="list-clipName"">Name</a></li>
+          <li><a class="dropdown-item sort {% if order == 0 %} desc {% endif %}" href="#" data-sort="list-clipViews" {% if order == 0 %} data-default-order="desc" {% endif %}>Views</a></li>
+        </ul>
+      </div>
     </div>
   </div>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
@@ -1206,9 +1218,15 @@
                                     <button type="button" class="btn btn-warning boxShadow" id="generateGUID-{{channel.id}}"><i class="fas fa-sync"></i></button>
                                 </div>
                             </div>
-                            <small id="streamKeyHelpBlock" class="form-text text-muted">
-                                RTMP Ingests: {% for server in rtmpList %}rtmp://{{server}}/stream/ {% endfor %}
-                            </small>
+                            <label class="col-form-label"><b>RTMP Ingests</b></label>
+                            {% for server in rtmpList %}
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPI('rtmp://{{server}}/stream/')"><i class="fas fa-copy"></i></button>
+                              </div>
+                              <input type="text" class="form-control boxShadow" name="ingestServer" id="rtmp://{{server}}/stream/" value="rtmp://{{server}}/stream/" required readonly aria-describedby="generateGUID required">
+                            </div>
+                            {% endfor %}
                         </div>
                         <div class="form-group">
                           <label for="channelTags" class="col-form-label"><b>Channel Tags</b></label>
@@ -1274,65 +1292,65 @@
                                     </div>
                                 </div>
                                 <div id="channelPanel-{{channel.id}}" style="display:none;">
-                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <b><i class="far fa-window-maximize"></i> Configured Panels</b>
-                                                    <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="OpenAddChannelPanelModal('{{ channel.id }}');"><i class="fas fa-plus"></i> Add</button>
-                                                </div>
-                                                <div class="card-body">
-                                                    <table class="table table-borderless align-middle">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Type</th>
-                                                                <th>Order</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {% for panel in channel.id | getChannelPanels %}
-                                                            <tr id="panel-{{ panel.id }}">
-                                                                <td id="channelPanel-name-{{ panel.id }}">{{ panel.name }}</td>
-                                                                <td>{{ panel.type | panelTypeIdToPanelTypeName }}</td>
-                                                                <td class="d-none" id="channelPanel-typeId-{{ panel.id }}">{{ panel.type }}</td>
-                                                                <td>{{ panel.order | panelOrderIdToPanelOrderName }}</td>
-                                                                <td class="d-none" id="channelPanel-orderId-{{ panel.id }}">{{ panel.order }}</td>
-                                                                <td class="d-none" id="channelPanel-header-{{ panel.id }}">{{ panel.header }}</td>
-                                                                <td class="d-none" id="channelPanel-content-{{ panel.id }}">{{ panel.content }}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-success boxShadow" onclick="addPanelToMapping('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-arrow-right"></i></button>
-                                                                    <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editChannelPanel('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-edit"></i></button>
-                                                                    <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteChannelPanelModal('{{ panel.id }}');"><i class="fas fa-trash"></i></button>
-                                                                </td>
-                                                            <td></td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="card-header">
-                                                    <b><i class="far fa-window-restore"></i> Panel Order</b>
-                                                </div>
-                                                <div class="card-body">
-                                                    <ul id="panelOrderList-{{ channel.id }}" class="panel-ui-list mt-2">
-                                                        {% for entry in channelPanelMapping[channel.id] %}
-                                                            <li id="panel-mapping-{{ channel.id }}-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | channelPanelIdToPanelName }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemovePageLayoutPanel(this);"></i></span></li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                    <button type="button" class="btn btn-primary boxShadow" onclick="savePanelMapping({{ channel.id }});">Save</button>
-                                                </div>
-                                                <script>
-                                                    // Sets the Page Panel Layout Object to be Sortable
-                                                    var pagePanelSortList_{{ channel.id }} = document.getElementById('panelOrderList-{{ channel.id }}');
-                                                    var pagePanelSortableObject_{{ channel.id }} = Sortable.create(pagePanelSortList_{{ channel.id }}, {
-                                                      animation: 350
-                                                    });
-                                                </script>
-                                            </div>
-                                        </div>
-                                     </div>
+                                  <div class="row">
+                                    <div class="col-12">
+                                      <div class="card">
+                                          <div class="card-header">
+                                              <b><i class="far fa-window-maximize"></i> Configured Panels</b>
+                                              <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="OpenAddChannelPanelModal('{{ channel.id }}');"><i class="fas fa-plus"></i> Add</button>
+                                          </div>
+                                          <div class="card-body">
+                                              <table class="table table-borderless align-middle">
+                                                  <thead>
+                                                      <tr>
+                                                          <th>Name</th>
+                                                          <th>Type</th>
+                                                          <th>Order</th>
+                                                          <th></th>
+                                                      </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                  {% for panel in channel.id | getChannelPanels %}
+                                                      <tr id="panel-{{ panel.id }}">
+                                                          <td id="channelPanel-name-{{ panel.id }}">{{ panel.name }}</td>
+                                                          <td>{{ panel.type | panelTypeIdToPanelTypeName }}</td>
+                                                          <td class="d-none" id="channelPanel-typeId-{{ panel.id }}">{{ panel.type }}</td>
+                                                          <td>{{ panel.order | panelOrderIdToPanelOrderName }}</td>
+                                                          <td class="d-none" id="channelPanel-orderId-{{ panel.id }}">{{ panel.order }}</td>
+                                                          <td class="d-none" id="channelPanel-header-{{ panel.id }}">{{ panel.header }}</td>
+                                                          <td class="d-none" id="channelPanel-content-{{ panel.id }}">{{ panel.content }}</td>
+                                                          <td>
+                                                              <button type="button" class="btn btn-sm btn-success boxShadow" onclick="addPanelToMapping('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-arrow-right"></i></button>
+                                                              <button type="button" class="btn btn-sm btn-warning boxShadow" onclick="editChannelPanel('{{ panel.id }}', '{{ channel.id }}');"><i class="fas fa-edit"></i></button>
+                                                              <button type="button" class="btn btn-sm btn-danger boxShadow" onclick="deleteChannelPanelModal('{{ panel.id }}');"><i class="fas fa-trash"></i></button>
+                                                          </td>
+                                                      <td></td>
+                                                      </tr>
+                                                  {% endfor %}
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                          <div class="card-header">
+                                              <b><i class="far fa-window-restore"></i> Panel Order</b>
+                                          </div>
+                                          <div class="card-body">
+                                              <ul id="panelOrderList-{{ channel.id }}" class="panel-ui-list mt-2">
+                                                  {% for entry in channelPanelMapping[channel.id] %}
+                                                      <li id="panel-mapping-{{ channel.id }}-id-{{ entry.panelId }}" class="d-flex align-items-center"><i class="fas fa-bars me-2"></i> {{ entry.panelId | channelPanelIdToPanelName }} <span class="ms-auto me-2"><i class="fas fa-times" onclick="RemovePageLayoutPanel(this);"></i></span></li>
+                                                  {% endfor %}
+                                              </ul>
+                                              <button type="button" class="btn btn-primary boxShadow" onclick="savePanelMapping({{ channel.id }});">Save</button>
+                                          </div>
+                                          <script>
+                                              // Sets the Page Panel Layout Object to be Sortable
+                                              var pagePanelSortList_{{ channel.id }} = document.getElementById('panelOrderList-{{ channel.id }}');
+                                              var pagePanelSortableObject_{{ channel.id }} = Sortable.create(pagePanelSortList_{{ channel.id }}, {
+                                                animation: 350
+                                              });
+                                          </script>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -1443,43 +1461,43 @@
                                     </div>
                                 </div>
                                 <div id="restream-{{channel.id}}" style="display:none;">
-                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <b><i class="fas fa-globe"></i> Restream Destinations</b>
-                                                    <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i> Add</button>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div id="restreamList">
-                                                        <div class="table-responsive">
-                                                            <table id="restreamTable-{{channel.id}}" class="table" width="100%">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Restream Destination Name</th>
-                                                                        <th>URL</th>
-                                                                        <th>Enabled</th>
-                                                                        <th></th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {% set channelRestreamDestinations = channel.id | get_channelRestreamDestinations %}
-                                                                    {% for restreamDestination in channelRestreamDestinations %}
-                                                                    <tr id="restreamTableRow-{{restreamDestination.id}}" class="align-middle">
-                                                                        <td>{{restreamDestination.name}}</td>
-                                                                        <td>{{restreamDestination.url}}</td>
-                                                                        <td><div class="form-check form-switch"><input type="checkbox" class="form-check-input" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %}></div></td>
-                                                                        <td><button type="button" class="btn btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></td>
-                                                                    </tr>
-                                                                    {% endfor %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                  <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <b><i class="fas fa-globe"></i> Restream Destinations</b>
+                                                <button type="button" class="btn btn-sm btn-success mx-2 boxShadow" onclick="openNewRestreamModal('{{channel.id}}');"><i class="fas fa-plus"></i> Add</button>
+                                            </div>
+                                            <div class="card-body">
+                                                <div id="restreamList">
+                                                    <div class="table-responsive">
+                                                        <table id="restreamTable-{{channel.id}}" class="table" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Restream Destination Name</th>
+                                                                    <th>URL</th>
+                                                                    <th>Enabled</th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% set channelRestreamDestinations = channel.id | get_channelRestreamDestinations %}
+                                                                {% for restreamDestination in channelRestreamDestinations %}
+                                                                <tr id="restreamTableRow-{{restreamDestination.id}}" class="align-middle">
+                                                                    <td>{{restreamDestination.name}}</td>
+                                                                    <td>{{restreamDestination.url}}</td>
+                                                                    <td><div class="form-check form-switch"><input type="checkbox" class="form-check-input" id="restreamEnableToggle-{{restreamDestination.id}}" name="restreamEnableToggle-{{restreamDestination.id}}" onchange="toggleRestream('{{restreamDestination.id}}')" {% if restreamDestination.enabled == True %} checked {% endif %}></div></td>
+                                                                    <td><button type="button" class="btn btn-danger" onclick="deleteRestream('{{restreamDestination.id}}')"><i class="far fa-trash-alt"></i></button></td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                     </div>
+                                    </div>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -1538,6 +1556,30 @@
                                 </div>
                             </div>
                         </div>
+                        <!--OSP Hub Dropdown-->
+                        <div class="row mt-1">
+                          <div class="col-12">
+                              <div class="row userChannelSettings-dropdownHeader">
+                                  <div class="col-12">
+                                      <a href="javascript:void(0)" onclick="toggleDiv('osphub-{{channel.id}}');return false;"><h5><b><i class="fas fa-angle-double-down"></i> OSP Hub</b></h5></a>
+                                  </div>
+                              </div>
+                              <div id="osphub-{{channel.id}}" style="display:none;">
+                                <div class="row">
+                                  <div class="col-12 m-2">
+                                    <div class="form-check form-switch">
+                                      <label class="form-check-label" for="publishSelect">Publish Channel to OSP Hub</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                      <label class="form-check-label" for="publishSelect">Not Safe for Work (NSFW) Channel</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
                     </div>
                 </div>
             </div>

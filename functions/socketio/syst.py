@@ -627,6 +627,12 @@ def add_server_to_hub(message):
                 db.session.add(newHub)
                 db.session.commit()
                 db.session.close()
+                emit(
+                    "osp-hub-addAck",
+                    {
+                        "serverUUID": results["results"]["serverUUID"]
+                    }
+                )
             else:
                 log.error(
                     {

@@ -468,9 +468,9 @@ function onMessage(msg) {
               tempNode.querySelector("span.chatTimestamp").textContent = messageTimestamp.format('hh:mm A');
               tempNode.id = messageId;
               if (Strophe.getResourceFromJid(from) == 'SERVER') {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + Strophe.getResourceFromJid(from) + '</span>';
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user">' + sanitize(Strophe.getResourceFromJid(from)) + '</span>';
               } else {
-                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + Strophe.getResourceFromJid(from) + '</a></span>';
+                  tempNode.querySelector("span.chatUsername").innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + sanitize(Strophe.getResourceFromJid(from)) + '</a></span>';
               }
 
               msg = format_msg(msg)
@@ -508,19 +508,24 @@ function format_msg(msg){
 }
 
 function format_nick(nick) {
-    nick = nick.replace(/<\/?[^>]+(>|$)/ig, '');
-    nick = nick.replace(/(?:\r\n|\r|\n)/ig, '');
+    nick = sanitize(nick);
+    nick = nick.slice(0,24);
+    nick = nick + ' (g)'
+    return nick
+}
+
+function sanitize(text) {
+    text = text.replace(/<\/?[^>]+(>|$)/ig, '');
+    text = text.replace(/(?:\r\n|\r|\n)/ig, '');
     for (var i = 0; i < bannedWords.length; i++) {
         var searchMask = bannedWords[i];
         if (searchMask !== '') {
             var regEx = new RegExp(searchMask, "ig");
             var replaceMask = "****";
-            nick = nick.replace(regEx, replaceMask);
+            text = text.replace(regEx, replaceMask);
         }
     }
-    nick = nick.slice(0,24);
-    nick = nick + ' (g)'
-    return nick
+    return text;
 }
 
 // Handle Stick Chat Window Scroll
@@ -573,7 +578,7 @@ function parseOccupants(resp) {
 
   // Parse Occupant Data and Store in Occupants Array
   for (user in elements) {
-      var username = elements[user]['nick'];
+      var username = sanitize(elements[user]['nick']);
       var affiliation = elements[user]['affiliation'];
       var role = elements[user]['role'];
       var jid = elements[user]['jid']

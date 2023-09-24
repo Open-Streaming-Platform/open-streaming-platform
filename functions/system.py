@@ -29,6 +29,8 @@ from classes.shared import celery
 log = logging.getLogger("app.functions.system")
 
 
+
+
 def asynch(func):
     @wraps(func)
     def async_func(*args, **kwargs):
@@ -191,7 +193,7 @@ def systemFixes(app):
         clip.videoLocation = clipVideoLocation
         clipVideo = subprocess.run(
             [
-                "ffmpeg",
+                "/usr/bin/ffmpeg",
                 "-ss",
                 str(clip.startTime),
                 "-i",

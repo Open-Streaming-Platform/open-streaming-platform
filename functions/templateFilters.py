@@ -219,7 +219,10 @@ def get_userName(userID):
     if userQuery is None:
         return "Unknown User"
     else:
-        return userQuery.username
+        try:
+            return userQuery.username
+        except AttributeError:
+            return "Unknown User"
 
 
 def get_Video_Upvotes_Filter(videoID):
