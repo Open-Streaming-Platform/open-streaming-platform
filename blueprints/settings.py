@@ -742,6 +742,10 @@ def admin_page():
                 sysSettings.limitMaxChannels = int(request.form["limitMaxChannels"])
             if "maxVideoRetention" in request.form:
                 sysSettings.maxVideoRetention = int(request.form["maxVideoRetention"])
+            if "maxVideoUploadFileSize" in request.form:
+                sysSettings.maxVideoUploadFileSize = int(request.form["maxVideoUploadFileSize"])
+            if "maxThumbnailUploadFileSize" in request.form:
+                sysSettings.maxThumbnailUploadFileSize = int(request.form["maxThumbnailUploadFileSize"])
             # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
             if "enableRTMPRestream" in request.form:
                 sysSettings.allowRestream = True
