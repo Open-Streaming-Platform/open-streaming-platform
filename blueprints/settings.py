@@ -746,6 +746,8 @@ def admin_page():
                 sysSettings.maxVideoUploadFileSize = int(request.form["maxVideoUploadFileSize"])
             if "maxThumbnailUploadFileSize" in request.form:
                 sysSettings.maxThumbnailUploadFileSize = int(request.form["maxThumbnailUploadFileSize"])
+            if "maxStickerUploadFileSize" in request.form:
+                sysSettings.maxStickerUploadFileSize = int(request.form['maxStickerUploadFileSize'])
             # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
             if "enableRTMPRestream" in request.form:
                 sysSettings.allowRestream = True
@@ -810,6 +812,14 @@ def admin_page():
                     if "stickerUpload" in request.files:
                         file = request.files["stickerUpload"]
                         if file.filename != "":
+                            file.seek(0, os.SEEK_END)
+                            fileSizeMiB = file.tell() / 1048576
+                            file.seek(0, os.SEEK_SET)
+
+                            if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                flash(f"{file.filename} is too big.", "error")
+                                return redirect(url_for(".admin_page", page="stickers"))
+
                             fileName = stickerUploads.save(
                                 request.files["stickerUpload"],
                                 name=stickerName + ".",
@@ -1516,6 +1526,14 @@ def settings_channels_page():
                             if "stickerUpload" in request.files:
                                 file = request.files["stickerUpload"]
                                 if file.filename != "":
+                                    file.seek(0, os.SEEK_END)
+                                    fileSizeMiB = file.tell() / 1048576
+                                    file.seek(0, os.SEEK_SET)
+
+                                    if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                        flash(f"{file.filename} is too big.", "error")
+                                        return redirect(url_for(".settings_channels_page"))
+
                                     fileName = stickerUploads.save(
                                         request.files["stickerUpload"],
                                         name=stickerName + ".",

@@ -170,6 +170,10 @@ def dbFixes():
     if sysSettings.maxThumbnailUploadFileSize is None:
         sysSettings.maxThumbnailUploadFileSize = 8
         db.session.commit()
+    # Sets maxStickerUploadFileSize if none to 1 MiB
+    if sysSettings.maxStickerUploadFileSize is None:
+        sysSettings.maxStickerUploadFileSize = 1
+        db.session.commit()
     # If Hub Settings are not set, set to default
     if sysSettings.hubURL is None:
         sysSettings.hubURL = "https://hub.openstreamingplatform.com"
