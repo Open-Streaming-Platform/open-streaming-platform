@@ -90,14 +90,59 @@
 
 
 <script>
+    async function generateNewStreamKey() {
+        if (this.nodeName !== 'BUTTON') return;
+
+        this.disabled = true;
+        const thisButton = this;
+
+        if (thisButton.id.startsWith('generateGUID-') === false) {
+            thisButton.disabled = false;
+            return;
+        };
+
+        const channelId = parseInt(thisButton.id.split('-',2)[1]);
+        if (isNaN(channelId)) {
+            thisButton.disabled = false;
+            return;
+        }
+
+        try {
+            // Use this to send a POST request to server to generate a new stream key for the channel on the server itself,
+            // then fetch and display this new stream key.
+            const response = await fetch('/settings/channels/streamKey', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'channelId': channelId
+                }),
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const responseJson = await response.json();
+            if (responseJson['error'] !== null) {
+                throw new Error(responseJson['error']);
+            }
+            const newStreamKey = responseJson['result'];
+
+            document.getElementById(`streamKey-${channelId}`).textContent = newStreamKey;
+            createNewBSAlert("Success!", "Stream Key Refresh");
+        } catch (errorReason) {
+            createNewBSAlert(errorReason, "ERROR: Stream Key Refresh");
+        } finally {
+            setTimeout(() => {
+                thisButton.disabled = false;
+            }, 5000);
+        }
+    };
+
     {% for channel in channels %}
     var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 
     {% for channel in channels %}
-      document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', function() {
-      document.getElementById('streamKey-{{channel.id}}').value = guid();
-    })
+      document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', generateNewStreamKey)
     {% endfor %}
 </script>
 
