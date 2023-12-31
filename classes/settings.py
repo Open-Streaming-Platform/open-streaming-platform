@@ -31,6 +31,7 @@ class settings(db.Model):
     hubURL = db.Column(db.String(255))
     maxVideoUploadFileSize = db.Column(db.Integer)
     maxThumbnailUploadFileSize = db.Column(db.Integer)
+    maxStickerUploadFileSize = db.Column(db.Integer)
     maxVideoRetention = db.Column(db.Integer)
     webrtcPlaybackEnabled = db.Column(db.Boolean)
     webrtcSignalProtocol = db.Column(db.String(128))
@@ -76,6 +77,7 @@ class settings(db.Model):
         self.maxVideoRetention = 0
         self.maxVideoUploadFileSize = 4096
         self.maxThumbnailUploadFileSize = 8
+        self.maxStickerUploadFileSize = 1
         self.webrtcPlaybackEnabled = False
 
     def __repr__(self):
@@ -106,6 +108,7 @@ class settings(db.Model):
             "maxVideoRetention": self.maxVideoRetention,
             "maxVideoUploadFileSize": self.maxVideoUploadFileSize,
             "maxThumbnailUploadFileSize": self.maxThumbnailUploadFileSize,
+            "maxStickerUploadFileSize": self.maxStickerUploadFileSize,
             "webrtcPlaybackEnabled": self.webrtcPlaybackEnabled,
         }
 

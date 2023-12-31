@@ -635,16 +635,35 @@
                 <div class="row">
                       <div class="col-12">
                           <div class="custom-file">
-                            <label id="stickerUploadFilename" class="form-label" for="stickerUpload">Upload Sticker</label>
-                            <input type="file" class="form-control" name=stickerUpload id="stickerUpload" required>
+                            <label id="stickerUploadFilename" class="form-label" for="stickerUpload">Upload Sticker (Max Size: {{ sysSettings.maxStickerUploadFileSize }} MiB)</label>
+                            <input type="file" accept="image/*" class="form-control" name=stickerUpload id="stickerUpload" required>
+                            <strong id="stickerUploadError" class="text-danger"></strong>
                           </div>
                       </div>
                       <script>
                         $('#stickerUpload').on('change',function(){
+                            const filesList = $(this)[0].files;
+                            if (filesList.length === 0) {
+                              $('#stickerUploadSubmitBtn').attr('disabled', true);
+                              return;
+                            }
+
+                            const fileObject = filesList[0];
+                            const fileSizeInMiB = fileObject.size / 1048576;
                             //get the file name
-                            var fileName = $(this).val();
-                            //replace the "Choose a file" label
-                            $(this).next('#stickerUploadFilename').html(fileName);
+                            var fileName = fileObject.name;
+
+                            //get filesize
+                            const stickerIsTooBig = fileSizeInMiB > {{ sysSettings.maxStickerUploadFileSize }};
+                            $('#stickerUploadSubmitBtn').attr('disabled', stickerIsTooBig);
+
+                            if (stickerIsTooBig) {
+                              $(this).val(null);
+                              $('#stickerUploadError').text(`${fileName} is too big! (${fileSizeInMiB.toFixed(2)} MiB)`);
+                              return;
+                            }
+
+                            $('#stickerUploadError').text(null);
                         })
                       </script>
                 </div>
@@ -654,7 +673,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-            <input type="submit" class="btn btn-success" value="Create">
+            <input id="stickerUploadSubmitBtn" type="submit" class="btn btn-success" value="Create" disabled>
           </div>
       </form>
     </div>
