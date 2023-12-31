@@ -127,7 +127,7 @@ reset_nginx() {
     echo 75 | dialog --title "Reset Nginx Configuration" --gauge "Restoring Nginx Conf" 10 70 0
     sudo cp -R /tmp/nginxbak/conf/* /usr/local/nginx/conf/ >> $OSPLOG 2>&1
     echo 90 | dialog --title "Reset Nginx Configuration" --gauge "Restarting Nginx-OSP" 10 70 0
-    sudo systemctl stop nginx-osp
+    sudo systemctl enable nginx-osp
     sudo systemctl start nginx-osp
   fi
 }
