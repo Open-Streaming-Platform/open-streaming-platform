@@ -18,6 +18,8 @@ room_config = {
     "allow_visitor_nickchange": "false",
 }
 
+defaultChatDomain = "osp.internal"
+
 # Global oAuth Dictionary
 oAuthProviderObjects = {}
 
