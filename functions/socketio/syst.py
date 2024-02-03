@@ -246,16 +246,17 @@ def disable_2fa(msg):
         userID = int(msg["userID"])
         userQuery = Sec.User.query.filter_by(id=userID).first()
         if userQuery is not None:
-            userQuery.tf_primary_method = None
-            userQuery.tf_totp_secret = None
-            db.session.commit()
-            system.newLog(
-                1,
-                "User "
-                + current_user.username
-                + " disabled 2FA for "
-                + str(userQuery.username),
-            )
+            if userQuery.tf_primary_method is not None:
+                userQuery.tf_primary_method = None
+                userQuery.tf_totp_secret = None
+                db.session.commit()
+                system.newLog(
+                    1,
+                    "User "
+                    + current_user.username
+                    + " disabled 2FA for "
+                    + str(userQuery.username),
+                )
     db.session.close()
     return "OK"
 

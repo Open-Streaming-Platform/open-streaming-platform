@@ -485,7 +485,9 @@ function disable2FA() {
     var userID = userIDInputDiv.value;
     socket.emit('disable2FA', {userID: userID});
     var buttonSelector = document.getElementById('2fa-active-button-' + userID);
-    buttonSelector.disabled = true;
+    if (buttonSelector !== null) {
+        buttonSelector.remove();
+    }
 }
 
 function updateDefaultRoles() {
