@@ -290,7 +290,7 @@
             reloadSourceOnError: {}
         }
     });
-    //qualityLevels = player{{ stream.linkedChannel }}.qualityLevels();
+    qualityLevels = player{{ stream.linkedChannel }}.qualityLevels();
     httpSelector = player{{ stream.linkedChannel }}.httpSourceSelector();
 
     player{{ stream.linkedChannel  }}.ready(function() {
