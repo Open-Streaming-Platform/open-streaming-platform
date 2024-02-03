@@ -1353,19 +1353,19 @@ def settings_channels_page():
         for chan in user_channels:
             try:
                 xmppQuery = ejabberd.get_room_options(
-                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                    chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
             except AttributeError:
                 # If Channel Doesn't Exist in ejabberd, Create
                 ejabberd.create_room(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
-                    sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
+                    globalvars.defaultChatDomain,
                 )
                 ejabberd.set_room_affiliation(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
-                    (current_user.uuid) + "@" + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
+                    (current_user.uuid) + "@" + globalvars.defaultChatDomain,
                     "owner",
                 )
 
@@ -1373,7 +1373,7 @@ def settings_channels_page():
                 for key, value in globalvars.room_config.items():
                     ejabberd.change_room_option(
                         chan.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         key,
                         value,
                     )
@@ -1381,13 +1381,13 @@ def settings_channels_page():
                 # Name and title
                 ejabberd.change_room_option(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "title",
                     chan.channelName,
                 )
                 ejabberd.change_room_option(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "description",
                     current_user.username
                     + 's chat room for the channel "'
@@ -1395,7 +1395,7 @@ def settings_channels_page():
                     + '"',
                 )
                 xmppQuery = ejabberd.get_room_options(
-                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                    chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
             except:
                 # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
@@ -1416,7 +1416,7 @@ def settings_channels_page():
 
             # Get room affiliations
             xmppQuery = ejabberd.get_room_affiliations(
-                chan.channelLoc, "conference." + sysSettings.siteAddress
+                chan.channelLoc, "conference." + globalvars.defaultChatDomain
             )
 
             affiliationList = []
