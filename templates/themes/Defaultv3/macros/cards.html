@@ -156,7 +156,7 @@
 {% macro streamer_card(streamerInfo) %}
     <a href="/streamer/{{ streamerInfo.id }}">
         <li class="streamer-avatar">
-          <img class="shadow zoom" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+          <img class="shadow lazy zoom" src="/images/{{ streamerInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
           <div class="username m-t2"><b>{{ streamerInfo.username }}</b></div>
         </li>
     </a>
@@ -165,7 +165,7 @@
 {% macro user_card(userInfo) %}
 <a href="/profile/{{ userInfo.username }}">
   <li class="streamer-avatar">
-    <img class="shadow zoom" src="/images/{{ userInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+    <img class="shadow lazy zoom" src="/images/{{ userInfo.pictureLocation }}" onerror="this.src='/static/img/user2.png';">
     <div class="username m-t2"><b>{{ userInfo.username }}</b></div>
   </li>
 </a>
@@ -215,7 +215,7 @@
 <div class="comment" id="vidComment-{{ comment.id }}">
   <div class="row gx-0">
     <div class="comment-avatar col-auto mx-1 mt-2">
-        <img class="avatar-md mx-2 boxShadow" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
+        <img class="avatar-md mx-2 boxShadow lazy" src="/images/{{ comment.userID | get_pictureLocation }}" onerror="this.src='/static/img/user2.png';">
     </div>
     <div class="col mt-2">
       <div class="comment-header">
