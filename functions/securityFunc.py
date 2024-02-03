@@ -208,9 +208,10 @@ def uia_username_mapper(identity):
 def admin_force_reset(userId):
     UserQuery = Sec.User.query.filter_by(id=userId).first()
     if UserQuery != None:
-        randomPass = secrets.token_urlsafe(32)
-        admin_change_password(UserQuery, randomPass, notify=True)
-        db.session.commit()
-        return True
+        if UserQuery.authType == 0:
+            randomPass = secrets.token_urlsafe(32)
+            admin_change_password(UserQuery, randomPass, notify=True)
+            db.session.commit()
+            return True
     db.session.commit()
     return False

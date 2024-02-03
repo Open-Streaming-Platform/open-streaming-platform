@@ -347,6 +347,11 @@ def admin_page():
 
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
+
+                    if current_user.id == userID:
+                        flash("User cannot delete self", "Error")
+                        return redirect(url_for(".admin_page", page="users"))
+
                     userQuery = Sec.User.query.filter_by(id=userID).first()
 
                     if userQuery is not None:
@@ -359,6 +364,10 @@ def admin_page():
 
                 elif setting == "userRole":
                     userID = int(request.args.get("userID"))
+                    if current_user.id == userID:
+                        flash("User cannot delete own roles", "Error")
+                        return redirect(url_for(".admin_page"))
+
                     roleID = int(request.args.get("roleID"))
 
                     userQuery = Sec.User.query.filter_by(id=userID).first()
@@ -409,6 +418,11 @@ def admin_page():
             elif action == "toggleActive":
                 if setting == "users":
                     userID = int(request.args.get("userID"))
+
+                    if current_user.id == userID:
+                        flash("User cannot disable/enable self", "Error")
+                        return redirect(url_for(".admin_page", page="users"))
+
                     userQuery = Sec.User.query.filter_by(id=userID).first()
                     if userQuery is not None:
                         if userQuery.active:
@@ -487,7 +501,7 @@ def admin_page():
                 Stream.Stream.streamName,
                 Stream.Stream.totalViewers,
             )
-            .order_by(Stream.Stream.endTimeStamp.desc())
+            .order_by(Stream.Stream.startTimestamp.desc())
             .limit(100)
         )
         topicsList = cachedDbCalls.getAllTopics()
