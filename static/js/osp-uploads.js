@@ -5,6 +5,7 @@ function s4() {
     .substring(1);
 }
 
+const bytesInOneMebibyte = 1048576;
 videofilename = s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 
 // Used for Video Upload Cancel Cleanup
@@ -30,8 +31,8 @@ var thumbnaildropper = new Dropzone(
   chunking: true,
   forceChunking: true,
   url: '/upload/video-files',
-  maxFilesize: maxThumbnailUploadFileSize, // megabytes
-  chunkSize: 1000000 // bytes
+  maxFilesize: maxThumbnailUploadFileSize, // mebibytes
+  chunkSize: bytesInOneMebibyte
 }
 );
 thumbnaildropper.on('sending', function (file, xhr, formData) {
@@ -70,8 +71,8 @@ var videodropper = new Dropzone(
   chunking: true,
   forceChunking: true,
   url: '/upload/video-files',
-  maxFilesize: maxVideoUploadFileSize, // megabytes
-  chunkSize: 1000000 // bytes
+  maxFilesize: maxVideoUploadFileSize, // mebibytes
+  chunkSize: bytesInOneMebibyte
 }
 );
 
@@ -118,8 +119,8 @@ var uploadthumbnaildropper = new Dropzone(
   chunking: true,
   forceChunking: true,
   url: '/upload/video-files',
-  maxFilesize: 5, // megabytes
-  chunkSize: 1000000 // bytes
+  maxFilesize: maxThumbnailUploadFileSize, // mebibytes
+  chunkSize: bytesInOneMebibyte
 }
 );
 

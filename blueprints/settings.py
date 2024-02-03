@@ -742,6 +742,12 @@ def admin_page():
                 sysSettings.limitMaxChannels = int(request.form["limitMaxChannels"])
             if "maxVideoRetention" in request.form:
                 sysSettings.maxVideoRetention = int(request.form["maxVideoRetention"])
+            if "maxVideoUploadFileSize" in request.form:
+                sysSettings.maxVideoUploadFileSize = int(request.form["maxVideoUploadFileSize"])
+            if "maxThumbnailUploadFileSize" in request.form:
+                sysSettings.maxThumbnailUploadFileSize = int(request.form["maxThumbnailUploadFileSize"])
+            if "maxStickerUploadFileSize" in request.form:
+                sysSettings.maxStickerUploadFileSize = int(request.form['maxStickerUploadFileSize'])
             # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
             if "enableRTMPRestream" in request.form:
                 sysSettings.allowRestream = True
@@ -806,6 +812,14 @@ def admin_page():
                     if "stickerUpload" in request.files:
                         file = request.files["stickerUpload"]
                         if file.filename != "":
+                            file.seek(0, os.SEEK_END)
+                            fileSizeMiB = file.tell() / 1048576
+                            file.seek(0, os.SEEK_SET)
+
+                            if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                flash(f"{file.filename} is too big.", "error")
+                                return redirect(url_for(".admin_page", page="stickers"))
+
                             fileName = stickerUploads.save(
                                 request.files["stickerUpload"],
                                 name=stickerName + ".",
@@ -1512,6 +1526,14 @@ def settings_channels_page():
                             if "stickerUpload" in request.files:
                                 file = request.files["stickerUpload"]
                                 if file.filename != "":
+                                    file.seek(0, os.SEEK_END)
+                                    fileSizeMiB = file.tell() / 1048576
+                                    file.seek(0, os.SEEK_SET)
+
+                                    if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                        flash(f"{file.filename} is too big.", "error")
+                                        return redirect(url_for(".settings_channels_page"))
+
                                     fileName = stickerUploads.save(
                                         request.files["stickerUpload"],
                                         name=stickerName + ".",
@@ -1713,12 +1735,11 @@ def settings_channels_page():
             db.session.commit()
 
         elif requestType == "change":
-            streamKey = request.form["streamKey"]
-            origStreamKey = request.form["origStreamKey"]
+            channelId = request.form["channelId"]
 
             defaultstreamName = request.form["channelStreamName"]
 
-            requestedChannel = cachedDbCalls.getChannelByStreamKey(origStreamKey)
+            requestedChannel = cachedDbCalls.getChannel(channelId)
 
             if current_user.id == requestedChannel.owningUser:
 
@@ -1726,7 +1747,7 @@ def settings_channels_page():
                     channelTagString = request.form["channelTags"]
                     tagArray = system.parseTags(channelTagString)
                     existingTagArray = Channel.channel_tags.query.filter_by(
-                        channelID=requestedChannel.id
+                        channelID=channelId
                     ).all()
 
                     for currentTag in existingTagArray:
@@ -1737,7 +1758,7 @@ def settings_channels_page():
                     db.session.commit()
                     for currentTag in tagArray:
                         newTag = Channel.channel_tags(
-                            currentTag, requestedChannel.id, current_user.id
+                            currentTag, channelId, current_user.id
                         )
                         db.session.add(newTag)
                         db.session.commit()
@@ -1752,7 +1773,7 @@ def settings_channels_page():
                         ).with_entities(Channel.Channel.id).first()
                         if (
                             existingChannelQuery is None
-                            or existingChannelQuery.id == requestedChannel.id
+                            or existingChannelQuery.id == channelId
                         ):
                             vanityURL = requestedVanityURL
                         else:
@@ -1764,7 +1785,6 @@ def settings_channels_page():
 
                 updateDict = dict(
                     channelName=channelName,
-                    streamKey=streamKey,
                     topic=topic,
                     record=record,
                     chatEnabled=chatEnabled,
@@ -1848,11 +1868,11 @@ def settings_channels_page():
                                 pass
 
                 channelUpdateQuery = Channel.Channel.query.filter_by(
-                    id=requestedChannel.id
+                    id=channelId
                 ).update(updateDict)
 
                 # Invalidate Channel Cache
-                cachedDbCalls.invalidateChannelCache(requestedChannel.id)
+                cachedDbCalls.invalidateChannelCache(channelId)
 
                 flash("Channel Saved")
                 db.session.commit()
@@ -1861,6 +1881,37 @@ def settings_channels_page():
             return redirect(url_for(".settings_channels_page"))
         return redirect(url_for(".settings_channels_page"))
 
+@settings_bp.route("/channels/streamKey", methods=["POST"])
+@login_required
+@roles_required("Streamer")
+def settings_channel_new_stream_key():
+    channelId = request.json['channelId']
+
+    requestedChannel = cachedDbCalls.getChannel(channelId)
+
+    returnPayload = {
+        'result': None, 'error': None
+    }
+    if current_user.id != requestedChannel.owningUser:
+        returnPayload['error'] = "Invalid Stream Key Change Attempt"
+        return returnPayload
+
+    try:
+        newStreamKey = str(uuid.uuid4())
+        updateDict = dict(
+            streamKey=newStreamKey,
+        )
+        channelUpdateQuery = Channel.Channel.query.filter_by(
+            id=channelId
+        ).update(updateDict)
+        cachedDbCalls.invalidateChannelCache(channelId)
+        db.session.commit()
+
+        returnPayload['result'] = newStreamKey
+    except Exception as e:
+        returnPayload['error'] = "Failed to update stream key"
+    finally:
+        return returnPayload
 
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
 @login_required

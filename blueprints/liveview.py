@@ -16,7 +16,7 @@ from classes import banList
 from classes import stickers
 from classes import panel
 
-from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN
+from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN, defaultChatDomain
 
 from functions import themes
 from functions import securityFunc
@@ -201,6 +201,7 @@ def view_page(loc):
                     stickerSelectorList=stickerSelectorList,
                     bannedWords=bannedWordArray,
                     bannedMessages=bannedMessagesList,
+                    chatDomain = defaultChatDomain
                 )
             else:
                 flash("Chat is Not Enabled For This Stream", "error")
@@ -310,6 +311,7 @@ def view_page(loc):
                 bannedWords=bannedWordArray,
                 bannedMessages=bannedMessagesList,
                 channelPanelList=channelPanelListSorted,
+                chatDomain=defaultChatDomain
             )
         else:
             isAutoPlay = request.args.get("autoplay")
@@ -336,6 +338,7 @@ def view_page(loc):
                 isAutoPlay=isAutoPlay,
                 countViewers=countViewers,
                 xmppserver=xmppserver,
+                chatDomain=defaultChatDomain
             )
 
     else:

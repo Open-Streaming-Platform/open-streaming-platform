@@ -385,6 +385,27 @@
                </div>
                <div class="row">
                    <div class="col-3 mb-1">
+                       <label for="maxVideoUploadFileSize" class="form-label">Maximum Video Upload File Size (MiB)</label>
+                       <input type="number" name="maxVideoUploadFileSize"  id="maxVideoUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxVideoUploadFileSize}}">
+                       <small>Default of 4096 MiB (4 GiB)</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxThumbnailUploadFileSize" class="form-label">Maximum Video Thumbnail File Size (MiB)</label>
+                       <input type="number" name="maxThumbnailUploadFileSize"  id="maxThumbnailUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxThumbnailUploadFileSize}}">
+                       <small>Default of 8 MiB</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxStickerUploadFileSize" class="form-label">Maximum Sticker File Size (MiB)</label>
+                       <input type="number" name="maxStickerUploadFileSize"  id="maxStickerUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxStickerUploadFileSize}}">
+                       <small>Default of 1 MiB</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
                        <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
                        <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
                        <small>Set to 0 for Indefinite Retention</small>

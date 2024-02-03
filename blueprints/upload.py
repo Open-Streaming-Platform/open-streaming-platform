@@ -66,7 +66,9 @@ def upload():
             )
             return "Filetype not allowed", 403
 
-        if current_chunk > 4500:
+        total_chunks = int(request.form["dztotalchunkcount"])
+
+        if total_chunks > (sysSettings.maxVideoUploadFileSize + 5):
             open(save_path, "w").close()
             return "File is getting too large.", 403
 
@@ -82,8 +84,6 @@ def upload():
                 4, "File Upload Failed - OSError - Username:" + current_user.username
             )
             return "Ooops.", 500
-
-        total_chunks = int(request.form["dztotalchunkcount"])
 
         if current_chunk + 1 == total_chunks:
             if os.path.getsize(save_path) != int(request.form["dztotalfilesize"]):

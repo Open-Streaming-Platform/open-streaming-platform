@@ -570,7 +570,7 @@ def rtmp_user_deauth_check(key, ipaddress):
             return returnMessage
 
 
-@celery.task(bind=True, max_retries=20)
+@celery.task(bind=True, max_retries=100)
 def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
     try:
         sysSettings = cachedDbCalls.getSystemSettings()
@@ -615,6 +615,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             channelTuple = (requestedChannel.id, requestedChannel.channelLoc)
             db.session.commit()
 
+            # TODO Not Working?
             notifications.userNotification(f"{pendingVideo.channelName} has started processing.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             results = videoFunc.processStreamVideo(fileName, channelTuple[1])
