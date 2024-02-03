@@ -86,7 +86,8 @@ except:
     config.smtpEncryption = os.getenv("OSP_SMTP_ENCRYPTION")
     config.smtpUsername = os.getenv("OSP_SMTP_USERNAME")
     config.smtpPassword = os.getenv("OSP_SMTP_PASSWORD")
-
+    if os.getenv("OSP_XMPP_DOMAIN") is not None:
+        config.ospXMPPDomain = os.getenv("OSP_XMPP_DOMAIN")
     if os.getenv("OSP_EJABBERD_RPCHOST") is not None:
         config.ejabberdServer = os.getenv("OSP_EJABBERD_RPCHOST")
     if os.getenv("OSP_RECAPTCHA_ENABLED") is not None:
@@ -115,6 +116,11 @@ except:
 # Global Vars Imports
 # ----------------------------------------------------------------------------#
 from globals import globalvars
+
+# Add Manual OSP XMPP Domain for those who need it
+if hasattr(config, "ospXMPPDomain"):
+    if config.ospXMPPDomain != "" and config.ospXMPPDomain != None:
+        globalvars.defaultChatDomain = config.ospXMPPDomain
 
 # ----------------------------------------------------------------------------#
 # App Configuration Setup
