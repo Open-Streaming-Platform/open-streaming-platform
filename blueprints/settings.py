@@ -1695,13 +1695,13 @@ def settings_channels_page():
 
             ejabberd.create_room(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
+                globalvars.defaultChatDomain,
             )
             ejabberd.set_room_affiliation(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                (current_user.uuid) + "@" + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
+                (current_user.uuid) + "@" + globalvars.defaultChatDomain,
                 "owner",
             )
 
@@ -1709,7 +1709,7 @@ def settings_channels_page():
             for key, value in globalvars.room_config.items():
                 ejabberd.change_room_option(
                     newChannel.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     key,
                     value,
                 )
@@ -1717,13 +1717,13 @@ def settings_channels_page():
             # Name and title
             ejabberd.change_room_option(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "title",
                 newChannel.channelName,
             )
             ejabberd.change_room_option(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "description",
                 current_user.username
                 + 's chat room for the channel "'
@@ -1805,26 +1805,26 @@ def settings_channels_page():
                 if protection is True:
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password_protected",
                         "true",
                     )
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password",
                         requestedChannel.xmppToken,
                     )
                 else:
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password",
                         "",
                     )
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password_protected",
                         "false",
                     )
@@ -1944,14 +1944,14 @@ def settings_channels_chat_page():
             if "moderatedSelect" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "moderated",
                     "true",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "moderated",
                     "false",
                 )
@@ -1959,14 +1959,14 @@ def settings_channels_chat_page():
             if "allowGuests" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_only",
                     "false",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_only",
                     "true",
                 )
@@ -1974,14 +1974,14 @@ def settings_channels_chat_page():
             if "allowGuestsChat" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_by_default",
                     "true",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_by_default",
                     "false",
                 )
