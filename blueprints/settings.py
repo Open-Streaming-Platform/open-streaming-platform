@@ -1942,11 +1942,11 @@ def settings_channels_chat_page():
             roomTitle = request.form["roomTitle"]
             roomDescr = system.strip_html(request.form["roomDescr"])
             ejabberd.change_room_option(
-                channelLoc, "conference." + sysSettings.siteAddress, "title", roomTitle
+                channelLoc, "conference." + globalvars.defaultChatDomain, "title", roomTitle
             )
             ejabberd.change_room_option(
                 channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "description",
                 roomDescr,
             )
