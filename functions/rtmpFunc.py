@@ -27,6 +27,7 @@ from functions import templateFilters
 from functions import subsFunc
 from functions import videoFunc
 from functions import xmpp
+from functions import notifications as notificationFunctions
 from functions import cachedDbCalls
 from functions.scheduled_tasks import message_tasks
 
@@ -221,7 +222,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
             )
             for sub in subscriptionQuery:
                 # Create Notification for Channel Subs
-                newNotification = notifications.userNotification(
+                notificationFunctions.sendNotification(
                     templateFilters.get_userName(requestedChannel.owningUser)
                     + " has started a live stream in "
                     + requestedChannel.channelName,
@@ -232,9 +233,6 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
                     ),
                     sub.userID,
                 )
-                db.session.add(newNotification)
-            db.session.commit()
-
             try:
                 subsFunc.processSubscriptions(
                     requestedChannel.id,
@@ -616,7 +614,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             db.session.commit()
 
             # TODO Not Working?
-            notifications.userNotification(f"{pendingVideo.channelName} has started processing.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+            notificationFunctions.sendNotification(f"{pendingVideo.channelName} has started processing.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             results = videoFunc.processStreamVideo(fileName, channelTuple[1])
 
@@ -654,10 +652,10 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
 
             if requestedChannel.autoPublish is True:
                 pendingVideo.published = True
-                notifications.userNotification(f"{pendingVideo.channelName} has finished processing and has been published.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+                notificationFunctions.sendNotification(f"{pendingVideo.channelName} has finished processing and has been published.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
             else:
                 pendingVideo.published = False
-                notifications.userNotification(f"{pendingVideo.channelName} has finished processing and is available in the Channel Settings Page.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+                notificationFunctions.sendNotification(f"{pendingVideo.channelName} has finished processing and is available in the Channel Settings Page.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             db.session.commit()
 
@@ -713,7 +711,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
                 ).all()
                 for sub in subscriptionQuery:
                     # Create Notification for Channel Subs
-                    newNotification = notifications.userNotification(
+                    notificationFunctions.sendNotification(
                         templateFilters.get_userName(requestedChannel.owningUser)
                         + " has posted a new video to "
                         + requestedChannel.channelName
@@ -728,9 +726,7 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
                         ),
                         sub.userID,
                     )
-                    db.session.add(newNotification)
-                db.session.commit()
-
+                    
                 subsFunc.processSubscriptions(
                     requestedChannel.id,
                     sysSettings.siteName
