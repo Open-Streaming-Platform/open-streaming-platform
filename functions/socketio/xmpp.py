@@ -13,6 +13,7 @@ from classes import banList
 from functions import xmpp
 from functions import cachedDbCalls
 
+from globals import globalvars
 
 @socketio.on("addMod")
 def addMod(message):
@@ -23,7 +24,7 @@ def addMod(message):
         func.lower(Sec.User.username) == func.lower(username)
     ).first()
     if userQuery is not None:
-        JID = userQuery.uuid + "@" + sysSettings.siteAddress
+        JID = userQuery.uuid + "@" + globalvars.defaultChatDomain
 
     channelLoc = str(message["channelLoc"])
     channelQuery = Channel.Channel.query.filter_by(
@@ -34,7 +35,7 @@ def addMod(message):
         from app import ejabberd
 
         ejabberd.set_room_affiliation(
-            channelLoc, "conference." + sysSettings.siteAddress, JID, "admin"
+            channelLoc, "conference." + globalvars.defaultChatDomain, JID, "admin"
         )
         emit(
             "addMod",
@@ -68,7 +69,7 @@ def deleteMod(message):
         from app import ejabberd
 
         ejabberd.set_room_affiliation(
-            channelLoc, "conference." + sysSettings.siteAddress, JID, "none"
+            channelLoc, "conference." + globalvars.defaultChatDomain, JID, "none"
         )
         emit(
             "deleteMod",
