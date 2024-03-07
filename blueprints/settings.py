@@ -147,6 +147,36 @@ def user_page():
                 else:
                     flash("Passwords Don't Match!")
 
+        userName = request.form["userName"].strip()
+        if userName == '':
+            flash("New username cannot be empty!", "error")
+            return redirect(url_for(".user_page"))
+        if len(userName) > 32:
+            flash("New username is too long!", "error")
+            return redirect(url_for(".user_page"))
+
+        userName = bleach.clean(system.strip_html(userName))
+        if userName == '':
+            flash("New username would be empty after sanitization!", "error")
+            return redirect(url_for(".user_page"))
+
+        bannedWordQuery = banList.chatBannedWords.query.all()
+        for bannedWord in bannedWordQuery:
+            bannedWordRegex = bannedWord.word
+            if bannedWordRegex == '':
+                continue
+            
+            if re.search(bannedWordRegex, userName, flags=re.IGNORECASE) is not None:
+                flash(f"New username has a banned word ({bannedWord.word})!", "error")
+                return redirect(url_for(".user_page"))
+
+        existingUsernameQuery = Sec.User.query.filter_by(username=userName).first()
+        if existingUsernameQuery is not None:
+            if existingUsernameQuery.id != current_user.id:
+                flash(f"Another user has the name '{userName}'.", "error")
+                return redirect(url_for(".user_page"))
+        current_user.username = userName
+
         emailAddress = request.form["emailAddress"]
         existingEmailQuery = Sec.User.query.filter_by(email=emailAddress).first()
         if existingEmailQuery is not None:

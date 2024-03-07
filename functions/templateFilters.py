@@ -35,6 +35,7 @@ def init(context):
     context.jinja_env.filters["normalize_date"] = normalize_date
     context.jinja_env.filters["limit_title"] = limit_title
     context.jinja_env.filters["limit_title20"] = limit_title20
+    context.jinja_env.filters["limit_string14"] = limit_string14
     context.jinja_env.filters["format_kbps"] = format_kbps
     context.jinja_env.filters["hms_format"] = hms_format
     context.jinja_env.filters["get_topicName"] = get_topicName
@@ -165,6 +166,12 @@ def limit_title20(titleStr):
         return titleStr[:17] + "..."
     else:
         return titleStr
+
+
+def limit_string14(inputString):
+    if len(inputString) > 14:
+        return inputString[:11] + "..."
+    return inputString
 
 
 def formatSpace(B):
