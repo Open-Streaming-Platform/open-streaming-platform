@@ -796,7 +796,7 @@
                    <tr id="user-row-{{user.id}}">
                       <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
                       <td><img class="rounded-circle" src="/images/{{user.pictureLocation}}" style="width:32px;height:32px;" onerror="this.src='/static/img/user2.png';"></td>
-                      <td><a href="/profile/{{user.username}}">{{user.username}}</a></td>
+                      <td><a href="/profile/{{user.username}}">{{user.username | limit_title20}}</a></td>
                       <td>{{user.email}}</td>
                       <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                       <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
@@ -913,7 +913,7 @@
                               </div>
                           </td>
                           <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
-                          <td id="channelCardRow-{{channel.id}}-userCol"><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                          <td id="channelCardRow-{{channel.id}}-userCol"><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName|limit_title20}}</a></td>
                           <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
                           <td>{{channel.channelLoc}}</td>
                           <td>{{channel.views}}</td>
