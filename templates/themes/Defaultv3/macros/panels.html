@@ -575,8 +575,8 @@
                         </div>
                         <div class="col-10 mt-2">
                             <div class="form-group">
-                                <label for="userName"><b>User Name</b></label>
-                                <input type="text" name="userName" id="userName" class="form-control boxShadow" value="{{userData.username}}" disabled>
+                                <label for="userName"><b>User Name</b> (32 characters max)</label>
+                                <input type="text" name="userName" id="userName" class="form-control boxShadow" value="{{userData.username}}" minlength="1" maxlength="32" required>
                             </div>
                         </div>
                         <div class="form-group mt-2">
