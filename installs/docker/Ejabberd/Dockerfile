@@ -15,7 +15,7 @@ MAINTAINER David Lockwood
 
 ARG DEFAULT_TZ="ETC/UTC"
 
-ARG DEFAULT_EJABBERD_DOMAIN=stream.example.com
+ARG DEFAULT_EJABBERD_DOMAIN=osp.internal
 ARG DEFAULT_EJABBERD_PASSWORD=CHANGEME
 ARG DEFAULT_EJABBERD_XMLRPC_ALLOWIP=127.0.0.0/8
 ARG DEFAULT_OSP_API_PROTOCOL=http
@@ -30,8 +30,7 @@ ENV OSP_API_DOMAIN=$DEFAULT_OSP_API_DOMAIN
 
 USER root
 RUN apk add --update python3 py3-pip
-RUN pip3 install --upgrade pip
-RUN pip install requests
+RUN apk add --update py3-requests
 RUN apk add --no-cache bash
 
 COPY docker-files.d/entrypoint.sh /run/entrypoint.sh

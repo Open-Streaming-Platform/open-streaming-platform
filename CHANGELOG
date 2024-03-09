@@ -3,12 +3,14 @@
 ** BREAKING CHANGE **: Ejabberd's Internal Domain has been moved to osp.internal to elminate install complexity.  
                        Previous installs will need to edit the /opt/ejabberd/conf/ejabberd.yml to swap your domain to osp.internal.
                        Another option is to add `ospXMPPDomain` to your /opt/osp/conf/config.py and set the value to the name of your OSP Ejabberd domain name
+                       See: https://open-streaming-platform.readthedocs.io/en/latest/install/upgrades.html#chat-upgrade
 OSP-Core: Improvements to Admin Page UI - MR !399 (@Helix9618)
 OSP-Core: Configurable maximum size (MiB) for Sticker uploads. !397 (@Helix9618)
 OSP-Core: Configurable maximum sizes (MiB) for video upload and thumbnail upload !395 (@Helix9618)
 OSP-Core: Improvements to 'Stream Key', 'RTMP Ingest', and 'XMPP Token' fields for channel settings. !396 (@Helix9618)
 OSP-Core: Bumps VideoJs version to 8.9.0
 OSP-Core: Adds `ospXMPPDomain` as an option in the config.py
+OSP-Core: Adds ability for users to change username
 Ejabberd: Sets the default XMPP domain to osp.internal
 
 
