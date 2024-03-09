@@ -8,7 +8,7 @@ from functions import cachedDbCalls
 
 from app import ejabberd
 
-from globals.globalvars import room_config
+from globals.globalvars import room_config, defaultChatDomain
 
 log = logging.getLogger("app.functions.xmpp")
 
@@ -28,7 +28,7 @@ def buildMissingRooms():
     for channel in channelQuery:
         try:
             xmppQuery = ejabberd.get_room_affiliations(
-                channel.channelLoc, "conference." + sysSettings.siteAddress
+                channel.channelLoc, "conference." + defaultChatDomain
             )
         except:
             log.info(
@@ -40,22 +40,22 @@ def buildMissingRooms():
             )
             ejabberd.create_room(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
+                defaultChatDomain,
             )
 
             for key, value in room_config.items():
                 ejabberd.change_room_option(
                     channel.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + defaultChatDomain,
                     key,
                     value,
                 )
 
             ejabberd.set_room_affiliation(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                channel.userUUID + "@" + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
+                channel.userUUID + "@" + defaultChatDomain,
                 "owner",
             )
 
@@ -75,7 +75,7 @@ def verifyExistingRooms():
     )
     for channel in channelQuery:
         xmppQuery = ejabberd.get_room_affiliations(
-            channel.channelLoc, "conference." + sysSettings.siteAddress
+            channel.channelLoc, "conference." + defaultChatDomain
         )
 
         affiliationList = []
@@ -87,53 +87,53 @@ def verifyExistingRooms():
             affiliationList.append(user)
 
         for user in affiliationList:
-            if user["domain"] != sysSettings.siteAddress:
+            if user["domain"] != defaultChatDomain:
                 userQuery = User.query.filter_by(uuid=user["username"]).first()
                 if userQuery is not None:
                     ejabberd.set_room_affiliation(
                         channel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        userQuery.uuid + "@" + sysSettings.siteAddress,
+                        "conference." + defaultChatDomain,
+                        userQuery.uuid + "@" + defaultChatDomain,
                         user["affiliation"],
                     )
 
         if not all(
             (
                 d["username"] == channel.userUUID
-                and d["domain"] == sysSettings.siteAddress
+                and d["domain"] == defaultChatDomain
             )
             for d in affiliationList
         ):
             ejabberd.set_room_affiliation(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                channel.userUUID + "@" + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
+                channel.userUUID + "@" + defaultChatDomain,
                 "owner",
             )
 
         if channel.protected:
             ejabberd.change_room_option(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
                 "password_protected",
                 "true",
             )
             ejabberd.change_room_option(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
                 "password",
                 channel.xmppToken,
             )
         else:
             ejabberd.change_room_option(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
                 "password",
                 "",
             )
             ejabberd.change_room_option(
                 channel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + defaultChatDomain,
                 "password_protected",
                 "false",
             )
@@ -148,11 +148,11 @@ def cleanInvalidRooms():
     if "rooms" in xmppChannels:
         for room in xmppChannels["rooms"]:
             roomName = room["room"].replace(
-                "@conference." + sysSettings.siteAddress, ""
+                "@conference." + defaultChatDomain, ""
             )
             existingChannels = cachedDbCalls.getChannelByLoc(roomName)
             if existingChannels is None:
-                ejabberd.destroy_room(roomName, "conference." + sysSettings.siteAddress)
+                ejabberd.destroy_room(roomName, "conference." + defaultChatDomain)
                 count = count + 1
     log.info(
         {"level": "info", "message": "Completed Pruning Invalid Rooms - " + str(count)}
@@ -162,7 +162,7 @@ def cleanInvalidRooms():
 def getChannelCounts(channelLoc):
     sysSettings = cachedDbCalls.getSystemSettings()
     roomOccupantsJSON = ejabberd.get_room_occupants_number(
-        channelLoc, "conference." + sysSettings.siteAddress
+        channelLoc, "conference." + defaultChatDomain
     )
     currentViewers = roomOccupantsJSON["occupants"]
 
@@ -172,7 +172,7 @@ def getChannelCounts(channelLoc):
 def getChannelAffiliations(channelLoc):
     sysSettings = cachedDbCalls.getSystemSettings()
     roomAffiliationJSON = ejabberd.get_room_affiliations(
-        channelLoc, "conference." + sysSettings.siteAddress
+        channelLoc, "conference." + defaultChatDomain
     )
     userList = {}
     for entry in roomAffiliationJSON["affiliations"]:

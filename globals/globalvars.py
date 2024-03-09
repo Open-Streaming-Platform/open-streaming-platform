@@ -1,5 +1,5 @@
-version = "0.9.10"
-appDBVersion = 0.90
+version = "0.9.11"
+appDBVersion = 0.95
 processUUID = None
 
 RedisURL = None
@@ -17,6 +17,8 @@ room_config = {
     "allow_visitor_status": "false",
     "allow_visitor_nickchange": "false",
 }
+
+defaultChatDomain = "osp.internal"
 
 # Global oAuth Dictionary
 oAuthProviderObjects = {}

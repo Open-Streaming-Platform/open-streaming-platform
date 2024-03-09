@@ -1,7 +1,7 @@
 [project]
 name = "Open Streaming Platform"
 authors = [{name = "Deamos", email = "contact@openstreamingplatform.com"}]
-version = "0.9.10"
+version = "0.9.11"
 description = "Open Source Video Streaming Server"
 readme = "README.md"
 requires-python = ">=3.09"

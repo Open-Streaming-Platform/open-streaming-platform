@@ -247,8 +247,8 @@
     {% endblock %}
 
     <script>
-        var maxVideoUploadFileSize = 4096; // In Megabytes
-        var maxThumbnailUploadFileSize = 8; // In Megabytes
+        var maxVideoUploadFileSize = {{ sysSettings.maxVideoUploadFileSize }}; // In Mebibytes
+        var maxThumbnailUploadFileSize = {{ sysSettings.maxThumbnailUploadFileSize }}; // In Mebibytes
 
         {% if current_user.is_authenticated %}
         var notificationCount = {{ notifications | count }};

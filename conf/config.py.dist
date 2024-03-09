@@ -39,6 +39,9 @@ ejabberdAdmin = "admin"
 ejabberdPass = "CHANGE_EJABBERD_PASS"
 ejabberdHost = "localhost"
 
+# Sets the Ejabberd XMPP Chat Domain
+#ospXMPPDomain = "osp.internal"
+
 # ReCaptcha Configuration
 # RECAPTCHA_ENABLED = False
 # RECAPTCHA_SITE_KEY = "SomeKey"

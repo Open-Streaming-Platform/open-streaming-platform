@@ -385,6 +385,27 @@
                </div>
                <div class="row">
                    <div class="col-3 mb-1">
+                       <label for="maxVideoUploadFileSize" class="form-label">Maximum Video Upload File Size (MiB)</label>
+                       <input type="number" name="maxVideoUploadFileSize"  id="maxVideoUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxVideoUploadFileSize}}">
+                       <small>Default of 4096 MiB (4 GiB)</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxThumbnailUploadFileSize" class="form-label">Maximum Video Thumbnail File Size (MiB)</label>
+                       <input type="number" name="maxThumbnailUploadFileSize"  id="maxThumbnailUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxThumbnailUploadFileSize}}">
+                       <small>Default of 8 MiB</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxStickerUploadFileSize" class="form-label">Maximum Sticker File Size (MiB)</label>
+                       <input type="number" name="maxStickerUploadFileSize"  id="maxStickerUploadFileSize" class="form-control boxShadow" min="1" value="{{sysSettings.maxStickerUploadFileSize}}">
+                       <small>Default of 1 MiB</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
                        <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
                        <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
                        <small>Set to 0 for Indefinite Retention</small>
@@ -775,7 +796,7 @@
                    <tr id="user-row-{{user.id}}">
                       <td><input name="selector-user" type="checkbox" value="{{user.id}}"></td>
                       <td><img class="rounded-circle" src="/images/{{user.pictureLocation}}" style="width:32px;height:32px;" onerror="this.src='/static/img/user2.png';"></td>
-                      <td><a href="/profile/{{user.username}}">{{user.username}}</a></td>
+                      <td><a href="/profile/{{user.username}}">{{user.username | limit_title20}}</a></td>
                       <td>{{user.email}}</td>
                       <td><span class="badge badge-primary">{% if user.authType == 0 %}Local{% elif user.authType == 1 %}oAuth{% endif %}</span></td>
                       <td>{% if user.authType == 1 %}<span class="badge badge-primary">{{user.oAuthProvider}}</span>{% endif %}</td>
@@ -783,7 +804,11 @@
                        <td>{% if user.active == true %}<span class="badge badge-success">True</span>{% else %}<span class="badge badge-secondary">False</span>{% endif %}</td>
                       <td>
                         {% for role in user.roles %}
-                            <span class="badge badge-info">{{role.name}} <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}" class="{% if user.id == current_user.id %} disabled {% endif %}"><i class="bi bi-x"></i></a></span><br>
+                            <span class="badge badge-info">{{role.name}}
+                                {% if user.id != current_user.id %}
+                                <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="bi bi-x"></i></a>
+                                {% endif %}
+                            </span><br>
                         {% endfor %}
                       </td>
                        <td><span class="badge badge-danger">{{ user.id | get_flaggedForDeletion | normalize_date }}</span></td>
@@ -798,10 +823,16 @@
                               {% endif %}
                             <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
                         </div>
-                        <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});" {% if user.tf_primary_method == None %}disabled{% endif %}><i class="bi bi-shield-slash-fill"></i></button>
-                        <button id="forcepw-reset-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Force Reset Password" onclick="resetPassword({{ user.id }});" {% if user.authType != 0 %}disabled{% endif %}><i class="fa-solid fa-key"></i></button>
-                        <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="bi bi-person-plus-fill"></i></a>
-                        <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow {% if user.id == current_user.id %} disabled {% endif %}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="bi bi-trash-fill"></i></a>
+                        {% if user.tf_primary_method is not none %}
+                        <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});"><i class="bi bi-shield-slash-fill"></i></button>
+                        {% endif %}
+                        {% if user.authType == 0 %}
+                        <button id="forcepw-reset-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Force Reset Password" onclick="resetPassword({{ user.id }});"><i class="fa-solid fa-key"></i></button>
+                        {% endif %}
+                        {% if user.id != current_user.id %}
+                        <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="bi bi-person-plus-fill"></i></a>
+                        <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="bi bi-trash-fill"></i></a>
+                        {% endif %}
                       </td>
                    </tr>
                 {% endfor %}
@@ -882,7 +913,7 @@
                               </div>
                           </td>
                           <td><a href="/channel/{{channel.id}}/">{{channel.channelName}}</a></td>
-                          <td id="channelCardRow-{{channel.id}}-userCol"><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName}}</a></td>
+                          <td id="channelCardRow-{{channel.id}}-userCol"><a href="/profile/{{channel.owningUser|get_userName}}">{{channel.owningUser|get_userName|limit_title20}}</a></td>
                           <td><a href="/topic/{{channel.topic}}/">{{channel.topic|get_topicName}}</a></td>
                           <td>{{channel.channelLoc}}</td>
                           <td>{{channel.views}}</td>
@@ -963,7 +994,11 @@
                     {% for stream in streamHistory %}
                     <tr id="streamCard-{{stream.id}}">
                         <td>{{stream.startTimestamp | localize_time | normalize_date}}</td>
+                        {% if stream.endTimeStamp is none %}
+                        <td>Unknown</td>
+                        {% else %}
                         <td>{{stream.endTimeStamp | localize_time | normalize_date}}</td>
+                        {% endif %}
                         <td><a href="/view/{{stream.linkedChannel | get_channelLocationFromID }}/">{{stream.streamName}}</a></td>
                         <td><a href="/channel/{{stream.linkedChannel}}">{{stream.linkedChannel | get_channelName}}</a></td>
                         <td><a href="/profile/{{stream.linkedChannel | channeltoOwnerID |get_userName}}">{{stream.linkedChannel | channeltoOwnerID |get_userName}}</a></td>

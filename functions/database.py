@@ -162,6 +162,18 @@ def dbFixes():
     if sysSettings.maxVideoRetention is None:
         sysSettings.maxVideoRetention = 0
         db.session.commit()
+    # Sets maxVideoUploadFileSize if none to 4096 MiB (4 GiB)
+    if sysSettings.maxVideoUploadFileSize is None:
+        sysSettings.maxVideoUploadFileSize = 4096
+        db.session.commit()
+    # Sets maxThumbnailUploadFileSize if none to 8 MiB
+    if sysSettings.maxThumbnailUploadFileSize is None:
+        sysSettings.maxThumbnailUploadFileSize = 8
+        db.session.commit()
+    # Sets maxStickerUploadFileSize if none to 1 MiB
+    if sysSettings.maxStickerUploadFileSize is None:
+        sysSettings.maxStickerUploadFileSize = 1
+        db.session.commit()
     # If Hub Settings are not set, set to default
     if sysSettings.hubURL is None:
         sysSettings.hubURL = "https://hub.openstreamingplatform.com"

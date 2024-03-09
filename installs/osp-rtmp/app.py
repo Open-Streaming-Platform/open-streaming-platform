@@ -19,7 +19,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 cwp = sys.path[0]
 sys.path.append(cwp)
 
-version = "0.9.10-nightly"
+version = "0.9.11"
 
 # ----------------------------------------------------------------------------#
 # Configuration Imports

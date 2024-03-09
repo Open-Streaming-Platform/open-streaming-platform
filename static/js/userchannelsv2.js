@@ -413,6 +413,31 @@ function CopyAPI(divVal) {
     document.execCommand("copy");
 }
 
+async function CopyAPINonInput(divVal) {
+    const elementToCopy = document.getElementById(divVal);
+    
+    let range, selection;
+
+    if (window.getSelection && document.createRange) {
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(elementToCopy);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    } else if (document.selection && document.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(elementToCopy);
+        range.select();
+    }
+
+    const selectedText = selection.toString();
+    if (selectedText.length === 0) {
+        return;
+    }
+
+    await navigator.clipboard.writeText(selectedText);
+}
+
 function CopyInviteCode(divVal, type) {
     var copyText = document.getElementById(divVal).value;
     if (type == 'link') {

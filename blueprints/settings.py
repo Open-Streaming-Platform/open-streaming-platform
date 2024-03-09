@@ -147,6 +147,36 @@ def user_page():
                 else:
                     flash("Passwords Don't Match!")
 
+        userName = request.form["userName"].strip()
+        if userName == '':
+            flash("New username cannot be empty!", "error")
+            return redirect(url_for(".user_page"))
+        if len(userName) > 32:
+            flash("New username is too long!", "error")
+            return redirect(url_for(".user_page"))
+
+        userName = bleach.clean(system.strip_html(userName))
+        if userName == '':
+            flash("New username would be empty after sanitization!", "error")
+            return redirect(url_for(".user_page"))
+
+        bannedWordQuery = banList.chatBannedWords.query.all()
+        for bannedWord in bannedWordQuery:
+            bannedWordRegex = bannedWord.word
+            if bannedWordRegex == '':
+                continue
+            
+            if re.search(bannedWordRegex, userName, flags=re.IGNORECASE) is not None:
+                flash(f"New username has a banned word ({bannedWord.word})!", "error")
+                return redirect(url_for(".user_page"))
+
+        existingUsernameQuery = Sec.User.query.filter_by(username=userName).first()
+        if existingUsernameQuery is not None:
+            if existingUsernameQuery.id != current_user.id:
+                flash(f"Another user has the name '{userName}'.", "error")
+                return redirect(url_for(".user_page"))
+        current_user.username = userName
+
         emailAddress = request.form["emailAddress"]
         existingEmailQuery = Sec.User.query.filter_by(email=emailAddress).first()
         if existingEmailQuery is not None:
@@ -177,7 +207,7 @@ def user_page():
 
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
-
+    flash("User Settings Updated", "success")
     return redirect(url_for(".user_page"))
 
 
@@ -347,6 +377,11 @@ def admin_page():
 
                 elif setting == "users":
                     userID = int(request.args.get("userID"))
+
+                    if current_user.id == userID:
+                        flash("User cannot delete self", "Error")
+                        return redirect(url_for(".admin_page", page="users"))
+
                     userQuery = Sec.User.query.filter_by(id=userID).first()
 
                     if userQuery is not None:
@@ -359,6 +394,10 @@ def admin_page():
 
                 elif setting == "userRole":
                     userID = int(request.args.get("userID"))
+                    if current_user.id == userID:
+                        flash("User cannot delete own roles", "Error")
+                        return redirect(url_for(".admin_page"))
+
                     roleID = int(request.args.get("roleID"))
 
                     userQuery = Sec.User.query.filter_by(id=userID).first()
@@ -409,6 +448,11 @@ def admin_page():
             elif action == "toggleActive":
                 if setting == "users":
                     userID = int(request.args.get("userID"))
+
+                    if current_user.id == userID:
+                        flash("User cannot disable/enable self", "Error")
+                        return redirect(url_for(".admin_page", page="users"))
+
                     userQuery = Sec.User.query.filter_by(id=userID).first()
                     if userQuery is not None:
                         if userQuery.active:
@@ -487,7 +531,7 @@ def admin_page():
                 Stream.Stream.streamName,
                 Stream.Stream.totalViewers,
             )
-            .order_by(Stream.Stream.endTimeStamp.desc())
+            .order_by(Stream.Stream.startTimestamp.desc())
             .limit(100)
         )
         topicsList = cachedDbCalls.getAllTopics()
@@ -742,6 +786,12 @@ def admin_page():
                 sysSettings.limitMaxChannels = int(request.form["limitMaxChannels"])
             if "maxVideoRetention" in request.form:
                 sysSettings.maxVideoRetention = int(request.form["maxVideoRetention"])
+            if "maxVideoUploadFileSize" in request.form:
+                sysSettings.maxVideoUploadFileSize = int(request.form["maxVideoUploadFileSize"])
+            if "maxThumbnailUploadFileSize" in request.form:
+                sysSettings.maxThumbnailUploadFileSize = int(request.form["maxThumbnailUploadFileSize"])
+            if "maxStickerUploadFileSize" in request.form:
+                sysSettings.maxStickerUploadFileSize = int(request.form['maxStickerUploadFileSize'])
             # Check enableRTMPRestream - Workaround to pre 0.9.x themes, by checking for the existance of 'mainPageSort' which does not exist in >= 0.9.x
             if "enableRTMPRestream" in request.form:
                 sysSettings.allowRestream = True
@@ -806,6 +856,14 @@ def admin_page():
                     if "stickerUpload" in request.files:
                         file = request.files["stickerUpload"]
                         if file.filename != "":
+                            file.seek(0, os.SEEK_END)
+                            fileSizeMiB = file.tell() / 1048576
+                            file.seek(0, os.SEEK_SET)
+
+                            if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                flash(f"{file.filename} is too big.", "error")
+                                return redirect(url_for(".admin_page", page="stickers"))
+
                             fileName = stickerUploads.save(
                                 request.files["stickerUpload"],
                                 name=stickerName + ".",
@@ -1339,19 +1397,19 @@ def settings_channels_page():
         for chan in user_channels:
             try:
                 xmppQuery = ejabberd.get_room_options(
-                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                    chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
             except AttributeError:
                 # If Channel Doesn't Exist in ejabberd, Create
                 ejabberd.create_room(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
-                    sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
+                    globalvars.defaultChatDomain,
                 )
                 ejabberd.set_room_affiliation(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
-                    (current_user.uuid) + "@" + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
+                    (current_user.uuid) + "@" + globalvars.defaultChatDomain,
                     "owner",
                 )
 
@@ -1359,7 +1417,7 @@ def settings_channels_page():
                 for key, value in globalvars.room_config.items():
                     ejabberd.change_room_option(
                         chan.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         key,
                         value,
                     )
@@ -1367,13 +1425,13 @@ def settings_channels_page():
                 # Name and title
                 ejabberd.change_room_option(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "title",
                     chan.channelName,
                 )
                 ejabberd.change_room_option(
                     chan.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "description",
                     current_user.username
                     + 's chat room for the channel "'
@@ -1381,7 +1439,7 @@ def settings_channels_page():
                     + '"',
                 )
                 xmppQuery = ejabberd.get_room_options(
-                    chan.channelLoc, "conference." + sysSettings.siteAddress
+                    chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
             except:
                 # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
@@ -1402,7 +1460,7 @@ def settings_channels_page():
 
             # Get room affiliations
             xmppQuery = ejabberd.get_room_affiliations(
-                chan.channelLoc, "conference." + sysSettings.siteAddress
+                chan.channelLoc, "conference." + globalvars.defaultChatDomain
             )
 
             affiliationList = []
@@ -1512,6 +1570,14 @@ def settings_channels_page():
                             if "stickerUpload" in request.files:
                                 file = request.files["stickerUpload"]
                                 if file.filename != "":
+                                    file.seek(0, os.SEEK_END)
+                                    fileSizeMiB = file.tell() / 1048576
+                                    file.seek(0, os.SEEK_SET)
+
+                                    if fileSizeMiB > sysSettings.maxStickerUploadFileSize:
+                                        flash(f"{file.filename} is too big.", "error")
+                                        return redirect(url_for(".settings_channels_page"))
+
                                     fileName = stickerUploads.save(
                                         request.files["stickerUpload"],
                                         name=stickerName + ".",
@@ -1673,13 +1739,13 @@ def settings_channels_page():
 
             ejabberd.create_room(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
+                globalvars.defaultChatDomain,
             )
             ejabberd.set_room_affiliation(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
-                (current_user.uuid) + "@" + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
+                (current_user.uuid) + "@" + globalvars.defaultChatDomain,
                 "owner",
             )
 
@@ -1687,7 +1753,7 @@ def settings_channels_page():
             for key, value in globalvars.room_config.items():
                 ejabberd.change_room_option(
                     newChannel.channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     key,
                     value,
                 )
@@ -1695,13 +1761,13 @@ def settings_channels_page():
             # Name and title
             ejabberd.change_room_option(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "title",
                 newChannel.channelName,
             )
             ejabberd.change_room_option(
                 newChannel.channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "description",
                 current_user.username
                 + 's chat room for the channel "'
@@ -1713,12 +1779,11 @@ def settings_channels_page():
             db.session.commit()
 
         elif requestType == "change":
-            streamKey = request.form["streamKey"]
-            origStreamKey = request.form["origStreamKey"]
+            channelId = request.form["channelId"]
 
             defaultstreamName = request.form["channelStreamName"]
 
-            requestedChannel = cachedDbCalls.getChannelByStreamKey(origStreamKey)
+            requestedChannel = cachedDbCalls.getChannel(channelId)
 
             if current_user.id == requestedChannel.owningUser:
 
@@ -1726,7 +1791,7 @@ def settings_channels_page():
                     channelTagString = request.form["channelTags"]
                     tagArray = system.parseTags(channelTagString)
                     existingTagArray = Channel.channel_tags.query.filter_by(
-                        channelID=requestedChannel.id
+                        channelID=channelId
                     ).all()
 
                     for currentTag in existingTagArray:
@@ -1737,7 +1802,7 @@ def settings_channels_page():
                     db.session.commit()
                     for currentTag in tagArray:
                         newTag = Channel.channel_tags(
-                            currentTag, requestedChannel.id, current_user.id
+                            currentTag, channelId, current_user.id
                         )
                         db.session.add(newTag)
                         db.session.commit()
@@ -1752,7 +1817,7 @@ def settings_channels_page():
                         ).with_entities(Channel.Channel.id).first()
                         if (
                             existingChannelQuery is None
-                            or existingChannelQuery.id == requestedChannel.id
+                            or existingChannelQuery.id == channelId
                         ):
                             vanityURL = requestedVanityURL
                         else:
@@ -1764,7 +1829,6 @@ def settings_channels_page():
 
                 updateDict = dict(
                     channelName=channelName,
-                    streamKey=streamKey,
                     topic=topic,
                     record=record,
                     chatEnabled=chatEnabled,
@@ -1785,26 +1849,26 @@ def settings_channels_page():
                 if protection is True:
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password_protected",
                         "true",
                     )
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password",
                         requestedChannel.xmppToken,
                     )
                 else:
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password",
                         "",
                     )
                     ejabberd.change_room_option(
                         requestedChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
+                        "conference." + globalvars.defaultChatDomain,
                         "password_protected",
                         "false",
                     )
@@ -1848,11 +1912,11 @@ def settings_channels_page():
                                 pass
 
                 channelUpdateQuery = Channel.Channel.query.filter_by(
-                    id=requestedChannel.id
+                    id=channelId
                 ).update(updateDict)
 
                 # Invalidate Channel Cache
-                cachedDbCalls.invalidateChannelCache(requestedChannel.id)
+                cachedDbCalls.invalidateChannelCache(channelId)
 
                 flash("Channel Saved")
                 db.session.commit()
@@ -1861,6 +1925,37 @@ def settings_channels_page():
             return redirect(url_for(".settings_channels_page"))
         return redirect(url_for(".settings_channels_page"))
 
+@settings_bp.route("/channels/streamKey", methods=["POST"])
+@login_required
+@roles_required("Streamer")
+def settings_channel_new_stream_key():
+    channelId = request.json['channelId']
+
+    requestedChannel = cachedDbCalls.getChannel(channelId)
+
+    returnPayload = {
+        'result': None, 'error': None
+    }
+    if current_user.id != requestedChannel.owningUser:
+        returnPayload['error'] = "Invalid Stream Key Change Attempt"
+        return returnPayload
+
+    try:
+        newStreamKey = str(uuid.uuid4())
+        updateDict = dict(
+            streamKey=newStreamKey,
+        )
+        channelUpdateQuery = Channel.Channel.query.filter_by(
+            id=channelId
+        ).update(updateDict)
+        cachedDbCalls.invalidateChannelCache(channelId)
+        db.session.commit()
+
+        returnPayload['result'] = newStreamKey
+    except Exception as e:
+        returnPayload['error'] = "Failed to update stream key"
+    finally:
+        return returnPayload
 
 @settings_bp.route("/channels/chat", methods=["POST", "GET"])
 @login_required
@@ -1877,11 +1972,11 @@ def settings_channels_chat_page():
             roomTitle = request.form["roomTitle"]
             roomDescr = system.strip_html(request.form["roomDescr"])
             ejabberd.change_room_option(
-                channelLoc, "conference." + sysSettings.siteAddress, "title", roomTitle
+                channelLoc, "conference." + globalvars.defaultChatDomain, "title", roomTitle
             )
             ejabberd.change_room_option(
                 channelLoc,
-                "conference." + sysSettings.siteAddress,
+                "conference." + globalvars.defaultChatDomain,
                 "description",
                 roomDescr,
             )
@@ -1893,14 +1988,14 @@ def settings_channels_chat_page():
             if "moderatedSelect" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "moderated",
                     "true",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "moderated",
                     "false",
                 )
@@ -1908,14 +2003,14 @@ def settings_channels_chat_page():
             if "allowGuests" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_only",
                     "false",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_only",
                     "true",
                 )
@@ -1923,14 +2018,14 @@ def settings_channels_chat_page():
             if "allowGuestsChat" in request.form:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_by_default",
                     "true",
                 )
             else:
                 ejabberd.change_room_option(
                     channelLoc,
-                    "conference." + sysSettings.siteAddress,
+                    "conference." + globalvars.defaultChatDomain,
                     "members_by_default",
                     "false",
                 )

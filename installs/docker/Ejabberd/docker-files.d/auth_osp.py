@@ -18,12 +18,6 @@ def auth(user, host, password):
     payload = {"jid": user, "host": host, "token": password}
 
     global ospAPIServer
-    if (
-        ospAPIServer != "127.0.0.1"
-        and ospAPIServer != "localhost"
-        and ospAPIServer != "127.0.0.1:5010"
-    ):
-        ospAPIServer = host
 
     r = requests.post(
         protocol + "://" + ospAPIServer + "/apiv1/xmpp/auth", data=payload
@@ -45,12 +39,6 @@ def isUser(user, host):
     payload = {"jid": user, "host": host}
 
     global ospAPIServer
-    if (
-        ospAPIServer != "127.0.0.1"
-        and ospAPIServer != "localhost"
-        and ospAPIServer != "127.0.0.1:5010"
-    ):
-        ospAPIServer = host
 
     r = requests.post(
         protocol + "://" + ospAPIServer + "/apiv1/xmpp/isuser", data=payload
