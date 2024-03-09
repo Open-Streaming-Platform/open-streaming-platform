@@ -207,7 +207,7 @@ def user_page():
 
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
-
+    flash("User Settings Updated", "success")
     return redirect(url_for(".user_page"))
 
 
