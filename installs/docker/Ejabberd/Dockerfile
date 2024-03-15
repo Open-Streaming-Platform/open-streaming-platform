@@ -1,4 +1,4 @@
-FROM ghcr.io/processone/ejabberd:master
+FROM ghcr.io/processone/ejabberd:23.04
 MAINTAINER David Lockwood
 
 # OSP Customized EJABBERD Docker Container
