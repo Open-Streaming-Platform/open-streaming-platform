@@ -1251,6 +1251,16 @@
                           <label class="form-check-label" for="publishSelect-{{channel.id}}">Automatically Publish New Videos</label>
                           <input class="form-check-input boxShadow" type="checkbox" id="publishSelect-{{channel.id}}" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
                         </div>
+                        <div>
+                          <label for="maxVideoRetention-{{channel.id}}" class="form-label">
+                            Maximum Retention for Recordings Before Deletion (days)
+                          </label>
+                          <br>
+                          <small>Global Max. Recording Retention - {{sysSettings.maxVideoRetention}} days - takes priority if less than channel's value</small>
+                          <br>
+                          <small>0 = Infinite Retention</small>
+                          <input type="number" min="0" name="maxVideoRetention"  id="maxVideoRetention-{{channel.id}}" class="form-control boxShadow" value="{{channel.maxVideoRetention}}">
+                        </div>
                         <hr>
                         <h4><b>Chat Options</b></h4>
                         <div class="form-check form-switch">

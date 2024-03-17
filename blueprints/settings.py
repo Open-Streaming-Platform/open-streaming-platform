@@ -1367,6 +1367,7 @@ def settings_channels_page():
                 Channel.Channel.offlineImageLocation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.vanityURL,
+                Channel.Channel.maxVideoRetention,
                 Channel.Channel.defaultStreamName,
                 Channel.Channel.allowGuestNickChange,
                 Channel.Channel.showChatJoinLeaveNotification,
@@ -1841,6 +1842,9 @@ def settings_channels_page():
                             )
                     else:
                         updateDict['vanityURL'] = None
+
+                if 'maxVideoRetention' in request.form:
+                    updateDict['maxVideoRetention'] = max(0, int(request.form['maxVideoRetention']))
 
                 from app import ejabberd
 
