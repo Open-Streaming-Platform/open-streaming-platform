@@ -1177,10 +1177,10 @@
                             <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                         </div>
                         <div class="form-group">
-                            <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
-                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
-                            <small id="vanityURLHelpBlock" class="form-text text-muted">
-                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
+                            <label for="vanityURL-{{channel.id}}" class="col-form-label"><b>Short Link to Channel</b></label>
+                            <input type="text" pattern="[A-Za-z0-9]{0,32}" title="Alphanumeric characters only; no spaces" maxlength="32" class="vanityURL form-control boxShadow" name="vanityURL" id="vanityURL-{{channel.id}}" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
+                            <small id="vanityURLHelpBlock-{{channel.id}}" class="form-text text-muted">
+                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample-{{channel.id}}">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
                         </div>
                         <div class="row">

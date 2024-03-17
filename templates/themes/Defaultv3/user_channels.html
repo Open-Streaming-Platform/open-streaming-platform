@@ -141,6 +141,16 @@
     var easymde{{channel.id}} = new EasyMDE({ autoDownloadFontAwesome: false, spellChecker: false, element: document.getElementById("description-{{channel.id}}") });
     {% endfor %}
 
+    function vanityUrlChangeHandler() {
+        const channelId = this.id.split('-',2)[1];
+        let vanityURLData = this.value;
+        vanityURLData = vanityURLData.replace(/[^a-zA-Z0-9]/g, "");
+        const vanityURLHintDiv = document.getElementById(`vanityURLExample-${channelId}`);
+        vanityURLHintDiv.innerHTML = vanityURLData;
+        this.value = vanityURLData;
+    };
+    $('input.vanityURL').on('change keydown paste input', vanityUrlChangeHandler);
+
     {% for channel in channels %}
       document.getElementById('generateGUID-{{channel.id}}').addEventListener('click', generateNewStreamKey)
     {% endfor %}
