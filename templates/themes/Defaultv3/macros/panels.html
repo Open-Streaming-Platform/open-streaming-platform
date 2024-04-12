@@ -1663,8 +1663,8 @@
                       {% if channel.showChatJoinLeaveNotification==True %} checked {% endif %}>
                   </div>
                   <div class="form-group">
-                    <label for="chatHistory-{{channel.id}}" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
-                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory-{{channel.id}}" name="chatHistory" onInput="$('#chatHistoryLabel').html($(this).val())">
+                    <label for="chatHistory-{{channel.id}}" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel-{{channel.id}}" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
+                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory-{{channel.id}}" name="chatHistory" onInput="$('#chatHistoryLabel-{{channel.id}}').html($(this).val())">
 
                   </div>
                   <div class="row">
