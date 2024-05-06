@@ -22,11 +22,8 @@ from classes import subscriptions
 from classes import notifications
 
 from functions import system
-from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
-
-from functions.scheduled_tasks import message_tasks
 
 log = logging.getLogger("app.functions.database")
 
@@ -153,6 +150,7 @@ def changeVideoMetadata(
                 + channelQuery.imageLocation
             )
 
+        from functions.scheduled_tasks import message_tasks
         message_tasks.send_webhook.delay(
             channelQuery.id,
             9,
