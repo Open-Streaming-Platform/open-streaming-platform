@@ -1,2 +1,3 @@
 Flask-BabelEx
 Flask-Uploads
+ffmpeg-python
