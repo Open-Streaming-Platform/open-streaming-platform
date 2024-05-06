@@ -485,7 +485,9 @@ def deleteClip(clipID):
         for tag in clipTags:
             db.session.delete(tag)
 
-        videoPath = videos_root + clipQuery.videoLocation
+        videoPath = None
+        if clipQuery.videoLocation is not None:
+            videoPath = videos_root + clipQuery.videoLocation
         if clipQuery.thumbnailLocation is not None:
             thumbnailPath = videos_root + clipQuery.thumbnailLocation
         else:
@@ -505,7 +507,7 @@ def deleteClip(clipID):
                 clipQuery.gifLocation is not None or gifPath != ""
             ):
                 os.remove(gifPath)
-        if videoPath != videos_root:
+        if videoPath != videos_root and videoPath is not None:
             if os.path.exists(videoPath) and (
                 clipQuery.videoLocation is not None or videoPath != ""
             ):
