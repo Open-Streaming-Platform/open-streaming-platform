@@ -253,6 +253,24 @@ def dbFixes():
         db.session.commit()
 
     log.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
+    # Fix for Clips that were created during clip creation bug in 0.9.10 and 0.9.11
+    videos_root = os.path.join(globalvars.videoRoot, "videos")
+    clipQuery = RecordedVideo.Clips.query.filter(
+        (RecordedVideo.Clips.videoLocation == None) | (RecordedVideo.Clips.thumbnailLocation == None) | (RecordedVideo.Clips.gifLocation == None)
+    ).all()
+    for clip in clipQuery:
+        clipVideoQuery = cachedDbCalls.getVideo(clip.parentVideo)
+        clipChannelQuery = cachedDbCalls.getChannel(clipVideoQuery.channelID)
+        clipFilesPath = os.path.join(clipChannelQuery.channelLoc, "clips", f"clip-{clip.id}")
+
+        if clip.videoLocation is None:
+            clip.videoLocation = f"{clipFilesPath}.mp4"
+        if clip.thumbnailLocation is None:
+            clip.thumbnailLocation = f"{clipFilesPath}.png"
+        if clip.gifLocation is None:
+            clip.gifLocation = f"{clipFilesPath}.gif"
+        clip.published = True
+        db.session.commit()
     # Fix for Videos and Channels that were created before Publishing Option
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
     for vid in videoQuery:
