@@ -71,7 +71,6 @@ def init(context):
     context.jinja_env.filters["videotoChannelID"] = videotoChannelID
     context.jinja_env.filters["get_channelTopic"] = get_channelTopic
     context.jinja_env.filters["get_videoTopic"] = get_videoTopic
-    context.jinja_env.filters["get_videoDate"] = get_videoDate
     context.jinja_env.filters["get_channelPicture"] = get_channelPicture
     context.jinja_env.filters["is_channelObjVisible"] = is_channelObjVisible
     context.jinja_env.filters["localize_time"] = localize_time
@@ -404,11 +403,6 @@ def get_channelProtected(channelID):
 def get_channelLocationFromID(channelID):
     channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
     return channelQuery
-
-
-def get_videoDate(videoID):
-    videoQuery = cachedDbCalls.getVideo(videoID)
-    return videoQuery.videoDate
 
 
 def get_videoComments(videoID):

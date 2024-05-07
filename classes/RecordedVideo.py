@@ -151,6 +151,7 @@ class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(255))
+    clipDate = db.Column(db.DateTime)
     parentVideo = db.Column(db.Integer, db.ForeignKey("RecordedVideo.id"))
     startTime = db.Column(db.Float)
     endTime = db.Column(db.Float)
@@ -170,9 +171,10 @@ class Clips(db.Model):
     )
 
     def __init__(
-        self, parentVideo, videoLocation, startTime, endTime, clipName, description
+        self, clipDate, parentVideo, videoLocation, startTime, endTime, clipName, description
     ):
         self.uuid = str(uuid4())
+        self.clipDate = clipDate
         self.parentVideo = parentVideo
         self.videoLocation = videoLocation
         self.startTime = startTime
@@ -190,6 +192,7 @@ class Clips(db.Model):
         return {
             "id": self.id,
             "uuid": self.uuid,
+            "clipDate": str(self.clipDate),
             "parentVideo": self.parentVideo,
             "startTime": self.startTime,
             "endTime": self.endTime,

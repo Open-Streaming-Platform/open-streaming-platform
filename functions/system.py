@@ -23,7 +23,7 @@ from classes import RecordedVideo
 from classes import Sec
 
 from functions import cachedDbCalls, templateFilters
-from functions.videoFunc import generateClipFiles as vf_generateClipFiles
+from functions.videoFunc import generateClipFiles as vf_generateClipFiles, getClipCreationTimeFromFiles as vf_getClipCreationTimeFromFiles
 
 from classes.shared import celery
 
@@ -242,6 +242,8 @@ def resolveBrokenClips():
 
         # If all three of clip's files are present in file-system, this clip does not need re-generating
         if os.path.isfile(clipVideoAbsPath) and os.path.isfile(clipThumbAbsPath) and os.path.isfile(clipGifAbsPath):
+            if clip.clipDate is None:
+                vf_getClipCreationTimeFromFiles(clip)
             continue
 
         videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
@@ -262,6 +264,8 @@ def resolveBrokenClips():
                 videos_root,
                 sourceVideoAbsPath
             )
+            if clip.clipDate is None:
+                vf_getClipCreationTimeFromFiles(clip)
             clipFixedCount += 1
         except Exception as e:
             log.error({"level": "error", "message": f"Failed to fix clip #{clip.id}, because: {str(e)}"})

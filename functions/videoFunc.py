@@ -342,6 +342,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
             # Generate Clip Object
             newClip = RecordedVideo.Clips(
+                datetime.datetime.now(datetime.timezone.utc),
                 recordedVidQuery.id,
                 None,
                 clipStart,
@@ -435,6 +436,30 @@ def generateClipFiles(clip, videosRoot, sourceVideoLocation):
             fullgifLocation,
         ]
     )
+
+
+def getClipCreationTimeFromFiles(clip):
+    mp4AbsPath = os.path.join(globalvars.videoRoot, "videos", clip.videoLocation)
+    if not os.path.exists(mp4AbsPath):
+        raise Exception(f"could not find .mp4 file for clip #{clip.id}")
+    
+    earliestDatetime = None
+    statResults = os.stat(mp4AbsPath)
+    try:
+        earliestDatetime = datetime.datetime.fromtimestamp(statResults.st_birthtime, datetime.timezone.utc)
+    except AttributeError as e:
+        currentDatetime = None
+        earliestDatetime = datetime.datetime.fromtimestamp(statResults.st_ctime, datetime.timezone.utc)
+
+        currentDatetime = datetime.datetime.fromtimestamp(statResults.st_mtime, datetime.timezone.utc)
+        if currentDatetime < earliestDatetime:
+            earliestDatetime = currentDatetime
+
+        currentDatetime = datetime.datetime.fromtimestamp(statResults.st_atime, datetime.timezone.utc)
+        if currentDatetime < earliestDatetime:
+            earliestDatetime = currentDatetime
+    clip.clipDate = earliestDatetime
+    db.session.commit()
 
 
 def changeClipMetadata(clipID, name, description, clipTags):

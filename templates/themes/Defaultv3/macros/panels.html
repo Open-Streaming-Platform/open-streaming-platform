@@ -172,6 +172,7 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item sort" href="#" data-sort="list-clipName"">Name</a></li>
           <li><a class="dropdown-item sort {% if order == 0 %} desc {% endif %}" href="#" data-sort="list-clipViews" {% if order == 0 %} data-default-order="desc" {% endif %}>Views</a></li>
+          <li><a class="dropdown-item sort {% if order == 1 %} desc {% endif %}" href="#" data-sort="list-clipDate" {% if order == 1 %} data-default-order="desc" {% endif %}>Date</a></li>
         </ul>
       </div>
     </div>
@@ -187,7 +188,7 @@
 </div>
 <script>
     list_{{ clipListClass }}_options = {
-        valueNames: ['list-clipName', 'list-clipViews'],
+        valueNames: ['list-clipName', 'list-clipViews', 'list-clipDate'],
         page: 10,
         pagination: true
     };
@@ -838,7 +839,7 @@
     </div>
     <div class="col">
       <div class="video-name"><b>{{ clip.clipName }}</b></div>
-      <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a></div>
+      <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a> ⋅ {{ clip.clipDate }}</div>
       <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.parentVideo | get_videoTopic}}/"><i class="fas fa-hashtag"></i> {{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
           {% for tag in clip.id | get_clipTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>

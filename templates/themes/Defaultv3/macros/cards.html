@@ -101,6 +101,7 @@
     <div class="streamCard-thumbnail-container zoom {% if clip.gifLocation != None %}gifhover{% endif %}">
         <div class="d-none list-clipName">{{ clip.clipName }}</div>
         <div class="d-none list-clipViews">{{ clip.views }}</div>
+        <div class="d-none list-clipDate">{{ clip.clipDate }}</div>
         <div class="d-none list-clipLength">{{ clip.length }}</div>
         <div class="d-none list-clipTopic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
         <div class="streamCard-badges">
@@ -109,6 +110,9 @@
             {% endif %}
             {{ core_ui.views_badge(clip.views) }}
             {{ core_ui.length_badge(clip.length) }}
+        </div>
+        <div class="streamCard-date">
+          {{ core_ui.date_badge(clip.clipDate) }}
         </div>
         <a href="/clip/{{clip.id}}">
           <img class="streamCard-thumb boxShadow lazy" src="/static/img/video-placeholder.jpg" data-src="/videos/{{clip.thumbnailLocation}}" onerror="this.src='/static/img/video-placeholder.jpg';">
@@ -360,7 +364,7 @@
         <div class="my-1">
             <div class="btn-group boxShadow" role="group">
               <button type="button" class="btn btn-sm btn-primary noClickButton min-35"><i class="fas fa-calendar"></i></button>
-              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_videoDate |normalize_date}}</button>
+              <button type="button" class="btn btn-sm btn-dark noClickButton min-150">{{clip.clipDate | normalize_date}}</button>
             </div>
         </div>
         <div class="my-1">
