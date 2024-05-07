@@ -86,7 +86,7 @@ function newThumbnailRequest() {
     player.pause();
     window.whereYouAt = player.currentTime();
     document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: videoID, timeStamp: window.whereYouAt, clipID: clipID });
+    socket.emit('newScreenShot', { loc: null, timeStamp: window.whereYouAt, clipID: clipID });
 }
 
 function setNewThumbnail() {

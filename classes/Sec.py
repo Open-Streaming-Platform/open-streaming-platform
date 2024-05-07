@@ -144,6 +144,7 @@ class User(db.Model, UserMixin):
     )
     invites = db.relationship("invitedViewer", backref="user", lazy="dynamic")
     channels = db.relationship("Channel", backref="owner", lazy="noload")
+    clips = db.relationship("Clips", backref="owner", lazy="noload")
     messageBanList = db.relationship(
         "messageBanList", backref="owner", cascade="all, delete-orphan", lazy="dynamic"
     )

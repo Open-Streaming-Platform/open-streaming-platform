@@ -179,7 +179,7 @@
   </div>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
       {% for clip in clipsList %}
-          {% if clip.parentVideo | videotoChannelID | is_channelObjVisible %}
+          {% if clip.channelID | is_channelObjVisible %}
             {{ cards.clip_card(clip) }}
           {% endif %}
       {% endfor %}
@@ -521,13 +521,13 @@
         <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
       </button>
       {% if current_user.is_authenticated %}
-      <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.parentVideo | videotoChannelID}}")'>{% if subState == True %}<i
+      <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.channelID}}")'>{% if subState == True %}<i
           class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
       {% else %}
       <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
       {% endif %}
     </div>
-    {%  if (current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id) or current_user.has_role('Admin') %}
+    {%  if (current_user.is_authenticated and clip.owningUser == current_user.id) or current_user.has_role('Admin') %}
       <!--Start Video Owner Controls-->
       <div class="video-control-owner-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>
@@ -835,12 +835,12 @@
 <div class="video-metadata">
   <div class="row py-3">
     <div class="channelImg-sm mx-2 col-auto">
-      <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+      <img src="/images/{{ clip.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col">
-      <div class="video-name"><b>{{ clip.clipName }}</b></div>
-      <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a> ⋅ {{ clip.clipDate }}</div>
-      <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.parentVideo | get_videoTopic}}/"><i class="fas fa-hashtag"></i> {{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+      <div class="video-name"><b>{{ clip.clipName }}</b>{% if clip.parentVideo != None %} <a href="/play/{{ clip.parentVideo }}">(Source)</a>{% endif %}</div>
+      <div class="video-channelName"><a href="/channel/{{ clip.channelID }}">{{ clip.channelID | get_channelName }}</a> ⋅ {{ clip.clipDate }}</div>
+      <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.topic}}/"><i class="fas fa-hashtag"></i> {{ clip.topic | get_topicName }}</a>
           {% for tag in clip.id | get_clipTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
           {% endfor %}

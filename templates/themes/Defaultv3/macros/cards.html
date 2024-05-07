@@ -103,9 +103,9 @@
         <div class="d-none list-clipViews">{{ clip.views }}</div>
         <div class="d-none list-clipDate">{{ clip.clipDate }}</div>
         <div class="d-none list-clipLength">{{ clip.length }}</div>
-        <div class="d-none list-clipTopic">{{ clip.parentVideo | get_videoTopic | get_topicName }}</div>
+        <div class="d-none list-clipTopic">{{ clip.topic | get_topicName }}</div>
         <div class="streamCard-badges">
-            {% if clip.parentVideo | videotoChannelID | get_channelProtected %}
+            {% if clip.channelID | get_channelProtected %}
             {{ core_ui.protected_badge() }}
             {% endif %}
             {{ core_ui.views_badge(clip.views) }}
@@ -121,16 +121,16 @@
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-2">
-            <a href="/streamer/{{clip.parentVideo | videotoChannelID | channeltoOwnerID}}">
-              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ clip.parentVideo | videotoChannelID | channeltoOwnerID  | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
+            <a href="/streamer/{{clip.owningUser}}">
+              <img class="mt-3 userImage boxShadow img-fluid rounded-circle" src="/images/{{ clip.owningUser | get_pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="Username Picture">
             </a>
           </div>
           <div class="col-10">
             <div class="card-body">
               <p class="card-text textShadow">
                 <b><a href="/clip/{{clip.id}}" data-toggle="tooltip" title="{{ clip.clipName }}">{{ clip.clipName }}</a></b><br>
-                <a href="/channel/{{clip.parentVideo | videotoChannelID}}" data-toggle="tooltip" title="{{ clip.parentVideo | videotoChannelID | get_channelName }}">{{ clip.parentVideo | videotoChannelID | get_channelName  }}</a><br>
-                <a href="/topic/{{clip.parentVideo | get_videoTopic}}" data-toggle="tooltip" title="{{ clip.parentVideo | get_videoTopic | get_topicName }}">{{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+                <a href="/channel/{{clip.channelID}}" data-toggle="tooltip" title="{{ clip.channelID | get_channelName }}">{{ clip.channelID | get_channelName  }}</a><br>
+                <a href="/topic/{{clip.topic}}" data-toggle="tooltip" title="{{ clip.topic | get_topicName }}">{{ clip.topic | get_topicName }}</a>
               </p>
             </div>
           </div>
@@ -331,7 +331,7 @@
 {% endmacro %}
 
 {% macro user_settings_clip_card(clip) %}
-<li id="clip-{{clip.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2">
+<li id="clip-{{clip.id}}" class="channelVideoCard p-2 p-md-0 m-0 m-md-2 {% if clip.parentVideo != None %} parentVideo-{{clip.parentVideo}} {% endif %}">
     <div class="row">
         <div class="col-12">
             <a class="btn btn-sm btn-dark boxShadow w-100" href="/clip/{{clip.id}}">
@@ -349,7 +349,7 @@
         </div>
         <div class="mt-2">
           <button class="clipEditModalButton btn btn-primary boxShadow" onclick="editClipMetadataModal('{{ clip.id }}');"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '{{clip.parentVideo}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
+          <button class="btn btn-primary boxShadow" data-toggle="modal" onclick="openClipSSModal('{{clip.id}}', '/videos/{{clip.videoLocation}}');"><i class="fas fa-camera"></i></button>
           <button class="clipShareModalButton btn btn-primary boxShadow" data-bs-toggle="modal" data-bs-target="#videoShareModal" data-clipid="{{clip.id}}"><i class="fas fa-share-alt"></i></button>
           <button class="clipDeleteModalButton btn btn-danger boxShadow" onclick="deleteClipModal('{{clip.id}}');"><i class="fas fa-trash-alt"></i></button>
         </div>
@@ -358,7 +358,7 @@
         <div class="mb-1">
             <div class="btn-group boxShadow" role="group">
               <span type="button" class="btn btn-sm btn-success noClickButton min-35"><i class="fas fa-hashtag"></i></span>
-              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.parentVideo | get_videoTopic |get_topicName}}</span>
+              <span id="clipTopicText-{{clip.id}}" class="btn btn-sm btn-dark noClickButton min-150">{{clip.topic |get_topicName}}</span>
             </div>
         </div>
         <div class="my-1">

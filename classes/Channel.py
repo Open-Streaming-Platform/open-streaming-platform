@@ -42,6 +42,9 @@ class Channel(db.Model):
     stream = db.relationship(
         "Stream", backref="channel", cascade="all, delete-orphan", lazy="joined"
     )
+    clips = db.relationship(
+        "Clips", backref="channel", cascade="all, delete-orphan", lazy="joined"
+    )
     recordedVideo = db.relationship(
         "RecordedVideo", backref="channel", cascade="all, delete-orphan", lazy="joined"
     )

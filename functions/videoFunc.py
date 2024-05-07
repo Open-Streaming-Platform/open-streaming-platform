@@ -62,10 +62,6 @@ def deleteVideo(videoID):
         for tag in videoTags:
             db.session.delete(tag)
 
-        # Delete Clips Attached to Video
-        for clip in recordedVid.clips:
-            deleteClip(clip.id)
-
         # Delete Upvotes Attached to Video
         upvoteQuery = upvotes.videoUpvotes.query.filter_by(videoID=recordedVid.id).all()
 
@@ -278,13 +274,11 @@ def moveVideo(videoID, newChannel):
                     + "_"
                     + coreThumbnailGif
                 )
-            for clip in recordedVidQuery.clips:
-                coreThumbnail = clip.thumbnailLocation.split("/")[2]
-                if not os.path.isdir(
-                    videos_root + newChannelQuery.channelLoc + "/clips"
-                ):
+            for clip in RecordedVideo.Clips.query.filter_by(parentVideo=recordedVidQuery.id).all():
+                destClipFolderAbsPath = os.path.join(videos_root, newChannelQuery.channelLoc, "clips")
+                if not os.path.isdir(destClipFolderAbsPath):
                     try:
-                        os.mkdir(videos_root + newChannelQuery.channelLoc + "/clips")
+                        os.mkdir(destClipFolderAbsPath)
                     except OSError:
                         system.newLog(
                             4,
@@ -300,13 +294,9 @@ def moveVideo(videoID, newChannel):
                             "error",
                         )
                         return False
-                newClipLocation = (
-                    videos_root + newChannelQuery.channelLoc + "/clips/" + coreThumbnail
-                )
-                shutil.move(videos_root + clip.thumbnailLocation, newClipLocation)
-                clip.thumbnailLocation = (
-                    newChannelQuery.channelLoc + "/clips/" + coreThumbnail
-                )
+
+                clip.channelID = newChannelQuery.id
+                moveClips(clip, videos_root, newChannelQuery.channelLoc)
 
             db.session.commit()
             system.newLog(
@@ -343,7 +333,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             # Generate Clip Object
             newClip = RecordedVideo.Clips(
                 datetime.datetime.now(datetime.timezone.utc),
-                recordedVidQuery.id,
+                recordedVidQuery,
                 None,
                 clipStart,
                 clipStop,
@@ -437,6 +427,28 @@ def generateClipFiles(clip, videosRoot, sourceVideoLocation):
         ]
     )
 
+def moveClips(clip, videosRoot, destChannelLoc):
+    clipFilesNewPath = os.path.join(
+        destChannelLoc, "clips", os.path.basename(clip.videoLocation).replace(".mp4", "")
+    )
+
+    newMp4LocationValue = f"{clipFilesNewPath}.mp4"
+    newPngLocationValue = f"{clipFilesNewPath}.png"
+    newGifLocationValue = f"{clipFilesNewPath}.gif"
+
+    shutil.move(
+        os.path.join(videosRoot, clip.videoLocation), os.path.join(videosRoot, newMp4LocationValue), 
+    )
+    shutil.move(
+        os.path.join(videosRoot, clip.thumbnailLocation), os.path.join(videosRoot, newPngLocationValue), 
+    )
+    shutil.move(
+        os.path.join(videosRoot, clip.gifLocation), os.path.join(videosRoot, newGifLocationValue), 
+    )
+    
+    clip.videoLocation = newMp4LocationValue
+    clip.thumbnailLocation = newPngLocationValue
+    clip.gifLocation = newGifLocationValue
 
 def getClipCreationTimeFromFiles(clip):
     mp4AbsPath = os.path.join(globalvars.videoRoot, "videos", clip.videoLocation)
@@ -462,19 +474,20 @@ def getClipCreationTimeFromFiles(clip):
     db.session.commit()
 
 
-def changeClipMetadata(clipID, name, description, clipTags):
+def changeClipMetadata(clipID, name, topicID, description, clipTags):
     # TODO Add Webhook for Clip Metadata Change
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 
     if clipQuery is not None:
         if (
-            clipQuery.recordedVideo.owningUser == current_user.id
+            clipQuery.owningUser == current_user.id
             or current_user.has_role("Admin")
         ):
 
             clipQuery.clipName = system.strip_html(name)
             clipQuery.description = system.strip_html(description)
+            clipQuery.topic = topicID
 
             if clipTags != None:
                 videoTagString = clipTags

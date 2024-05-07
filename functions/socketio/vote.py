@@ -217,7 +217,7 @@ def handle_upvoteChange(streamData):
                     current_user.username + " liked your clip - " + clipQuery.clipName,
                     "/clip/" + str(clipQuery.id),
                     "/images/" + str(current_user.pictureLocation),
-                    clipQuery.recordedVideo.owningUser,
+                    clipQuery.owningUser,
                 )
                 db.session.add(newNotification)
 

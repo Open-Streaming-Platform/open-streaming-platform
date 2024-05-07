@@ -960,13 +960,9 @@ def searchVideos(term):
 @cache.memoize(timeout=30)
 def getClipChannelID(clipID):
     ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
-    if ClipQuery is not None:
-        RecordedVideoQuery = getVideo(ClipQuery.parentVideo)
-        if RecordedVideo is not None:
-            ChannelQuery = getChannel(RecordedVideoQuery.channelID)
-            if ChannelQuery is not None:
-                return ChannelQuery.id
-    return None
+    if ClipQuery is None:
+        return None
+    return ClipQuery.channelID
 
 @cache.memoize(timeout=30)
 def getClipsForVideo(videoID):
@@ -992,127 +988,70 @@ def getClipsForVideo(videoID):
 
 @cache.memoize(timeout=60)
 def getAllClipsForChannel_View(channelID):
-    VideoQuery = getChannelVideos(channelID)
-    clipList = []
-    for vid in VideoQuery:
-        clipQuery = RecordedVideo.Clips.query.filter_by(
-            parentVideo=vid.id, published=True
-        ).all()
-        clipList = clipList + clipQuery
-    return clipList
+    return RecordedVideo.Clips.query.filter_by(
+        channelID=channelID, published=True
+    ).all()
 
 
 @cache.memoize(timeout=60)
 def getAllClipsForUser(userId):
-    videoQuery = getAllVideoByOwnerId(userId)
-    videoIds = []
-    for video in videoQuery:
-        videoIds.append(video.id)
-
-    clips = (
-        RecordedVideo.Clips.query.filter(
-            RecordedVideo.Clips.published == True,
-            RecordedVideo.Clips.parentVideo.in_(videoIds),
-        )
-        .join(
-            RecordedVideo.RecordedVideo,
-            RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-        )
-        .join(
-            Channel.Channel, Channel.Channel.id == RecordedVideo.RecordedVideo.channelID
-        )
-        .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-        .with_entities(
-            RecordedVideo.Clips.id,
-            RecordedVideo.Clips.clipName,
-            RecordedVideo.Clips.uuid,
-            RecordedVideo.Clips.thumbnailLocation,
-            Channel.Channel.owningUser,
-            RecordedVideo.Clips.views,
-            RecordedVideo.Clips.length,
-            Channel.Channel.protected,
-            Channel.Channel.channelName,
-            RecordedVideo.RecordedVideo.topic,
-            Sec.User.pictureLocation,
-            RecordedVideo.Clips.parentVideo,
-            RecordedVideo.Clips.description,
-            RecordedVideo.Clips.published,
-        )
-        .all()
-    )
+    return RecordedVideo.Clips.query.filter(
+        RecordedVideo.Clips.published == True,
+        RecordedVideo.Clips.owningUser == userId,
+    ).join(
+        Channel.Channel, Channel.Channel.id == RecordedVideo.Clips.channelID
+    ).join(
+        Sec.User, Sec.User.id == RecordedVideo.Clips.owningUser
+    ).with_entities(
+        RecordedVideo.Clips.id,
+        RecordedVideo.Clips.clipName,
+        RecordedVideo.Clips.uuid,
+        RecordedVideo.Clips.thumbnailLocation,
+        RecordedVideo.Clips.owningUser,
+        RecordedVideo.Clips.views,
+        RecordedVideo.Clips.length,
+        Channel.Channel.protected,
+        RecordedVideo.Clips.channelID,
+        Channel.Channel.channelName,
+        RecordedVideo.Clips.topic,
+        Sec.User.pictureLocation,
+        RecordedVideo.Clips.parentVideo,
+        RecordedVideo.Clips.description,
+        RecordedVideo.Clips.published,
+    ).all()
     return clips
 
 
 @cache.memoize(timeout=120)
 def searchClips(term):
-    if term is not None:
-        clipNameQuery = (
-            RecordedVideo.Clips.query.filter(
-                RecordedVideo.Clips.clipName.like("%" + term + "%"),
-                RecordedVideo.Clips.published == True,
-            )
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.clipName,
-                RecordedVideo.Clips.uuid,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .all()
-        )
-
-        clipDescriptionQuery = (
-            RecordedVideo.Clips.query.filter(
-                RecordedVideo.Clips.clipName.like("%" + term + "%"),
-                RecordedVideo.Clips.published == True,
-            )
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.clipName,
-                RecordedVideo.Clips.uuid,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .all()
-        )
-
-        resultsArray = clipNameQuery + clipDescriptionQuery
-        resultsArray = list(set(resultsArray))
-        return resultsArray
-    else:
+    if term is None:
         return []
+
+    containsTermLikeString = "%" + term + "%"
+    return RecordedVideo.Clips.query.filter(
+        (RecordedVideo.Clips.clipName.like(containsTermLikeString) | RecordedVideo.Clips.description.like(containsTermLikeString)),
+        RecordedVideo.Clips.published == True,
+    ).join(
+        Channel.Channel,
+        Channel.Channel.id == RecordedVideo.Clips.channelID,
+    ).join(
+        Sec.User, Sec.User.id == RecordedVideo.Clips.owningUser
+    ).with_entities(
+        RecordedVideo.Clips.id,
+        RecordedVideo.Clips.clipName,
+        RecordedVideo.Clips.uuid,
+        RecordedVideo.Clips.thumbnailLocation,
+        RecordedVideo.Clips.owningUser,
+        RecordedVideo.Clips.views,
+        RecordedVideo.Clips.length,
+        Channel.Channel.protected,
+        RecordedVideo.Clips.channelID,
+        Channel.Channel.channelName,
+        RecordedVideo.Clips.topic,
+        Sec.User.pictureLocation,
+        RecordedVideo.Clips.parentVideo,
+    ).all()
+    
 
 
 # Topic Related DB Calls

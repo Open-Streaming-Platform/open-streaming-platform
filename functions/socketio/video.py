@@ -271,7 +271,7 @@ def togglePublishedClipSocketIO(message):
 
         if (
             clipQuery is not None
-            and current_user.id == clipQuery.recordedVideo.owningUser
+            and current_user.id == clipQuery.owningUser
         ):
             newState = not clipQuery.published
             clipQuery.published = newState
@@ -279,19 +279,19 @@ def togglePublishedClipSocketIO(message):
             if newState is True:
 
                 subscriptionQuery = subscriptions.channelSubs.query.filter_by(
-                    channelID=clipQuery.recordedVideo.channel.id
+                    channelID=clipQuery.channelID
                 ).all()
                 for sub in subscriptionQuery:
                     # Create Notification for Channel Subs
                     newNotification = notifications.userNotification(
-                        templateFilters.get_userName(clipQuery.recordedVideo.owningUser)
+                        templateFilters.get_userName(clipQuery.owningUser)
                         + " has posted a new clip to "
-                        + clipQuery.recordedVideo.channel.channelName
+                        + clipQuery.channel.channelName
                         + " titled "
                         + clipQuery.clipName,
                         "/clip/" + str(clipQuery.id),
                         "/images/"
-                        + str(clipQuery.recordedVideo.channel.owner.pictureLocation),
+                        + str(clipQuery.owner.pictureLocation),
                         sub.userID,
                     )
                     db.session.add(newNotification)
@@ -313,6 +313,7 @@ def changeClipMetadataSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message["clipID"])
         clipName = message["clipName"]
+        clipTopic = int(message["clipTopic"])
         clipDescription = message["clipDescription"]
 
         clipTags = None
@@ -320,7 +321,7 @@ def changeClipMetadataSocketIO(message):
             clipTags = message["clipTags"]
 
         result = videoFunc.changeClipMetadata(
-            clipID, clipName, clipDescription, clipTags
+            clipID, clipName, clipTopic, clipDescription, clipTags
         )
 
         if result is True:
@@ -342,7 +343,7 @@ def deleteClipSocketIO(message):
     if current_user.is_authenticated:
         clipID = int(message["clipID"])
         clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
-        if clipQuery.recordedVideo.owningUser == current_user.id:
+        if clipQuery.owningUser == current_user.id:
             result = video_tasks.delete_video_clip.delay(clipID)
             db.session.commit()
             db.session.close()
