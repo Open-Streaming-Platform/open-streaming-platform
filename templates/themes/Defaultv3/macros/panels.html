@@ -1222,9 +1222,9 @@
                             {% for server in rtmpList %}
                             <div class="input-group mb-3">
                               <div class="input-group-prepend">
-                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}')"><i class="fas fa-copy"></i></button>
+                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}-{{loop.index}}')"><i class="fas fa-copy"></i></button>
                               </div>
-                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}">rtmp://{{server}}/stream/</span>
+                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}-{{loop.index}}">rtmp://{{server}}/stream/</span>
                             </div>
                             {% endfor %}
                         </div>
