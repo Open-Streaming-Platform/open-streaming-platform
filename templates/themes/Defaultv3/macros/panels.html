@@ -1161,26 +1161,26 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12">
                         <div class="form-group">
-                            <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
-                            <input type="text" class="form-control boxShadow" name="channelName" id="channelName" value="{{channel.channelName}}" required>
+                            <label for="channelName-{{channel.id}}" class="col-form-label"><b>Channel Name</b></label>
+                            <input type="text" class="form-control boxShadow" name="channelName" id="channelName-{{channel.id}}" value="{{channel.channelName}}" required>
                         </div>
                         <div class="form-group">
-                            <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
-                            <select class="form-select boxShadow" name="channeltopic" id="channeltopic" style="font-family: sans-serif;" required >
+                            <label for="channeltopic-{{channel.id}}" class="col-form-label"><b>Default Topic</b></label>
+                            <select class="form-select boxShadow" name="channeltopic" id="channeltopic-{{channel.id}}" style="font-family: sans-serif;" required >
                                 {% for topic in topics %}
                                 <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
-                            <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
+                            <label for="channelStreamName-{{channel.id}}" class="col-form-label"><b>Default Name for Streams</b></label>
+                            <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName-{{channel.id}}" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                         </div>
                         <div class="form-group">
-                            <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
-                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
-                            <small id="vanityURLHelpBlock" class="form-text text-muted">
-                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
+                            <label for="vanityURL-{{channel.id}}" class="col-form-label"><b>Short Link to Channel</b></label>
+                            <input type="text" pattern="[A-Za-z0-9]{0,32}" title="Alphanumeric characters only; no spaces" maxlength="32" class="vanityURL form-control boxShadow" name="vanityURL" id="vanityURL-{{channel.id}}" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
+                            <small id="vanityURLHelpBlock-{{channel.id}}" class="form-text text-muted">
+                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample-{{channel.id}}">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
                         </div>
                         <div class="row">
@@ -1222,40 +1222,50 @@
                             {% for server in rtmpList %}
                             <div class="input-group mb-3">
                               <div class="input-group-prepend">
-                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}')"><i class="fas fa-copy"></i></button>
+                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}-{{loop.index}}')"><i class="fas fa-copy"></i></button>
                               </div>
-                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}">rtmp://{{server}}/stream/</span>
+                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}-{{loop.index}}">rtmp://{{server}}/stream/</span>
                             </div>
                             {% endfor %}
                         </div>
                         <div class="form-group">
-                          <label for="channelTags" class="col-form-label"><b>Channel Tags</b></label>
+                          <label for="channelTagsInput-{{channel.id}}" class="col-form-label"><b>Channel Tags</b></label>
                           <input type="basic" id="channelTagsInput-{{ channel.id }}" name="channelTags" class="form-control boxShadow" value="{{channel.id | get_channelTags_csv}}">
                         </div>
                         <div class="form-group">
-                            <label for="description" class="col-form-label"><b>Description</b></label>
+                            <label for="description-{{channel.id}}" class="col-form-label"><b>Description</b></label>
                             <textarea class="form-control boxShadow" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
                         </div>
                         <hr>
                         <h4><b>Recording Options</b></h4>
                         {% if sysSettings.allowRecording == False %} Recording Disabled at Server Level {% endif %}
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="recordSelect">Record Video {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
+                          <label class="form-check-label" for="recordSelect-{{channel.id}}">Record Video {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="recordSelect-{{channel.id}}" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="allowComments">Allow Comments on Recorded Videos</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
+                          <label class="form-check-label" for="allowComments-{{channel.id}}">Allow Comments on Recorded Videos</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="allowComments-{{channel.id}}" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="publishSelect">Automatically Publish New Videos</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                          <label class="form-check-label" for="publishSelect-{{channel.id}}">Automatically Publish New Videos</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="publishSelect-{{channel.id}}" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                        </div>
+                        <div>
+                          <label for="maxVideoRetention-{{channel.id}}" class="form-label">
+                            Maximum Retention for Recordings Before Deletion (days)
+                          </label>
+                          <br>
+                          <small>Global Max. Recording Retention - {{sysSettings.maxVideoRetention}} days - takes priority if less than channel's value</small>
+                          <br>
+                          <small>0 = Infinite Retention</small>
+                          <input type="number" min="0" name="maxVideoRetention"  id="maxVideoRetention-{{channel.id}}" class="form-control boxShadow" value="{{channel.maxVideoRetention}}">
                         </div>
                         <hr>
                         <h4><b>Chat Options</b></h4>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="chatSelect">Enable Chat</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                          <label class="form-check-label" for="chatSelect-{{channel.id}}">Enable Chat</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="chatSelect-{{channel.id}}" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                         </div>
                         <div class="form-group row">
                             <div class="col-12">
@@ -1274,12 +1284,12 @@
                         <hr>
                         <h4><b>Channel Publishing Options</b></h4>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="homePublishSelect">Show channel on Homepage when live</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="homePublishSelect" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
+                          <label class="form-check-label" for="homePublishSelect-{{channel.id}}">Show channel on Homepage when live</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="homePublishSelect-{{channel.id}}" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="privateChannelSelect">Private Channel</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="privateChannelSelect" name="private" {% if channel.private == True %} checked {% endif %}>
+                          <label class="form-check-label" for="privateChannelSelect-{{channel.id}}">Private Channel</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="privateChannelSelect-{{channel.id}}" name="private" {% if channel.private == True %} checked {% endif %}>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-12">
@@ -1568,12 +1578,12 @@
                                 <div class="row">
                                   <div class="col-12 m-2">
                                     <div class="form-check form-switch">
-                                      <label class="form-check-label" for="publishSelect">Publish Channel to OSP Hub</label>
-                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
+                                      <label class="form-check-label" for="hubPublishSelect-{{channel.id}}">Publish Channel to OSP Hub</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect-{{channel.id}}" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
                                     </div>
                                     <div class="form-check form-switch">
-                                      <label class="form-check-label" for="publishSelect">Not Safe for Work (NSFW) Channel</label>
-                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
+                                      <label class="form-check-label" for="hubNSFWSelect-{{channel.id}}">Not Safe for Work (NSFW) Channel</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect-{{channel.id}}" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
                                     </div>
                                   </div>
                                 </div>
@@ -1620,51 +1630,51 @@
           <div class="col-xl-6 col-lg-6 col-md-12">
             <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                 <div class="form-group">
-                  <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
-                  <input type="text" class="form-control" name="roomTitle" id="roomTitle"
+                  <label for="roomTitle-{{channel.id}}" class="col-form-label"><b>Room title</b></label>
+                  <input type="text" class="form-control" name="roomTitle" id="roomTitle-{{channel.id}}"
                     value="{{channelRooms[channel.channelLoc]['title']}}">
                 </div>
                 <div class="form-group">
-                  <label for="roomDescr" class="col-form-label"><b>Description</b></label>
-                  <input type="text" class="form-control" name="roomDescr" id="roomDescr"
+                  <label for="roomDescr-{{channel.id}}" class="col-form-label"><b>Description</b></label>
+                  <input type="text" class="form-control" name="roomDescr" id="roomDescr-{{channel.id}}"
                     value="{{channelRooms[channel.channelLoc]['description']}}">
                 </div>
                 <div class="form-group">
-                  <label for="chatFormat" class="col-form-label"><b>Chat message format</b></label>
-                  <select class="form-select boxShadow" name="chatFormat" id="chatFormat" style="font-family: sans-serif;" required>
+                  <label for="chatFormat-{{channel.id}}" class="col-form-label"><b>Chat message format</b></label>
+                  <select class="form-select boxShadow" name="chatFormat" id="chatFormat-{{channel.id}}" style="font-family: sans-serif;" required>
                     <option value="messenger" {% if channel.chatFormat=="messenger" %} selected {% endif %}>Messenger</option>
                     <option value="irc" {% if channel.chatFormat=="irc" %} selected {% endif %}>IRC</option>
                   </select>
                 </div>
                 <div class="mt-2">
                   <div class="form-check form-switch">
-                      <label for="moderatedSelect" class="form-check-label"><b>Moderated </b></label>
-                      <input type="checkbox" class="form-check-input" id="moderatedSelect" name="moderatedSelect"
+                      <label for="moderatedSelect-{{channel.id}}" class="form-check-label"><b>Moderated </b></label>
+                      <input type="checkbox" class="form-check-input" id="moderatedSelect-{{channel.id}}" name="moderatedSelect"
                               {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuests" class="form-check-label"><b>Allow guests to join room</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuests" name="allowGuests"
+                    <label for="allowGuests-{{channel.id}}" class="form-check-label"><b>Allow guests to join room</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuests-{{channel.id}}" name="allowGuests"
                             {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuestsChat" class="form-check-label"><b>Allow guests to chat</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuestsChat" name="allowGuestsChat"
+                    <label for="allowGuestsChat-{{channel.id}}" class="form-check-label"><b>Allow guests to chat</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsChat-{{channel.id}}" name="allowGuestsChat"
                       {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuestsNickChange" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuestsNickChange" name="allowGuestsNickChange"
+                    <label for="allowGuestsNickChange-{{channel.id}}" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsNickChange-{{channel.id}}" name="allowGuestsNickChange"
                       {% if channel.allowGuestNickChange == True %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="showJoinPartMsg" class="form-check-label"><b>Show join and part messages</b></label>
-                    <input type="checkbox" class="form-check-input" id="showJoinPartMsg" name="showJoinPartMsg"
+                    <label for="showJoinPartMsg-{{channel.id}}" class="form-check-label"><b>Show join and part messages</b></label>
+                    <input type="checkbox" class="form-check-input" id="showJoinPartMsg-{{channel.id}}" name="showJoinPartMsg"
                       {% if channel.showChatJoinLeaveNotification==True %} checked {% endif %}>
                   </div>
                   <div class="form-group">
-                    <label for="chatHistory" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
-                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory" name="chatHistory" onInput="$('#chatHistoryLabel').html($(this).val())">
+                    <label for="chatHistory-{{channel.id}}" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel-{{channel.id}}" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
+                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory-{{channel.id}}" name="chatHistory" onInput="$('#chatHistoryLabel-{{channel.id}}').html($(this).val())">
 
                   </div>
                   <div class="row">

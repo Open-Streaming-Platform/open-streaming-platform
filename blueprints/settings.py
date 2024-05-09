@@ -1367,6 +1367,7 @@ def settings_channels_page():
                 Channel.Channel.offlineImageLocation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.vanityURL,
+                Channel.Channel.maxVideoRetention,
                 Channel.Channel.defaultStreamName,
                 Channel.Channel.allowGuestNickChange,
                 Channel.Channel.showChatJoinLeaveNotification,
@@ -1564,8 +1565,12 @@ def settings_channels_page():
                     if "stickerName" in request.form:
                         stickerName = request.form["stickerName"]
                         existingStickerNameQuery = stickers.stickers.query.filter_by(
-                            name=stickerName
-                        ).first()
+                                                    name=stickerName,
+                                                    channelID=channelQuery.id
+                                                    ).first()
+                                                                                    
+                                                  
+
                         if existingStickerNameQuery is None:
                             if "stickerUpload" in request.files:
                                 file = request.files["stickerUpload"]
@@ -1806,27 +1811,7 @@ def settings_channels_page():
                         )
                         db.session.add(newTag)
                         db.session.commit()
-
-                vanityURL = None
-                if "vanityURL" in request.form:
-                    requestedVanityURL = request.form["vanityURL"]
-                    requestedVanityURL = re.sub("[^A-Za-z0-9]+", "", requestedVanityURL)
-                    if requestedVanityURL != "":
-                        existingChannelQuery = Channel.Channel.query.filter_by(
-                            vanityURL=requestedVanityURL
-                        ).with_entities(Channel.Channel.id).first()
-                        if (
-                            existingChannelQuery is None
-                            or existingChannelQuery.id == channelId
-                        ):
-                            vanityURL = requestedVanityURL
-                        else:
-                            flash(
-                                "Short link not saved. Link with same name exists!",
-                                "error",
-                            )
                 
-
                 updateDict = dict(
                     channelName=channelName,
                     topic=topic,
@@ -1839,10 +1824,31 @@ def settings_channels_page():
                     defaultStreamName=defaultstreamName,
                     autoPublish=autoPublish,
                     private=private,
-                    vanityURL=vanityURL,
                     hubEnabled = hubPublish,
                     hubNSFW = hubNSFW
                 )
+
+                if "vanityURL" in request.form:
+                    requestedVanityURL = re.sub("[^A-Za-z0-9]+", "", request.form["vanityURL"][:32])
+                    if requestedVanityURL != "":
+                        existingChannelQuery = Channel.Channel.query.filter_by(
+                            vanityURL=requestedVanityURL
+                        ).with_entities(Channel.Channel.id).first()
+                        if (
+                            existingChannelQuery is None
+                            or existingChannelQuery.id == channelId
+                        ):
+                            updateDict['vanityURL'] = requestedVanityURL
+                        else:
+                            flash(
+                                "Short link not saved. Link with same name exists!",
+                                "error",
+                            )
+                    else:
+                        updateDict['vanityURL'] = None
+
+                if 'maxVideoRetention' in request.form:
+                    updateDict['maxVideoRetention'] = max(0, int(request.form['maxVideoRetention']))
 
                 from app import ejabberd
 

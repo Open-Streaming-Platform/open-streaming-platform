@@ -8,7 +8,6 @@ import uuid
 
 from flask import flash, current_app
 from flask_security import current_user
-import ffmpeg
 
 from globals import globalvars
 
@@ -23,11 +22,8 @@ from classes import subscriptions
 from classes import notifications
 
 from functions import system
-from functions import webhookFunc
 from functions import templateFilters
 from functions import cachedDbCalls
-
-from functions.scheduled_tasks import message_tasks
 
 log = logging.getLogger("app.functions.database")
 
@@ -154,6 +150,7 @@ def changeVideoMetadata(
                 + channelQuery.imageLocation
             )
 
+        from functions.scheduled_tasks import message_tasks
         message_tasks.send_webhook.delay(
             channelQuery.id,
             9,
@@ -341,7 +338,7 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 return False, None
 
         if clipStop > clipStart:
-            videos_root = globalvars.videoRoot + "videos/"
+            videos_root = os.path.join(globalvars.videoRoot, "videos")
 
             # Generate Clip Object
             newClip = RecordedVideo.Clips(
@@ -357,75 +354,25 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             db.session.commit()
 
             newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
-
-            videoLocation = videos_root + recordedVidQuery.videoLocation
-
+            channelLocation = recordedVidQuery.channel.channelLoc
+            
             # Establish Locations for Clips and Thumbnails
-            clipVideoLocation = (
-                recordedVidQuery.channel.channelLoc
-                + "/clips/"
-                + "clip-"
-                + str(newClipQuery.id)
-                + ".mp4"
-            )
-            clipThumbNailLocation = (
-                recordedVidQuery.channel.channelLoc
-                + "/clips/"
-                + "clip-"
-                + str(newClipQuery.id)
-                + ".png"
-            )
-            clipGifLocation = (
-                recordedVidQuery.channel.channelLoc
-                + "/clips/"
-                + "clip-"
-                + str(newClipQuery.id)
-                + ".gif"
-            )
+            clipFilesPath = os.path.join(channelLocation, "clips", f"clip-{newClipQuery.id}")
 
             # Set Clip Object Values for Locations
-            newClipQuery.videoLocation = clipVideoLocation
-            newClipQuery.thumbnailLocation = clipThumbNailLocation
-            newClipQuery.gifLocation = clipGifLocation
+            newClipQuery.videoLocation = f"{clipFilesPath}.mp4"
+            newClipQuery.thumbnailLocation = f"{clipFilesPath}.png"
+            newClipQuery.gifLocation = f"{clipFilesPath}.gif"
 
-            # Set Full Path for Locations to be handled by FFMPEG
-            fullvideoLocation = videos_root + clipVideoLocation
-            fullthumbnailLocation = videos_root + clipThumbNailLocation
-            fullgifLocation = videos_root + clipGifLocation
-
+            clipFolderAbsPath = os.path.join(videos_root, channelLocation, "clips")
             # Create Clip Directory if doesn't exist
-            if not os.path.isdir(
-                videos_root + recordedVidQuery.channel.channelLoc + "/clips"
-            ):
-                os.mkdir(videos_root + recordedVidQuery.channel.channelLoc + "/clips")
+            if not os.path.isdir(clipFolderAbsPath):
+                os.mkdir(clipFolderAbsPath)
 
-            # FFMPEG Subprocess to Clip Video and generate Thumbnails
-            clipVideo = (
-                ffmpeg.input(videoLocation, ss=clipStart)
-                .output(fullvideoLocation, t=newClipQuery.length)
-                .run(quiet=True, overwrite_output=True)
-            )
-            # clipVideo = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-t', str(newClipQuery.length), fullvideoLocation])
-            processResult = (
-                ffmpeg.input(videoLocation, ss=clipStart)
-                .output(fullthumbnailLocation, vframes=1, s="384x216")
-                .run(quiet=True, overwrite_output=True)
-            )
-            # processResult = subprocess.call(['ffmpeg', '-ss', str(clipStart), '-i', videoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
-            gifprocessResult = subprocess.call(
-                [
-                    "/usr/bin/ffmpeg",
-                    "-ss",
-                    str(clipStart),
-                    "-t",
-                    "3",
-                    "-i",
-                    videoLocation,
-                    "-filter_complex",
-                    "[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1",
-                    "-y",
-                    fullgifLocation,
-                ]
+            generateClipFiles(
+                newClipQuery,
+                videos_root,
+                os.path.join(videos_root, recordedVidQuery.videoLocation)
             )
 
             redirectID = newClipQuery.id
@@ -460,6 +407,32 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             db.session.close()
             return True, redirectID
     return False, None
+
+
+def generateClipFiles(clip, videosRoot, sourceVideoLocation):
+    # Set Full Path for Locations to be handled by FFMPEG
+    fullvideoLocation = os.path.join(videosRoot, clip.videoLocation)
+    fullthumbnailLocation = os.path.join(videosRoot, clip.thumbnailLocation)
+    fullgifLocation = os.path.join(videosRoot, clip.gifLocation)
+
+    # FFMPEG Subprocess to generate clip's files - video, thumbnail, and gif.
+    clipVideo = subprocess.call(['/usr/bin/ffmpeg', '-ss', str(clip.startTime), '-t', str(clip.length), '-i', sourceVideoLocation, fullvideoLocation])
+    processResult = subprocess.call(['/usr/bin/ffmpeg', '-ss', str(clip.startTime), '-i', sourceVideoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+    gifprocessResult = subprocess.call(
+        [
+            "/usr/bin/ffmpeg",
+            '-ss',
+            str(clip.startTime),
+            "-t",
+            str(3),
+            "-i",
+            sourceVideoLocation,
+            "-filter_complex",
+            "[0:v] fps=30,scale=w=384:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1",
+            "-y",
+            fullgifLocation,
+        ]
+    )
 
 
 def changeClipMetadata(clipID, name, description, clipTags):
@@ -512,7 +485,9 @@ def deleteClip(clipID):
         for tag in clipTags:
             db.session.delete(tag)
 
-        videoPath = videos_root + clipQuery.videoLocation
+        videoPath = None
+        if clipQuery.videoLocation is not None:
+            videoPath = videos_root + clipQuery.videoLocation
         if clipQuery.thumbnailLocation is not None:
             thumbnailPath = videos_root + clipQuery.thumbnailLocation
         else:
@@ -532,7 +507,7 @@ def deleteClip(clipID):
                 clipQuery.gifLocation is not None or gifPath != ""
             ):
                 os.remove(gifPath)
-        if videoPath != videos_root:
+        if videoPath != videos_root and videoPath is not None:
             if os.path.exists(videoPath) and (
                 clipQuery.videoLocation is not None or videoPath != ""
             ):
