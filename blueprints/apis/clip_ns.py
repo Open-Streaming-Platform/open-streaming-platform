@@ -119,7 +119,11 @@ class api_1_SearchClips(Resource):
         args = clipSearchPost.parse_args()
         returnArray = []
         if "term" in args:
+            finalArray = []
             returnArray = cachedDbCalls.searchClips(args["term"])
-            return {"results": returnArray}
+            for clip in returnArray:
+                newVidObj = [clip.id, clip.clipName, clip.uuid, clip.thumbnailLocation]
+                finalArray.append(newVidObj)
+            return {"results": finalArray}
         else:
             return {"results": {"message": "Request Error"}}, 400
