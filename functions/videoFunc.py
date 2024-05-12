@@ -359,9 +359,9 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
             clipFilesPath = os.path.join(channelLocation, "clips", clipLocationName)
 
             # Set Clip Object Values for Locations
-            newClipQuery.videoLocation = f"{clipFilesPath}.mp4"
-            newClipQuery.thumbnailLocation = f"{clipFilesPath}.png"
-            newClipQuery.gifLocation = f"{clipFilesPath}.gif"
+            newClip.videoLocation = f"{clipFilesPath}.mp4"
+            newClip.thumbnailLocation = f"{clipFilesPath}.png"
+            newClip.gifLocation = f"{clipFilesPath}.gif"
             db.session.add(newClip)
             db.session.commit()
 
