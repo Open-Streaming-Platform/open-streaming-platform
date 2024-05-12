@@ -96,6 +96,8 @@ def user_auth_check():
                             p = subprocess.Popen(
                                 [
                                     "/usr/bin/ffmpeg",
+                                    '-hwaccel',
+                                    'auto',
                                     "-i",
                                     inputLocation,
                                     "-c",
@@ -145,6 +147,8 @@ def user_auth_check():
                         ):
                             subprocessConstructor = [
                                 "/usr/bin/ffmpeg",
+                                '-hwaccel',
+                                'auto',
                                 "-i",
                                 inputLocation,
                                 "-c",
