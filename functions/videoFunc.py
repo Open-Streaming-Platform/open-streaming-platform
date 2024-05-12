@@ -332,6 +332,8 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
     if recordedVidQuery is not None:
 
+        clipLocationName = str(uuid.uuid4())
+
         clipLength = clipStop - clipStart
         if settingsQuery.maxClipLength < 301:
             if clipLength > settingsQuery.maxClipLength:
@@ -350,19 +352,20 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 clipDescription,
             )
             newClip.published = False
-            db.session.add(newClip)
-            db.session.commit()
 
-            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
             channelLocation = recordedVidQuery.channel.channelLoc
             
             # Establish Locations for Clips and Thumbnails
-            clipFilesPath = os.path.join(channelLocation, "clips", f"clip-{newClipQuery.id}")
+            clipFilesPath = os.path.join(channelLocation, "clips", clipLocationName)
 
             # Set Clip Object Values for Locations
             newClipQuery.videoLocation = f"{clipFilesPath}.mp4"
             newClipQuery.thumbnailLocation = f"{clipFilesPath}.png"
             newClipQuery.gifLocation = f"{clipFilesPath}.gif"
+            db.session.add(newClip)
+            db.session.commit()
+
+            newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
 
             clipFolderAbsPath = os.path.join(videos_root, channelLocation, "clips")
             # Create Clip Directory if doesn't exist
