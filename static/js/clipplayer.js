@@ -66,9 +66,11 @@ function toggleChannelSub(chanID) {
     socket.emit('toggleChannelSubscription', { channelID: chanID });
 }
 
-socket.on('checkScreenShot', function (msg) {
+socket.on('checkClipScreenShot', function (msg) {
     document.getElementById("newScreenShotImg").src = msg['thumbnailLocation'];
-    openModal('newSSModal')
+    document.getElementById('screenshotPendingBox').style.display = "none";
+    document.getElementById('screenshotImageBox').style.display = "block";
+    document.getElementById('newScreenShotSetThumbButton').disabled = false;
 });
 
 function toggleShareTimestamp(requestURL, startTime) {
@@ -85,8 +87,12 @@ function toggleShareTimestamp(requestURL, startTime) {
 function newThumbnailRequest() {
     player.pause();
     window.whereYouAt = player.currentTime();
+    document.getElementById('newScreenShotSetThumbButton').disabled = true;
+    document.getElementById('screenshotPendingBox').style.display = "block";
+    document.getElementById('screenshotImageBox').style.display = "none";
     document.getElementById("thumbnailTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: null, timeStamp: window.whereYouAt, clipID: clipID });
+    openModal('newSSModal')
+    socket.emit('newScreenShot', { loc: null, timeStamp: window.whereYouAt, clipID: clipID, clip:true });
 }
 
 function setNewThumbnail() {
