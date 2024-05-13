@@ -349,20 +349,22 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
                 clipName,
                 clipDescription,
             )
+            clipFilesName = f"clip-{newClip.id}"
             newClip.published = False
+            
+            channelLocation = recordedVidQuery.channel.channelLoc
+            
+            # Establish Locations for Clips and Thumbnails
+            clipFilesPath = os.path.join(channelLocation, "clips", clipFilesName)
+
+            # Set Clip Object Values for Locations
+            newClip.videoLocation = f"{clipFilesPath}.mp4"
+            newClip.thumbnailLocation = f"{clipFilesPath}.png"
+            newClip.gifLocation = f"{clipFilesPath}.gif"
             db.session.add(newClip)
             db.session.commit()
 
             newClipQuery = RecordedVideo.Clips.query.filter_by(id=newClip.id).first()
-            channelLocation = recordedVidQuery.channel.channelLoc
-            
-            # Establish Locations for Clips and Thumbnails
-            clipFilesPath = os.path.join(channelLocation, "clips", f"clip-{newClipQuery.id}")
-
-            # Set Clip Object Values for Locations
-            newClipQuery.videoLocation = f"{clipFilesPath}.mp4"
-            newClipQuery.thumbnailLocation = f"{clipFilesPath}.png"
-            newClipQuery.gifLocation = f"{clipFilesPath}.gif"
 
             clipFolderAbsPath = os.path.join(videos_root, channelLocation, "clips")
             # Create Clip Directory if doesn't exist
