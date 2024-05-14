@@ -527,6 +527,7 @@ function moveVideoSubmit() {
     var destinationChannel = destinationChannelInput.options[destinationChannelInput.selectedIndex].value;
 
     $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
+    $('li.parentVideo-' + videoID).detach().prependTo('#clipList-' + destinationChannel);
 
     socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
     createNewBSAlert("Video Moved", "Success");
@@ -650,6 +651,8 @@ function createVideoClipSubmit() {
 function editClipSubmit() {
     var editClipIDInput = document.getElementById("editClipID").value;
     var editClipNameInput = document.getElementById("editClipName").value;
+    const editClipTopicId = document.getElementById('editClipTopic').value;
+    const editClipTopicName = document.querySelector(`#editClipTopic > option[value='${editClipTopicId}']`).label
     var editClipDescriptionInput = document.getElementById("clipEditDescription");
     var editClipTagsInput = document.getElementById('editClipTags').value;
 
@@ -662,11 +665,12 @@ function editClipSubmit() {
 
     document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
     document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
+    document.getElementById("clipTopicText-" + editClipIDInput).innerText = editClipTopicName;
     document.getElementById("clip-" + editClipIDInput + "-tags").innerText = editClipTagsInput;
 
     createNewBSAlert("Clip Metadata Edited", "Success");
 
-    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription, clipTags: editClipTagsInput});
+    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipTopic: editClipTopicId, clipDescription: clipDescription, clipTags: editClipTagsInput});
 }
 
 function deleteClip() {
@@ -933,14 +937,13 @@ function saveUploadedThumbnail() {
     createNewBSAlert("Thumbnail Updated", "Success");
 }
 
-function openClipSSModal(clipID, videoID, videoLocation) {
+function openClipSSModal(clipID, videoLocation) {
     clipssplayer.pause();
 
     clipssplayer.src(videoLocation);
     clipssplayer.load();
 
     document.getElementById("clipssID").value = clipID;
-    document.getElementById("clipvideossID").value = videoID;
 
     document.getElementById("newClipScreenShotImg").src = "/static/img/video-placeholder.jpg";
     openModal('clipNewSSModal');
@@ -965,7 +968,7 @@ function newClipScreenShot() {
     clipssplayer.pause();
     window.whereYouAt = clipssplayer.currentTime();
     document.getElementById("clipSSTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, 'clipID': document.getElementById('clipssID').value, timeStamp: window.whereYouAt, clip:true });
+    socket.emit('newScreenShot', { loc: null, 'clipID': document.getElementById('clipssID').value, timeStamp: window.whereYouAt, clip:true });
 }
 
 function setScreenShot() {

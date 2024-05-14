@@ -59,16 +59,15 @@
 
 <!--Start Modal Block-->
 {% block modals %}
-    {{ modals.video_share(video, request, startTime) }}
+    {{ modals.video_share(clip, request, startTime) }}
     {{ modals.new_thumbnail_modal() }}
-    {{ modals.edit_clip_metadata(clip) }}
+    {{ modals.edit_clip_metadata(clip, topics) }}
     {{ modals.delete_clip(clip) }}
 {% endblock %}
 
 <!--Start Script Block-->
 {% block scripts %}
     <script>
-    var videoID = {{ video.id }};
     var clipID = {{ clip.id }}
     </script>
 

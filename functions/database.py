@@ -162,6 +162,10 @@ def dbFixes():
     if sysSettings.maxVideoRetention is None:
         sysSettings.maxVideoRetention = 0
         db.session.commit()
+    # Sets maxClipRetention if none to 0
+    if sysSettings.maxClipRetention is None:
+        sysSettings.maxClipRetention = 0
+        db.session.commit()
     # Sets maxVideoUploadFileSize if none to 4096 MiB (4 GiB)
     if sysSettings.maxVideoUploadFileSize is None:
         sysSettings.maxVideoUploadFileSize = 4096
@@ -216,6 +220,10 @@ def dbFixes():
     for chan in channelQuery:
         chan.maxVideoRetention = 0
         db.session.commit()
+    channelQuery = Channel.Channel.query.filter_by(maxClipRetention=None).all()
+    for chan in channelQuery:
+        chan.maxClipRetention = 0
+        db.session.commit()
     channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
     for chan in channelQuery:
         chan.channelMuted = False
@@ -253,14 +261,26 @@ def dbFixes():
         db.session.commit()
 
     log.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
-    # Fix for Clips that were created during clip creation bug in 0.9.10 and 0.9.11
-    videos_root = os.path.join(globalvars.videoRoot, "videos")
+    # Fix for Clips that were created before the decoupling of clips and videos.
+    clipQuery = RecordedVideo.Clips.query.filter(
+        RecordedVideo.Clips.parentVideo != None,
+        (RecordedVideo.Clips.owningUser == None) | (RecordedVideo.Clips.channelID == None) | (RecordedVideo.Clips.topic == None)
+    ).all()
+    for clip in clipQuery:
+        videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
+
+        # clipDate is handled later in systemFixes.
+        clip.owningUser = videoQuery.owningUser
+        clip.channelID = videoQuery.channelID
+        clip.topic = videoQuery.topic
+        
+        db.session.commit()
+    # Fix for Clips to restore any NULL file paths.
     clipQuery = RecordedVideo.Clips.query.filter(
         (RecordedVideo.Clips.videoLocation == None) | (RecordedVideo.Clips.thumbnailLocation == None) | (RecordedVideo.Clips.gifLocation == None)
     ).all()
     for clip in clipQuery:
-        clipVideoQuery = cachedDbCalls.getVideo(clip.parentVideo)
-        clipChannelQuery = cachedDbCalls.getChannel(clipVideoQuery.channelID)
+        clipChannelQuery = cachedDbCalls.getChannel(clip.channelID)
         clipFilesPath = os.path.join(clipChannelQuery.channelLoc, "clips", f"clip-{clip.id}")
 
         if clip.videoLocation is None:
