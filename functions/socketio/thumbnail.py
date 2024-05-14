@@ -70,6 +70,8 @@ def newScreenShot(message):
         result = subprocess.call(
             [
                 "/usr/bin/ffmpeg",
+                '-hwaccel',
+                'auto',
                 "-ss",
                 str(timeStamp),
                 "-i",
@@ -146,6 +148,8 @@ def setScreenShot(message):
             result = subprocess.call(
                 [
                     "/usr/bin/ffmpeg",
+                    '-hwaccel',
+                    'auto',
                     "-ss",
                     str(timeStamp),
                     "-i",
@@ -183,6 +187,8 @@ def setScreenShot(message):
             gifresult = subprocess.call(
                 [
                     "/usr/bin/ffmpeg",
+                    '-hwaccel',
+                    'auto',
                     "-ss",
                     str(timeStamp),
                     "-t",

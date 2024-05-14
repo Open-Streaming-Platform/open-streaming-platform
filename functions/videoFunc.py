@@ -322,6 +322,8 @@ def createClip(videoID, clipStart, clipStop, clipName, clipDescription):
 
     if recordedVidQuery is not None:
 
+        clipLocationName = str(uuid.uuid4())
+
         clipLength = clipStop - clipStart
         if settingsQuery.maxClipLength < 301:
             if clipLength > settingsQuery.maxClipLength:
@@ -409,11 +411,13 @@ def generateClipFiles(clip, videosRoot, sourceVideoLocation):
     fullgifLocation = os.path.join(videosRoot, clip.gifLocation)
 
     # FFMPEG Subprocess to generate clip's files - video, thumbnail, and gif.
-    clipVideo = subprocess.call(['/usr/bin/ffmpeg', '-ss', str(clip.startTime), '-t', str(clip.length), '-i', sourceVideoLocation, fullvideoLocation])
-    processResult = subprocess.call(['/usr/bin/ffmpeg', '-ss', str(clip.startTime), '-i', sourceVideoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
+    clipVideo = subprocess.call(['/usr/bin/ffmpeg', '-hwaccel', 'auto', '-ss', str(clip.startTime), '-t', str(clip.length), '-i', sourceVideoLocation, fullvideoLocation])
+    processResult = subprocess.call(['/usr/bin/ffmpeg', '-hwaccel', 'auto', '-ss', str(clip.startTime), '-i', sourceVideoLocation, '-s', '384x216', '-vframes', '1', fullthumbnailLocation])
     gifprocessResult = subprocess.call(
         [
             "/usr/bin/ffmpeg",
+            '-hwaccel', 
+            'auto',
             '-ss',
             str(clip.startTime),
             "-t",
@@ -608,6 +612,8 @@ def setVideoThumbnail(videoID, timeStamp):
         result = subprocess.call(
             [
                 "/usr/bin/ffmpeg",
+                '-hwaccel', 
+                'auto',
                 "-ss",
                 str(timeStamp),
                 "-i",
@@ -622,6 +628,8 @@ def setVideoThumbnail(videoID, timeStamp):
         gifresult = subprocess.call(
             [
                 "/usr/bin/ffmpeg",
+                '-hwaccel',
+                'auto',
                 "-ss",
                 str(timeStamp),
                 "-t",
@@ -729,6 +737,8 @@ def processVideoUpload(
         subprocess.call(
             [
                 "/usr/bin/ffmpeg",
+                '-hwaccel',
+                'auto',
                 "-ss",
                 "00:00:01",
                 "-i",
@@ -753,6 +763,8 @@ def processVideoUpload(
     gifresult = subprocess.call(
         [
             "/usr/bin/ffmpeg",
+            '-hwaccel',
+            'auto',
             "-ss",
             "00:00:01",
             "-t",
@@ -806,6 +818,8 @@ def processFLVUpload(path):
     processedStreamVideo = subprocess.call(
         [
             "/usr/bin/ffmpeg",
+            '-hwaccel',
+            'auto',
             "-y",
             "-i",
             path,
@@ -837,6 +851,8 @@ def processStreamVideo(path, channelLoc):
     processedStreamVideo = subprocess.call(
         [
             "/usr/bin/ffmpeg",
+            '-hwaccel',
+            'auto',
             "-y",
             "-i",
             inputPath,
