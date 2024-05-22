@@ -265,32 +265,31 @@ def dbFixes():
     clipQuery = RecordedVideo.Clips.query.filter(
         RecordedVideo.Clips.parentVideo != None,
         (RecordedVideo.Clips.owningUser == None) | (RecordedVideo.Clips.channelID == None) | (RecordedVideo.Clips.topic == None)
-    ).all()
+    ).with_entities(RecordedVideo.Clips.id).all()
     for clip in clipQuery:
         videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
 
-        # clipDate is handled later in systemFixes.
-        clip.owningUser = videoQuery.owningUser
-        clip.channelID = videoQuery.channelID
-        clip.topic = videoQuery.topic
+        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(owningUser = videoQuery.owningUser, channelID=videoQuery.channelID, topic=videoQuery.topic, published=published))
         
-        db.session.commit()
+    db.session.commit()
     # Fix for Clips to restore any NULL file paths.
     clipQuery = RecordedVideo.Clips.query.filter(
         (RecordedVideo.Clips.videoLocation == None) | (RecordedVideo.Clips.thumbnailLocation == None) | (RecordedVideo.Clips.gifLocation == None)
-    ).all()
+    ).with_entities(RecordedVideo.Clips.id).all()
+
     for clip in clipQuery:
         clipChannelQuery = cachedDbCalls.getChannel(clip.channelID)
         clipFilesPath = os.path.join(clipChannelQuery.channelLoc, "clips", f"clip-{clip.id}")
 
         if clip.videoLocation is None:
-            clip.videoLocation = f"{clipFilesPath}.mp4"
+            videoLocation = f"{clipFilesPath}.mp4"
         if clip.thumbnailLocation is None:
-            clip.thumbnailLocation = f"{clipFilesPath}.png"
+            thumbnailLocation = f"{clipFilesPath}.png"
         if clip.gifLocation is None:
-            clip.gifLocation = f"{clipFilesPath}.gif"
-        clip.published = True
-        db.session.commit()
+            gifLocation = f"{clipFilesPath}.gif"
+        published = True
+        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(videoLocation=videoLocation, thumbnailLocation=thumbnailLocation, gifLocation=gifLocation, published=published))
+    db.session.commit()
     # Fix for Videos and Channels that were created before Publishing Option
     videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
     for vid in videoQuery:
