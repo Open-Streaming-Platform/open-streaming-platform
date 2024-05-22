@@ -18,12 +18,16 @@ from functions import videoFunc
 from functions import cachedDbCalls
 from functions import system
 
+log = logging.getLogger("app.functions.channelFunctions")
 
 def delete_channel(channelID):
 
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
-    if channelQuery is not None:
+    if channelQuery is None:
+        db.session.close()
+        return False
 
+    try:
         panelMappingQuery = panel.panelMapping.query.filter_by(
             panelType=2, panelLocationId=channelQuery.id
         ).all()
@@ -73,19 +77,18 @@ def delete_channel(channelID):
         for sticker in channelQuery.chatStickers:
             db.session.delete(sticker)
 
-        stickerFolder = "/var/www/images/stickers/" + channelQuery.channelLoc + "/"
-        shutil.rmtree(stickerFolder, ignore_errors=True)
+        stickerFolder = os.path.join(globalvars.videoRoot, "images/stickers", channelQuery.channelLoc)
+        if os.path.exists(stickerFolder):
+            shutil.rmtree(stickerFolder)
 
-        filePath = globalvars.videoRoot + channelQuery.channelLoc
-
-        if filePath != globalvars.videoRoot:
-            shutil.rmtree(filePath, ignore_errors=True)
+        videosFolder = os.path.join(globalvars.videoRoot, "videos", channelQuery.channelLoc)
+        if videosFolder != globalvars.videoRoot and os.path.exists(videosFolder):
+            shutil.rmtree(videosFolder)
 
         from app import ejabberd
 
-        sysSettings = cachedDbCalls.getSystemSettings()
         ejabberd.destroy_room(
-            channelQuery.channelLoc, "conference." + sysSettings.siteAddress
+            channelQuery.channelLoc, "conference." + globalvars.defaultChatDomain
         )
 
         system.newLog(
@@ -100,6 +103,10 @@ def delete_channel(channelID):
 
         db.session.delete(channelQuery)
         db.session.commit()
+    except Exception as e:
+        log.error("Error in deleting Channel " + str(channelQuery.id) + ": " + str(e))
+        db.session.close()
+        return False
 
     db.session.close()
     return True
