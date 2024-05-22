@@ -17,6 +17,7 @@ api = Namespace("clip", description="Clip Related Queries and Functions")
 clipParserPut = reqparse.RequestParser()
 clipParserPut.add_argument("clipName", type=str)
 clipParserPut.add_argument("description", type=str)
+clipParserPut.add_argument("topicId", type=int)
 
 clipSearchPost = reqparse.RequestParser()
 clipSearchPost.add_argument("term", type=str)
@@ -34,7 +35,7 @@ class api_1_ListClips(Resource):
             "results": [
                 ob.serialize()
                 for ob in clipsList
-                if ob.recordedVideo.channel.private is False
+                if ob.channel.private is False
             ]
         }
 
@@ -52,7 +53,7 @@ class api_1_ListClip(Resource):
             "results": [
                 ob.serialize()
                 for ob in clipList
-                if ob.recordedVideo.channel.private is False
+                if ob.channel.private is False
             ]
         }
 
@@ -61,7 +62,7 @@ class api_1_ListClip(Resource):
     @api.doc(responses={200: "Success", 400: "Request Error"})
     def put(self, clipID):
         """
-        Change a Clip's Name or Description
+        Change a Clip's Name, Description, or Topic
         """
         if "X-API-KEY" in request.headers:
             requestAPIKey = apikey.apikey.query.filter_by(
@@ -73,7 +74,7 @@ class api_1_ListClip(Resource):
                         id=int(clipID)
                     ).first()
                     if clipQuery is not None:
-                        if clipQuery.recordedVideo.owningUser == requestAPIKey.userID:
+                        if clipQuery.owningUser == requestAPIKey.userID:
                             args = clipParserPut.parse_args()
                             if "clipName" in args:
                                 if args["clipName"] is not None:
@@ -81,6 +82,11 @@ class api_1_ListClip(Resource):
                             if "description" in args:
                                 if args["description"] is not None:
                                     clipQuery.description = args["description"]
+                            if "topicId" in args:
+                                if args["topicId"] is not None:
+                                    from classes import topics
+                                    if topics.topics.query.filter_by(id=args["topicId"]).first() is not None:
+                                        clipQuery.topic = args["topicId"]
                             db.session.commit()
                             return {"results": {"message": "Clip Updated"}}, 200
         return {"results": {"message": "Request Error"}}, 400
@@ -99,7 +105,7 @@ class api_1_ListClip(Resource):
                 if requestAPIKey.isValid():
                     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
                     if clipQuery is not None:
-                        if clipQuery.recordedVideo.owningUser == requestAPIKey.userID:
+                        if clipQuery.owningUser == requestAPIKey.userID:
                             results = video_tasks.delete_video_clip.delay(clipQuery.id)
                             return {
                                 "results": {"message": "Clip Scheduled for Deletion"}
@@ -119,7 +125,11 @@ class api_1_SearchClips(Resource):
         args = clipSearchPost.parse_args()
         returnArray = []
         if "term" in args:
+            finalArray = []
             returnArray = cachedDbCalls.searchClips(args["term"])
-            return {"results": returnArray}
+            for clip in returnArray:
+                newVidObj = [clip.id, clip.clipName, clip.uuid, clip.thumbnailLocation]
+                finalArray.append(newVidObj)
+            return {"results": finalArray}
         else:
             return {"results": {"message": "Request Error"}}, 400

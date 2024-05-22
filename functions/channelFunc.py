@@ -54,6 +54,9 @@ def delete_channel(channelID):
         for user in bannedUsersQuery:
             db.session.delete(user)
 
+        for clip in channelQuery.clips:
+            videoFunc.deleteClip(clip.id)
+
         for vid in channelQuery.recordedVideo:
             videoFunc.deleteVideo(vid.id)
 

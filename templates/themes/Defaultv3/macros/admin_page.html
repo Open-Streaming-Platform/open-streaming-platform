@@ -406,8 +406,15 @@
                </div>
                <div class="row">
                    <div class="col-3 mb-1">
-                       <label for="maxVideoRetention" class="form-label">Maximum Retention for Recordings Before Deletion (days)</label>
-                       <input type="number" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
+                       <label for="maxVideoRetention" class="form-label">Maximum Retention for Videos Before Deletion (days)</label>
+                       <input type="number" min="0" name="maxVideoRetention"  id="maxVideoRetention" class="form-control boxShadow" value="{{sysSettings.maxVideoRetention}}">
+                       <small>Set to 0 for Indefinite Retention</small>
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="col-3 mb-1">
+                       <label for="maxClipRetention" class="form-label">Maximum Retention for Clips Before Deletion (days)</label>
+                       <input type="number" min="0" name="maxClipRetention"  id="maxClipRetention" class="form-control boxShadow" value="{{sysSettings.maxClipRetention}}">
                        <small>Set to 0 for Indefinite Retention</small>
                    </div>
                </div>
@@ -510,6 +517,14 @@
             <tr>
                 <td>Check Video Retention</td>
                 <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_video_retention');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Check Clip Retention</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_clip_retention');"><i class="fas fa-terminal"></i></button></td>
+            </tr>
+            <tr>
+                <td>Check Video and Clip Retention</td>
+                <td><button class="btn btn-primary boxShadow" onclick="call_celery_task('check_video_and_clip_retention');"><i class="fas fa-terminal"></i></button></td>
             </tr>
             <tr>
                 <td>Reprocess Stuck Videos</td>

@@ -39,7 +39,7 @@ class RecordedVideo(db.Model):
         lazy="noload",
     )
     clips = db.relationship(
-        "Clips", backref="recordedVideo", cascade="all, delete-orphan", lazy="noload"
+        "Clips", backref="recordedVideo", lazy="noload"
     )
     tags = db.relationship(
         "video_tags",
@@ -151,7 +151,10 @@ class Clips(db.Model):
     __tablename__ = "Clips"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(255))
-    parentVideo = db.Column(db.Integer, db.ForeignKey("RecordedVideo.id"))
+    clipDate = db.Column(db.DateTime)
+    owningUser = db.Column(db.Integer, db.ForeignKey("user.id", name="clips_owningUser_to_userid", ondelete="CASCADE"))
+    channelID = db.Column(db.Integer, db.ForeignKey("Channel.id", name="clips_channelID_to_channelid", ondelete="CASCADE"))
+    parentVideo = db.Column(db.Integer, db.ForeignKey("RecordedVideo.id", name="clips_parentVideo_to_RecordedVideoid", ondelete="SET NULL"))
     startTime = db.Column(db.Float)
     endTime = db.Column(db.Float)
     length = db.Column(db.Float)
@@ -159,6 +162,7 @@ class Clips(db.Model):
     clipName = db.Column(db.String(255))
     videoLocation = db.Column(db.String(255))
     description = db.Column(db.String(2048))
+    topic = db.Column(db.Integer)
     thumbnailLocation = db.Column(db.String(255))
     gifLocation = db.Column(db.String(255))
     published = db.Column(db.Boolean)
@@ -170,14 +174,18 @@ class Clips(db.Model):
     )
 
     def __init__(
-        self, parentVideo, videoLocation, startTime, endTime, clipName, description
+        self, clipDate, parentVideoQuery, videoLocation, startTime, endTime, clipName, description
     ):
         self.uuid = str(uuid4())
-        self.parentVideo = parentVideo
+        self.clipDate = clipDate
+        self.parentVideo = parentVideoQuery.id
+        self.owningUser = parentVideoQuery.owningUser
+        self.channelID = parentVideoQuery.channelID
         self.videoLocation = videoLocation
         self.startTime = startTime
         self.endTime = endTime
         self.description = description
+        self.topic = parentVideoQuery.topic
         self.clipName = clipName
         self.length = endTime - startTime
         self.views = 0
@@ -190,12 +198,16 @@ class Clips(db.Model):
         return {
             "id": self.id,
             "uuid": self.uuid,
+            "clipDate": str(self.clipDate),
             "parentVideo": self.parentVideo,
+            "owningUser": self.owningUser,
+            "channelID": self.channelID,
             "startTime": self.startTime,
             "endTime": self.endTime,
             "length": self.length,
             "name": self.clipName,
             "description": self.description,
+            "topic": self.topic,
             "views": self.views,
             "videoLocation": "/videos/" + self.videoLocation,
             "thumbnailLocation": "/videos/" + self.thumbnailLocation,

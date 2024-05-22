@@ -762,6 +762,10 @@ def call_celery_task(message):
                     video_tasks.check_video_published_exists.delay()
                 elif message["task"] == "check_video_retention":
                     video_tasks.check_video_retention.delay()
+                elif message["task"] == "check_clip_retention":
+                    video_tasks.check_video_retention.delay(checkVideos=False, checkClips=True)
+                elif message["task"] == "check_video_and_clip_retention":
+                    video_tasks.check_video_retention.delay(checkVideos=True, checkClips=True)
                 elif message["task"] == "reprocess_stuck_videos":
                     video_tasks.reprocess_stuck_videos.delay()
                 elif message["task"] == "check_video_thumbnails":

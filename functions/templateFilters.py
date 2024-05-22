@@ -68,10 +68,7 @@ def init(context):
     context.jinja_env.filters["get_channelProtected"] = get_channelProtected
     context.jinja_env.filters["get_channelLocationFromID"] = get_channelLocationFromID
     context.jinja_env.filters["channeltoOwnerID"] = channeltoOwnerID
-    context.jinja_env.filters["videotoChannelID"] = videotoChannelID
     context.jinja_env.filters["get_channelTopic"] = get_channelTopic
-    context.jinja_env.filters["get_videoTopic"] = get_videoTopic
-    context.jinja_env.filters["get_videoDate"] = get_videoDate
     context.jinja_env.filters["get_channelPicture"] = get_channelPicture
     context.jinja_env.filters["is_channelObjVisible"] = is_channelObjVisible
     context.jinja_env.filters["localize_time"] = localize_time
@@ -277,16 +274,6 @@ def get_channelTopic(channelID):
     return channelObj.topic
 
 
-def videotoChannelID(videoID):
-    videoObj = cachedDbCalls.getVideo(videoID)
-    return videoObj.channelID
-
-
-def get_videoTopic(videoID):
-    videoObj = cachedDbCalls.getVideo(videoID)
-    return videoObj.topic
-
-
 def get_diskUsage(channelLocation):
     videos_root = globalvars.videoRoot + "videos/"
     channelLocation = videos_root + channelLocation
@@ -404,11 +391,6 @@ def get_channelProtected(channelID):
 def get_channelLocationFromID(channelID):
     channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
     return channelQuery
-
-
-def get_videoDate(videoID):
-    videoQuery = cachedDbCalls.getVideo(videoID)
-    return videoQuery.videoDate
 
 
 def get_videoComments(videoID):
@@ -790,127 +772,38 @@ def getPanelVideoList(order, limitTo):
 
 
 def getPanelClipList(order, limitTo):
+    wipClipQuery = RecordedVideo.Clips.query.filter_by(
+        published=True
+    ).join(
+        Channel.Channel,
+        Channel.Channel.id == RecordedVideo.Clips.channelID,
+    ).join(
+        Sec.User, Sec.User.id == Channel.Channel.owningUser
+    ).with_entities(
+        RecordedVideo.Clips.id,
+        RecordedVideo.Clips.thumbnailLocation,
+        Channel.Channel.owningUser,
+        RecordedVideo.Clips.views,
+        RecordedVideo.Clips.length,
+        RecordedVideo.Clips.clipName,
+        Channel.Channel.protected,
+        RecordedVideo.Clips.channelID,
+        Channel.Channel.channelName,
+        RecordedVideo.Clips.topic,
+        RecordedVideo.Clips.clipDate,
+        Sec.User.pictureLocation,
+        RecordedVideo.Clips.parentVideo,
+    )
+
     if order == 0:
-        clipQuery = (
-            RecordedVideo.Clips.query.filter_by(published=True)
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                RecordedVideo.Clips.clipName,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                RecordedVideo.RecordedVideo.videoDate,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .order_by(RecordedVideo.Clips.views.desc())
-            .limit(limitTo)
-            .all()
-        )
+        wipClipQuery = wipClipQuery.order_by(RecordedVideo.Clips.views.desc())
     elif order == 1:
-        clipQuery = (
-            RecordedVideo.Clips.query.filter_by(published=True)
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                RecordedVideo.Clips.clipName,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                RecordedVideo.RecordedVideo.videoDate,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .order_by(RecordedVideo.RecordedVideo.videoDate.desc())
-            .limit(limitTo)
-            .all()
-        )
+        wipClipQuery = wipClipQuery.order_by(RecordedVideo.Clips.clipDate.desc())
     elif order == 2:
-        clipQuery = (
-            RecordedVideo.Clips.query.filter_by(published=True)
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                RecordedVideo.Clips.clipName,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                RecordedVideo.RecordedVideo.videoDate,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .order_by(func.random())
-            .limit(limitTo)
-            .all()
-        )
+        wipClipQuery = wipClipQuery.order_by(func.random())
     else:
-        clipQuery = (
-            RecordedVideo.Clips.query.filter_by(published=True)
-            .join(
-                RecordedVideo.RecordedVideo,
-                RecordedVideo.Clips.parentVideo == RecordedVideo.RecordedVideo.id,
-            )
-            .join(
-                Channel.Channel,
-                Channel.Channel.id == RecordedVideo.RecordedVideo.channelID,
-            )
-            .join(Sec.User, Sec.User.id == Channel.Channel.owningUser)
-            .with_entities(
-                RecordedVideo.Clips.id,
-                RecordedVideo.Clips.thumbnailLocation,
-                Channel.Channel.owningUser,
-                RecordedVideo.Clips.views,
-                RecordedVideo.Clips.length,
-                RecordedVideo.Clips.clipName,
-                Channel.Channel.protected,
-                Channel.Channel.channelName,
-                RecordedVideo.RecordedVideo.topic,
-                RecordedVideo.RecordedVideo.videoDate,
-                Sec.User.pictureLocation,
-                RecordedVideo.Clips.parentVideo,
-            )
-            .order_by(RecordedVideo.Clips.views.desc())
-            .limit(limitTo)
-            .all()
-        )
-    return clipQuery
+        wipClipQuery = wipClipQuery.order_by(RecordedVideo.Clips.views.desc())
+    return wipClipQuery.limit(limitTo).all()
 
 
 def getPanelChannelList(order, limitTo):
@@ -1127,22 +1020,17 @@ def get_channelVideos(channelID):
 
 
 def get_channelClips(channelID):
-    channelVideos = get_channelVideos(channelID)
-
-    videoIDList = []
-    for video in channelVideos:
-        if video.id not in videoIDList:
-            videoIDList.append(video.id)
-
-    clipQuery = (
+    return (
         RecordedVideo.Clips.query.filter(
-            RecordedVideo.Clips.parentVideo.in_(videoIDList)
+            RecordedVideo.Clips.channelID == channelID
         )
         .with_entities(
             RecordedVideo.Clips.id,
             RecordedVideo.Clips.gifLocation,
             RecordedVideo.Clips.thumbnailLocation,
             RecordedVideo.Clips.clipName,
+            RecordedVideo.Clips.clipDate,
+            RecordedVideo.Clips.topic,
             RecordedVideo.Clips.videoLocation,
             RecordedVideo.Clips.length,
             RecordedVideo.Clips.views,
@@ -1152,7 +1040,6 @@ def get_channelClips(channelID):
         )
         .all()
     )
-    return clipQuery
 
 
 def get_flaggedForDeletion(userID):

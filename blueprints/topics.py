@@ -52,11 +52,9 @@ def topic_view_page(topicID):
     # Sort Video to Show Newest First
     recordedVideoQuery.sort(key=lambda x: x.videoDate, reverse=True)
 
-    clipsList = []
-    for vid in recordedVideoQuery:
-        for clip in vid.clips:
-            if clip.published is True:
-                clipsList.append(clip)
+    clipsList = RecordedVideo.Clips.query.filter_by(
+        topic=topicID, published=True
+    ).all()
 
     clipsList.sort(key=lambda x: x.views, reverse=True)
 
