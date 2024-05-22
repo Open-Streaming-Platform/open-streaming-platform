@@ -269,7 +269,7 @@ def dbFixes():
     for clip in clipQuery:
         videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
 
-        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(owningUser = videoQuery.owningUser, channelID=videoQuery.channelID, topic=videoQuery.topic, published=published))
+        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(owningUser = videoQuery.owningUser, channelID=videoQuery.channelID, topic=videoQuery.topic, published=videoQuery.published))
         
     db.session.commit()
     # Fix for Clips to restore any NULL file paths.
