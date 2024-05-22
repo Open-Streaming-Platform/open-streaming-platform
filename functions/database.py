@@ -265,7 +265,7 @@ def dbFixes():
     clipQuery = RecordedVideo.Clips.query.filter(
         RecordedVideo.Clips.parentVideo != None,
         (RecordedVideo.Clips.owningUser == None) | (RecordedVideo.Clips.channelID == None) | (RecordedVideo.Clips.topic == None)
-    ).with_entities(RecordedVideo.Clips.id).all()
+    ).with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.parentVideo).all()
     for clip in clipQuery:
         videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
 
@@ -275,7 +275,7 @@ def dbFixes():
     # Fix for Clips to restore any NULL file paths.
     clipQuery = RecordedVideo.Clips.query.filter(
         (RecordedVideo.Clips.videoLocation == None) | (RecordedVideo.Clips.thumbnailLocation == None) | (RecordedVideo.Clips.gifLocation == None)
-    ).with_entities(RecordedVideo.Clips.id).all()
+    ).with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.channelID).all()
 
     for clip in clipQuery:
         clipChannelQuery = cachedDbCalls.getChannel(clip.channelID)
