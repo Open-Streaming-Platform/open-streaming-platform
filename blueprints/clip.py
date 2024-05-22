@@ -50,7 +50,7 @@ def view_clip_page(clipID):
             else:
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
-
+        
         if associatedChannel.private:
             if current_user.is_authenticated:
                 if (
