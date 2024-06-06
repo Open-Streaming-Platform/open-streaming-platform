@@ -864,7 +864,7 @@ install_menu() {
         echo 95 | dialog --title "Installing OSP" --gauge "Starting Celery" 10 70 0
         sudo systemctl start osp-celery >> $OSPLOG 2>&1
         sudo systemctl start osp-celery-beat >> $OSPLOG 2>&1
-        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
+        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at ${OSPLOG}")
         display_result "Install OSP"
         ;;
       2 )
