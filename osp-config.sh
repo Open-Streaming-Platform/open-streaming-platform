@@ -485,13 +485,14 @@ install_ejabberd_venv() {
   cd /opt/ejabberd
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  pip3 install -r requests >> $OSPLOG 2>&1
+  pip3 install requests >> $OSPLOG 2>&1
   deactivate
 }
 
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  sudo pip3 install requests >> $OSPLOG 2>&1
+  sudo mkdir -p /opt/ejabberd
+  install_ejabberd_venv
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
