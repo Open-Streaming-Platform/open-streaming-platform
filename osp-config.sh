@@ -485,13 +485,14 @@ install_ejabberd_venv() {
   cd /opt/ejabberd
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  pip3 install -r requests >> $OSPLOG 2>&1
+  pip3 install requests >> $OSPLOG 2>&1
   deactivate
 }
 
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  sudo pip3 install requests >> $OSPLOG 2>&1
+  sudo mkdir -p /opt/ejabberd
+  install_ejabberd_venv
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
@@ -863,7 +864,7 @@ install_menu() {
         echo 95 | dialog --title "Installing OSP" --gauge "Starting Celery" 10 70 0
         sudo systemctl start osp-celery >> $OSPLOG 2>&1
         sudo systemctl start osp-celery-beat >> $OSPLOG 2>&1
-        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
+        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at ${OSPLOG}")
         display_result "Install OSP"
         ;;
       2 )
