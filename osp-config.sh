@@ -482,11 +482,8 @@ install_osp_edge () {
 }
 
 install_ejabberd_venv() {
-  cd /opt/ejabberd
-  sudo python3 -m venv venv >> $OSPLOG 2>&1
-  source venv/bin/activate >> $OSPLOG 2>&1
-  pip3 install requests >> $OSPLOG 2>&1
-  deactivate
+  sudo python3 -m venv /opt/ejabberd/venv >> $OSPLOG 2>&1
+  /opt/ejabberd/venv/bin/pip3 install requests >> $OSPLOG 2>&1
 }
 
 install_ejabberd() {
@@ -735,6 +732,12 @@ upgrade_rtmp() {
 upgrade_ejabberd() {
   sudo cp -rf $DIR/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
   sudo cp -rf $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
+
+  if [[ ! -d /opt/ejabberd/venv ]]; then
+    install_ejabberd_venv
+  fi
+
+  sed -i 's/^extauth_program:.*$/extauth_program: "\/opt\/ejabberd\/venv\/bin\/python3 \/opt\/ejabberd\/conf\/auth_osp.py"/' /opt/ejabberd/conf/ejabberd.yml
 }
 
 upgrade_edge() {
