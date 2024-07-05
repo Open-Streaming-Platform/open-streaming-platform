@@ -689,7 +689,7 @@ from blueprints.play import play_bp
 from blueprints.liveview import liveview_bp
 from blueprints.clip import clip_bp
 from blueprints.upload import upload_bp
-from blueprints.settings import settings_bp
+from blueprints.settings.settings import settings_bp
 from blueprints.oauth import oauth_bp
 from blueprints.m3u8 import m3u8_bp
 
