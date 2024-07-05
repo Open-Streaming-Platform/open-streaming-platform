@@ -22,18 +22,17 @@ from classes.shared import cache
 
 
 @cache.memoize(timeout=600)
-def getSystemSettings() -> Union[settings.settings, None]:
+def getSystemSettings():
     """Get cached system settings from DB and returns if exists
 
     Returns:
-        Union[settings.settings, None]: System Settings
+        sysSettings: System Settings
     """
-    sysSettings: Union[settings.settings, None] = settings.settings.query.first()
-    return sysSettings
+    return settings.settings.query.first()
 
 
 @cache.memoize(timeout=1200)
-def getOAuthProviders() -> settings.oAuthProvider:
+def getOAuthProviders() -> list:
     """Get Cached List of oAuth Providers and their settings
 
     Returns:
@@ -44,7 +43,7 @@ def getOAuthProviders() -> settings.oAuthProvider:
 
 
 @cache.memoize(timeout=300)
-def getChannelLiveViewsByDate(channelId: str) -> views.views:
+def getChannelLiveViewsByDate(channelId: str) -> list:
     """Get Cached List of DB Live Views for a given channel
 
     Args:
@@ -69,7 +68,7 @@ def getChannelLiveViewsByDate(channelId: str) -> views.views:
     return liveViewCountQuery
 
 @cache.memoize(timeout=600)
-def getVideoViewsByDate(videoId: int) -> views.views:
+def getVideoViewsByDate(videoId: int) -> list:
     """Get Cached DB Video View Count Per Video by Date
 
     Args:
@@ -132,7 +131,7 @@ def searchStreams(term: str) -> list:
 
 # Channel Related DB Calls
 @cache.memoize(timeout=60)
-def getAllChannels() -> Channel.Channel:
+def getAllChannels() -> list:
     """Get all Cached DB Channels and return
 
     Returns:
@@ -176,14 +175,14 @@ def getAllChannels() -> Channel.Channel:
 
 
 @cache.memoize(timeout=60)
-def getChannel(channelID: int) -> Union[Channel.Channel, None]:
+def getChannel(channelID: int) -> Union[list, None]:
     """Returns Cached Data on a given Channel
 
     Args:
         channelID (int): Channel ID
 
     Returns:
-        Union[Channel.Channel, None]: Channel Data, if exists
+        Union[list, None]: Channel Data, if exists
     """
     return Channel.Channel.query.with_entities(
         Channel.Channel.id,
@@ -223,14 +222,14 @@ def getChannel(channelID: int) -> Union[Channel.Channel, None]:
 
 
 @cache.memoize(timeout=600)
-def getChannelByLoc(channelLoc: str) -> Union[Channel.Channel, None]:
+def getChannelByLoc(channelLoc: str) -> Union[list, None]:
     """Get Cached DB Channel based on Channel UUID
 
     Args:
         channelLoc (str): Channel UUID
 
     Returns:
-        Union[Channel.Channel, None]: Channel if Exists
+        Union[list, None]: Channel if Exists
     """
     return Channel.Channel.query.with_entities(
         Channel.Channel.id,
@@ -270,7 +269,7 @@ def getChannelByLoc(channelLoc: str) -> Union[Channel.Channel, None]:
 
 
 @cache.memoize(timeout=600)
-def getChannelByStreamKey(StreamKey: str) -> Union[Channel.Channel, None]:
+def getChannelByStreamKey(StreamKey: str) -> Union[list, None]:
     return Channel.Channel.query.with_entities(
         Channel.Channel.id,
         Channel.Channel.owningUser,
@@ -308,9 +307,8 @@ def getChannelByStreamKey(StreamKey: str) -> Union[Channel.Channel, None]:
     ).filter_by(streamKey=StreamKey).first()
 
 
-
 @cache.memoize(timeout=600)
-def getChannelsByOwnerId(OwnerId: int) -> Channel.Channel:
+def getChannelsByOwnerId(OwnerId: int) -> list:
     return Channel.Channel.query.with_entities(
         Channel.Channel.id,
         Channel.Channel.owningUser,
@@ -359,7 +357,7 @@ def serializeChannelByLocationID(channelLoc: str) -> dict:
 
 @cache.memoize(timeout=30)
 def serializeChannel(channelID: int) -> dict:
-    channelData: Channel.Channel = getChannel(channelID)
+    channelData = getChannel(channelID)
     if channelData != None:
         return {
             "id": channelData.id,
@@ -436,7 +434,7 @@ def getHubChannels() -> list:
 
 
 @cache.memoize(timeout=30)
-def getChannelSubCount(channelID: int) -> subscriptions.channelSubs:
+def getChannelSubCount(channelID: int) -> int:
     return subscriptions.channelSubs.query.filter_by(
         channelID=channelID
     ).count()
@@ -449,7 +447,7 @@ def getChannelUpvotes(channelID):
 
 
 @cache.memoize(timeout=5)
-def getChannelStreamIds(channelID: int) -> Stream.Stream:
+def getChannelStreamIds(channelID: int) -> list:
     return (
         Stream.Stream.query.filter_by(active=True, linkedChannel=channelID)
         .with_entities(Stream.Stream.id)
@@ -469,7 +467,7 @@ def isChannelLive(channelID: int) -> bool:
 
 
 @cache.memoize(timeout=30)
-def getChannelTagIds(channelID: int) -> Channel.channel_tags:
+def getChannelTagIds(channelID: int) -> list:
     return (
         Channel.channel_tags.query.filter_by(channelID=channelID)
         .with_entities(Channel.channel_tags.id)
@@ -477,7 +475,7 @@ def getChannelTagIds(channelID: int) -> Channel.channel_tags:
     )
 
 @cache.memoize(timeout=240)
-def getChannelTagName(tagId: int) -> Channel.channel_tags:
+def getChannelTagName(tagId: int):
     return (
         Channel.channel_tags.query.filter_by(id=tagId)
         .with_entities(Channel.channel_tags.name)
@@ -486,7 +484,7 @@ def getChannelTagName(tagId: int) -> Channel.channel_tags:
 
 
 @cache.memoize(timeout=10)
-def getChannelVideos(channelID: int) -> RecordedVideo.RecordedVideo:
+def getChannelVideos(channelID: int) -> list:
     VideoQuery = (
         RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID)
         .with_entities(
@@ -682,7 +680,7 @@ def invalidateVideoCache(videoId: int) -> bool:
 
 
 @cache.memoize(timeout=5)
-def getChanneActiveStreams(channelID: int) -> Stream.Stream:
+def getChanneActiveStreams(channelID: int) -> list:
     return (
         Stream.Stream.query.filter_by(
             linkedChannel=channelID, active=True, complete=False
@@ -701,7 +699,7 @@ def getChanneActiveStreams(channelID: int) -> Stream.Stream:
 
 
 @cache.memoize(timeout=10)
-def getAllStreams() -> Stream.Stream:
+def getAllStreams() -> list:
     return (
         Stream.Stream.query.filter_by(active=True, complete=False)
         .join(Channel.Channel, and_(Channel.Channel.id == Stream.Stream.linkedChannel, Channel.Channel.private == False, Channel.Channel.protected == False))
@@ -722,7 +720,7 @@ def getAllStreams() -> Stream.Stream:
 
 # Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
-def getAllVideo_View(channelID: int) -> RecordedVideo.RecordedVideo:
+def getAllVideo_View(channelID: int) -> list:
     return (
         RecordedVideo.RecordedVideo.query.filter_by(
             channelID=channelID, pending=False, published=True
@@ -751,7 +749,7 @@ def getAllVideo_View(channelID: int) -> RecordedVideo.RecordedVideo:
 
 
 @cache.memoize(timeout=60)
-def getVideo(videoID: int) -> RecordedVideo.RecordedVideo:
+def getVideo(videoID: int) -> list:
     return (
         RecordedVideo.RecordedVideo.query.filter_by(id=videoID)
         .with_entities(
@@ -778,7 +776,7 @@ def getVideo(videoID: int) -> RecordedVideo.RecordedVideo:
 
 
 @cache.memoize(timeout=60)
-def getAllVideoByOwnerId(ownerId: int) -> RecordedVideo.RecordedVideo:
+def getAllVideoByOwnerId(ownerId: int) -> list:
     return (
         RecordedVideo.RecordedVideo.query.filter_by(
             owningUser=ownerId, pending=False, published=True
@@ -807,7 +805,7 @@ def getAllVideoByOwnerId(ownerId: int) -> RecordedVideo.RecordedVideo:
 
 
 @cache.memoize(timeout=60)
-def getAllVideo() -> RecordedVideo.RecordedVideo:
+def getAllVideo() -> list:
     return (
         RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
         .join(
@@ -842,7 +840,7 @@ def getAllVideo() -> RecordedVideo.RecordedVideo:
 
 # Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
-def getTopicsVideo_View(TopicID: int) -> RecordedVideo.RecordedVideo:
+def getTopicsVideo_View(TopicID: int) -> list:
     return (
         RecordedVideo.RecordedVideo.query.filter_by(
             topic=TopicID, pending=False, published=True
@@ -900,7 +898,7 @@ def getVideoUpvotes(videoID: int) -> int:
     return upvotes.videoUpvotes.query.filter_by(videoID=videoID).count()
 
 @cache.memoize(timeout=30)
-def getVideoTags(videoID: int) -> RecordedVideo.video_tags:
+def getVideoTags(videoID: int) -> list:
     return RecordedVideo.video_tags.query.filter_by(videoID=videoID).with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name).all()
 
 
@@ -1027,7 +1025,7 @@ def getClipChannelID(clipID: int) -> Union[int, None]:
     return ClipQuery.channelID
 
 @cache.memoize(timeout=30)
-def getClipsForVideo(videoID: int) -> RecordedVideo.Clips:
+def getClipsForVideo(videoID: int) -> list:
     return (
         RecordedVideo.Clips.query.filter_by(parentVideo=videoID)
         .with_entities(
@@ -1048,14 +1046,14 @@ def getClipsForVideo(videoID: int) -> RecordedVideo.Clips:
     )
 
 @cache.memoize(timeout=60)
-def getAllClipsForChannel_View(channelID: int) -> RecordedVideo.Clips:
+def getAllClipsForChannel_View(channelID: int) -> list:
     return RecordedVideo.Clips.query.filter_by(
         channelID=channelID, published=True
     ).all()
 
 
 @cache.memoize(timeout=60)
-def getAllClipsForUser(userId: int) -> RecordedVideo.Clips:
+def getAllClipsForUser(userId: int) -> list:
     return RecordedVideo.Clips.query.filter(
         RecordedVideo.Clips.published == True,
         RecordedVideo.Clips.owningUser == userId,
@@ -1116,7 +1114,7 @@ def searchClips(term: str) -> list:
 
 # Topic Related DB Calls
 @cache.memoize(timeout=120)
-def getAllTopics() -> topics.topics:
+def getAllTopics() -> list:
     topicQuery = topics.topics.query.all()
     return topicQuery
 
@@ -1153,7 +1151,7 @@ def getUserPhotoLocation(userID: int) -> str:
 
 
 @cache.memoize(timeout=30)
-def getUser(userID: int) -> Dict2Class:
+def getUser(userID: int):
     returnData = {}
     UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
     if UserQuery is not None:
@@ -1192,7 +1190,7 @@ def getUserByUsernameDict(username: str) -> dict:
     return returnData
 
 @cache.memoize(timeout=60)
-def getUsers() -> Sec.User:
+def getUsers() -> list:
     return Sec.User.query.filter_by(active=True).with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid).all()
 
 @cache.memoize(timeout=120)
@@ -1224,7 +1222,7 @@ def searchUsers(term: str) -> list:
 
 
 @cache.memoize(timeout=30)
-def getGlobalPanel(panelId: int) -> panel.globalPanel:
+def getGlobalPanel(panelId: int):
     return panel.globalPanel.query.filter_by(id=panelId).first()
 
 
@@ -1239,10 +1237,10 @@ def getChannelPanel(panelId: int):
 
 
 @cache.memoize(timeout=1200)
-def getStaticPages() -> settings.static_page:
+def getStaticPages() -> list:
     return settings.static_page.query.all()
 
 
 @cache.memoize(timeout=1200)
-def getStaticPage(pageName: str) -> settings.static_page:
+def getStaticPage(pageName: str) -> list:
     return settings.static_page.query.filter_by(name=pageName).first()

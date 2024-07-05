@@ -3,15 +3,15 @@ from flask_security import current_user
 from classes import upvotes
 
 
-def get_Video_Upvotes(videoID: int) -> upvotes.videoUpvotes:
+def get_Video_Upvotes(videoID: int) -> int:
     return upvotes.videoUpvotes.query.filter_by(videoID=videoID).count()
 
 
-def get_Stream_Upvotes(videoID: int) -> upvotes.streamUpvotes:
+def get_Stream_Upvotes(videoID: int) -> int:
     return upvotes.streamUpvotes.query.filter_by(streamID=videoID).count()
 
 
-def get_Clip_Upvotes(videoID: int) -> upvotes.clipUpvotes:
+def get_Clip_Upvotes(videoID: int) -> int:
     return upvotes.clipUpvotes.query.filter_by(clipID=videoID).count()
 
 

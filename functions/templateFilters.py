@@ -391,11 +391,11 @@ def get_channelLocationFromID(channelID: int) -> Union[str, None]:
     return cachedDbCalls.getChannelLocationFromID(channelID)
 
 
-def get_videoComments(videoID: int) -> comments.videoComments:
+def get_videoComments(videoID: int) -> list:
     return comments.videoComments.query.filter_by(videoID=videoID).all()
 
 
-def get_clipTags(clipId: int) -> RecordedVideo.clip_tags:
+def get_clipTags(clipId: int) -> list:
     return RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
 
 
@@ -421,7 +421,7 @@ def get_videoTags_csv(videoId: int) -> str:
     return tagString
 
 
-def get_channelTags(channelId: int) -> Channel.channel_tags:
+def get_channelTags(channelId: int) -> list:
     return Channel.channel_tags.query.filter_by(channelID=channelId).all()
 
 
@@ -521,11 +521,11 @@ def getPanel(panelId: int, panelType: int) -> Union[panel.channelPanel, panel.gl
     return panel
 
 
-def getChannelPanels(channelId: int) -> panel.channelPanel:
+def getChannelPanels(channelId: int) -> list:
     return panel.channelPanel.query.filter_by(channelId=channelId).all()
 
 
-def getLiveStream(channelId: int) -> Stream.Stream:
+def getLiveStream(channelId: int) -> list:
     return (
         Stream.Stream.query.filter_by(linkedChannel=channelId, active=True)
         .with_entities(
@@ -543,7 +543,7 @@ def getLiveStream(channelId: int) -> Stream.Stream:
     )
 
 
-def getLiveStreamURL(channel: Channel.Channel) -> str:
+def getLiveStreamURL(channel: list) -> str:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     # Stream URL Generation
@@ -580,7 +580,7 @@ def getChannelPanelArg(panelId: int, arg: str) -> str:
     return result
 
 
-def getPanelStreamList(order: int, limitTo: int) -> Stream.Stream:
+def getPanelStreamList(order: int, limitTo: int) -> list:
     if order == 0:
         activeStreams = (
             Stream.Stream.query.filter_by(active=True)
@@ -656,7 +656,7 @@ def getPanelStreamList(order: int, limitTo: int) -> Stream.Stream:
     return activeStreams
 
 
-def getPanelVideoList(order: int, limitTo: int) -> RecordedVideo.RecordedVideo:
+def getPanelVideoList(order: int, limitTo: int) -> list:
     if order == 0:
         recordedQuery = (
             RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
@@ -764,7 +764,7 @@ def getPanelVideoList(order: int, limitTo: int) -> RecordedVideo.RecordedVideo:
     return recordedQuery
 
 
-def getPanelClipList(order: int, limitTo: int) -> RecordedVideo.Clips:
+def getPanelClipList(order: int, limitTo: int) -> list:
     wipClipQuery = RecordedVideo.Clips.query.filter_by(
         published=True
     ).join(
@@ -799,7 +799,7 @@ def getPanelClipList(order: int, limitTo: int) -> RecordedVideo.Clips:
     return wipClipQuery.limit(limitTo).all()
 
 
-def getPanelChannelList(order: int, limitTo: int) -> Channel.Channel:
+def getPanelChannelList(order: int, limitTo: int) -> list:
     if order == 0:
         channelQuery = (
             Channel.Channel.query.with_entities(
@@ -972,15 +972,15 @@ def generatePlaybackAuthToken(channelLoc: str) -> str:
     return validationToken
 
 
-def get_channelInviteCodes(channelID: int) -> invites.inviteCode:
+def get_channelInviteCodes(channelID: int) -> list:
     return invites.inviteCode.query.filter_by(channelID=channelID).all()
 
 
-def get_channelInvitedUsers(channelID: int) -> invites.invitedViewer:
+def get_channelInvitedUsers(channelID: int) -> list:
     return invites.invitedViewer.query.filter_by(channelID=channelID).all()
 
 
-def get_channelRestreamDestinations(channelID: int) -> Channel.restreamDestinations:
+def get_channelRestreamDestinations(channelID: int) -> list:
     return Channel.restreamDestinations.query.filter_by(
         channel=channelID
     ).all()
@@ -1003,11 +1003,11 @@ def get_channelWebhooks(channelID: int) -> webhook.webhook:
     )
 
 
-def get_channelVideos(channelID: int) -> RecordedVideo.RecordedVideo:
+def get_channelVideos(channelID: int) -> list:
     return cachedDbCalls.getChannelVideos(channelID)
 
 
-def get_channelClips(channelID: int) -> RecordedVideo.Clips:
+def get_channelClips(channelID: int) -> list:
     return (
         RecordedVideo.Clips.query.filter(
             RecordedVideo.Clips.channelID == channelID
@@ -1038,11 +1038,11 @@ def get_flaggedForDeletion(userID: int) -> str:
         return ""
 
 
-def get_channelData(channelID: int) -> Channel.Channel:
+def get_channelData(channelID: int):
     return cachedDbCalls.getChannel(int(channelID))
 
 
-def get_channelStickers(channelID: int) -> stickers.stickers:
+def get_channelStickers(channelID: int) -> list:
     return (
         stickers.stickers.query.filter_by(channelID=channelID)
         .with_entities(
@@ -1054,6 +1054,6 @@ def get_channelStickers(channelID: int) -> stickers.stickers:
         .all()
     )
 
-def get_users(value) -> Sec.User:
+def get_users(value) -> list:
     users = cachedDbCalls.getUsers()
     return users
