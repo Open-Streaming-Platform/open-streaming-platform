@@ -327,7 +327,7 @@ def createClip(videoID: int, clipStart: float, clipStop: float, clipName: int, c
     return False, None
 
 
-def generateClipFiles(clip: RecordedVideo.Clips, videosRoot: str, sourceVideoLocation: str) -> None:
+def generateClipFiles(clip, videosRoot: str, sourceVideoLocation: str) -> None:
     # Set Full Path for Locations to be handled by FFMPEG
     fullvideoLocation = os.path.join(videosRoot, clip.videoLocation)
     fullthumbnailLocation = os.path.join(videosRoot, clip.thumbnailLocation)
@@ -574,7 +574,7 @@ def processVideoUpload(
     topic: int,
     videoTitle: str,
     videoDescription: str,
-    ChannelQuery: Channel.Channel,
+    ChannelQuery,
     sourcePath: Union[str, None] = None,
 ) -> tuple:
     currentTime = datetime.datetime.utcnow()

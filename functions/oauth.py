@@ -19,7 +19,7 @@ def fetch_token(name: str):
     return token.to_token()
 
 
-def discord_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
+def discord_processLogin(userDataDict: dict, UserObj) -> bool:
     # Handle Discord Avatar Download
     avatarHash = userDataDict["avatar"]
     userID = userDataDict["id"]
@@ -41,7 +41,7 @@ def discord_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
     return True
 
 
-def reddit_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
+def reddit_processLogin(userDataDict: dict, UserObj) -> bool:
     # Handle Reddit Avatar Download
     image_url = userDataDict["icon_img"]
     img_data = requests.get(image_url).content
@@ -54,7 +54,7 @@ def reddit_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
     return True
 
 
-def facebook_processLogin(apiLocation: str, userDataDict: dict, UserObj: Sec.User) -> bool:
+def facebook_processLogin(apiLocation: str, userDataDict: dict, UserObj) -> bool:
     image_url = (
         apiLocation
         + str(userDataDict["id"])
