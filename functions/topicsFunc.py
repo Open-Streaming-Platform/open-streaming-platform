@@ -10,7 +10,7 @@ from functions import cachedDbCalls, system
 from globals import globalvars
 
 
-def deleteTopic(topicID, toTopicID):
+def deleteTopic(topicID: int, toTopicID: int) -> bool:
 
     topicID = int(topicID)
     toTopicID = int(toTopicID)

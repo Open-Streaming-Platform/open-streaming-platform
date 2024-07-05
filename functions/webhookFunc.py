@@ -2,6 +2,8 @@ import json
 import requests
 import logging
 
+from typing import Union
+
 from classes.shared import db
 from classes import webhook
 
@@ -11,7 +13,7 @@ log = logging.getLogger("app.functions.database")
 
 
 @system.asynch
-def runWebhook(channelID, triggerType, **kwargs):
+def runWebhook(channelID: Union[str, int], triggerType: str, **kwargs: dict) -> bool:
     webhookQueue = []
     if channelID != "ZZZ":
 
@@ -43,23 +45,15 @@ def runWebhook(channelID, triggerType, **kwargs):
                         r = requests.delete(url, headers=header, data=payload)
                 except:
                     pass
-                system.newLog(
-                    8,
-                    "Processing Webhook for ID #"
-                    + str(hook.id)
-                    + " - Destination:"
-                    + str(url),
-                )
+                system.newLog(8, f"Processing Webhook for ID #{str(hook.id)} - Destination: {str(url)}",)
     db.session.commit()
     db.session.close()
     return True
 
 
 @system.asynch
-def testWebhook(webhookType, webhookID, **kwargs):
-    system.newLog(
-        8, "Testing Webhook for ID #" + str(webhookID) + ", Type: " + webhookType
-    )
+def testWebhook(webhookType: str, webhookID: int, **kwargs: dict) -> None:
+    system.newLog(8, f"Testing Webhook for ID #{str(webhookID)} Type: {webhookType}")
     webhookQuery = None
     if webhookType == "channel":
         webhookQuery = webhook.webhook.query.filter_by(id=webhookID).first()
@@ -80,17 +74,11 @@ def testWebhook(webhookType, webhookID, **kwargs):
             elif requestType == 3:
                 r = requests.delete(url, headers=header, data=payload)
         except Exception as e:
-            print("Webhook Error-" + str(e))
-        system.newLog(
-            8,
-            "Completed Webhook Test for ID #"
-            + str(webhookQuery.id)
-            + " - Destination:"
-            + str(url),
-        )
+            print(f"Webhook Error-{str(e)}")
+        system.newLog(8,f"Completed Webhook Test for ID #{str(webhookQuery.id)} - Destination: {str(url)}",)
 
 
-def processWebhookVariables(payload, **kwargs):
+def processWebhookVariables(payload: dict, **kwargs: dict) -> dict:
     for key, value in kwargs.items():
         replacementValue = "%" + key + "%"
         if value is None or value == "":

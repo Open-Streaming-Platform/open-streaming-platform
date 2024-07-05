@@ -20,7 +20,8 @@ from functions import system
 
 log = logging.getLogger("app.functions.channelFunctions")
 
-def delete_channel(channelID):
+# TODO Optimize the call to Channel.Channel
+def delete_channel(channelID: int) -> bool:
 
     channelQuery = Channel.Channel.query.filter_by(id=channelID).first()
     if channelQuery is None:
@@ -111,5 +112,5 @@ def delete_channel(channelID):
     db.session.close()
     return True
 
-def broadcastEventStream(channelLoc, message):
+def broadcastEventStream(channelLoc: str, message: str) -> None:
     emit('eventStream', { 'message': message }, namespace="ES_" + channelLoc, broadcast=True)
