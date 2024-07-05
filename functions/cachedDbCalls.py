@@ -1,6 +1,7 @@
 from sqlalchemy import and_
 from sqlalchemy.sql.expression import func
 import datetime
+from typing import Union
 
 from classes import settings
 from classes import Channel
@@ -21,19 +22,37 @@ from classes.shared import cache
 
 
 @cache.memoize(timeout=600)
-def getSystemSettings():
-    sysSettings = settings.settings.query.first()
+def getSystemSettings() -> Union[settings.settings, None]:
+    """Get cached system settings from DB and returns if exists
+
+    Returns:
+        Union[settings.settings, None]: System Settings
+    """
+    sysSettings: Union[settings.settings, None] = settings.settings.query.first()
     return sysSettings
 
 
 @cache.memoize(timeout=1200)
-def getOAuthProviders():
+def getOAuthProviders() -> settings.oAuthProvider:
+    """Get Cached List of oAuth Providers and their settings
+
+    Returns:
+        settings.oAuthProvider: List of oAuth Providers
+    """
     SystemOAuthProviders = settings.oAuthProvider.query.all()
     return SystemOAuthProviders
 
 
 @cache.memoize(timeout=300)
-def getChannelLiveViewsByDate(channelId):
+def getChannelLiveViewsByDate(channelId: str) -> views.views:
+    """Get Cached List of DB Live Views for a given channel
+
+    Args:
+        channelId (str): UUID Channel identifier
+
+    Returns:
+        views.views: Live View Count Instances, grouped by Date
+    """
     liveViewCountQuery = (
         db.session.query(
             func.date(views.views.date), func.count(views.views.id)
@@ -50,7 +69,15 @@ def getChannelLiveViewsByDate(channelId):
     return liveViewCountQuery
 
 @cache.memoize(timeout=600)
-def getVideoViewsByDate(videoId):
+def getVideoViewsByDate(videoId: int) -> views.views:
+    """Get Cached DB Video View Count Per Video by Date
+
+    Args:
+        videoId (int): Video ID Number
+
+    Returns:
+        views.views: Video Count Instances, grouped by Date
+    """
     videoViewCountQuery = (
         db.session.query(
             func.date(views.views.date), func.count(views.views.id)
@@ -65,7 +92,15 @@ def getVideoViewsByDate(videoId):
 
 # Stream Related DB Calls
 @cache.memoize(timeout=60)
-def searchStreams(term):
+def searchStreams(term: str) -> list:
+    """Search for a DB cached stream with a given term
+
+    Args:
+        term (str): Search Term
+
+    Returns:
+        list: Stream List
+    """
     if term is not None:
         StreamNameQuery = (
             Stream.Stream.query.filter(
@@ -97,8 +132,13 @@ def searchStreams(term):
 
 # Channel Related DB Calls
 @cache.memoize(timeout=60)
-def getAllChannels():
-    channelQuery = Channel.Channel.query.with_entities(
+def getAllChannels() -> Channel.Channel:
+    """Get all Cached DB Channels and return
+
+    Returns:
+        Channel.Channel: All Channels
+    """
+    return Channel.Channel.query.with_entities(
         Channel.Channel.id,
         Channel.Channel.owningUser,
         Channel.Channel.channelName,
@@ -133,227 +173,229 @@ def getAllChannels():
         Channel.Channel.hubEnabled,
         Channel.Channel.hubNSFW
     ).all()
-    return channelQuery
 
 
 @cache.memoize(timeout=60)
-def getChannel(channelID):
-    channelQuery = (
-        Channel.Channel.query.with_entities(
-            Channel.Channel.id,
-            Channel.Channel.owningUser,
-            Channel.Channel.channelName,
-            Channel.Channel.channelLoc,
-            Channel.Channel.topic,
-            Channel.Channel.views,
-            Channel.Channel.currentViewers,
-            Channel.Channel.record,
-            Channel.Channel.chatEnabled,
-            Channel.Channel.chatBG,
-            Channel.Channel.chatTextColor,
-            Channel.Channel.chatAnimation,
-            Channel.Channel.imageLocation,
-            Channel.Channel.offlineImageLocation,
-            Channel.Channel.description,
-            Channel.Channel.allowComments,
-            Channel.Channel.protected,
-            Channel.Channel.channelMuted,
-            Channel.Channel.showChatJoinLeaveNotification,
-            Channel.Channel.defaultStreamName,
-            Channel.Channel.autoPublish,
-            Channel.Channel.vanityURL,
-            Channel.Channel.private,
-            Channel.Channel.streamKey,
-            Channel.Channel.xmppToken,
-            Channel.Channel.chatFormat,
-            Channel.Channel.chatHistory,
-            Channel.Channel.allowGuestNickChange,
-            Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention,
-            Channel.Channel.maxClipRetention,
-            Channel.Channel.hubEnabled,
-            Channel.Channel.hubNSFW
-        )
-        .filter_by(id=channelID)
-        .first()
-    )
-    return channelQuery
+def getChannel(channelID: int) -> Union[Channel.Channel, None]:
+    """Returns Cached Data on a given Channel
+
+    Args:
+        channelID (int): Channel ID
+
+    Returns:
+        Union[Channel.Channel, None]: Channel Data, if exists
+    """
+    return Channel.Channel.query.with_entities(
+        Channel.Channel.id,
+        Channel.Channel.owningUser,
+        Channel.Channel.channelName,
+        Channel.Channel.channelLoc,
+        Channel.Channel.topic,
+        Channel.Channel.views,
+        Channel.Channel.currentViewers,
+        Channel.Channel.record,
+        Channel.Channel.chatEnabled,
+        Channel.Channel.chatBG,
+        Channel.Channel.chatTextColor,
+        Channel.Channel.chatAnimation,
+        Channel.Channel.imageLocation,
+        Channel.Channel.offlineImageLocation,
+        Channel.Channel.description,
+        Channel.Channel.allowComments,
+        Channel.Channel.protected,
+        Channel.Channel.channelMuted,
+        Channel.Channel.showChatJoinLeaveNotification,
+        Channel.Channel.defaultStreamName,
+        Channel.Channel.autoPublish,
+        Channel.Channel.vanityURL,
+        Channel.Channel.private,
+        Channel.Channel.streamKey,
+        Channel.Channel.xmppToken,
+        Channel.Channel.chatFormat,
+        Channel.Channel.chatHistory,
+        Channel.Channel.allowGuestNickChange,
+        Channel.Channel.showHome,
+        Channel.Channel.maxVideoRetention,
+        Channel.Channel.maxClipRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
+    ).filter_by(id=channelID).first()
 
 
 @cache.memoize(timeout=600)
-def getChannelByLoc(channelLoc):
-    channelQuery = (
-        Channel.Channel.query.with_entities(
-            Channel.Channel.id,
-            Channel.Channel.owningUser,
-            Channel.Channel.channelName,
-            Channel.Channel.channelLoc,
-            Channel.Channel.topic,
-            Channel.Channel.views,
-            Channel.Channel.currentViewers,
-            Channel.Channel.record,
-            Channel.Channel.chatEnabled,
-            Channel.Channel.chatBG,
-            Channel.Channel.chatTextColor,
-            Channel.Channel.chatAnimation,
-            Channel.Channel.imageLocation,
-            Channel.Channel.offlineImageLocation,
-            Channel.Channel.description,
-            Channel.Channel.allowComments,
-            Channel.Channel.protected,
-            Channel.Channel.channelMuted,
-            Channel.Channel.showChatJoinLeaveNotification,
-            Channel.Channel.defaultStreamName,
-            Channel.Channel.autoPublish,
-            Channel.Channel.vanityURL,
-            Channel.Channel.private,
-            Channel.Channel.streamKey,
-            Channel.Channel.xmppToken,
-            Channel.Channel.chatFormat,
-            Channel.Channel.chatHistory,
-            Channel.Channel.allowGuestNickChange,
-            Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention,
-            Channel.Channel.maxClipRetention,
-            Channel.Channel.hubEnabled,
-            Channel.Channel.hubNSFW
-        )
-        .filter_by(channelLoc=channelLoc)
-        .first()
-    )
-    return channelQuery
+def getChannelByLoc(channelLoc: str) -> Union[Channel.Channel, None]:
+    """Get Cached DB Channel based on Channel UUID
+
+    Args:
+        channelLoc (str): Channel UUID
+
+    Returns:
+        Union[Channel.Channel, None]: Channel if Exists
+    """
+    return Channel.Channel.query.with_entities(
+        Channel.Channel.id,
+        Channel.Channel.owningUser,
+        Channel.Channel.channelName,
+        Channel.Channel.channelLoc,
+        Channel.Channel.topic,
+        Channel.Channel.views,
+        Channel.Channel.currentViewers,
+        Channel.Channel.record,
+        Channel.Channel.chatEnabled,
+        Channel.Channel.chatBG,
+        Channel.Channel.chatTextColor,
+        Channel.Channel.chatAnimation,
+        Channel.Channel.imageLocation,
+        Channel.Channel.offlineImageLocation,
+        Channel.Channel.description,
+        Channel.Channel.allowComments,
+        Channel.Channel.protected,
+        Channel.Channel.channelMuted,
+        Channel.Channel.showChatJoinLeaveNotification,
+        Channel.Channel.defaultStreamName,
+        Channel.Channel.autoPublish,
+        Channel.Channel.vanityURL,
+        Channel.Channel.private,
+        Channel.Channel.streamKey,
+        Channel.Channel.xmppToken,
+        Channel.Channel.chatFormat,
+        Channel.Channel.chatHistory,
+        Channel.Channel.allowGuestNickChange,
+        Channel.Channel.showHome,
+        Channel.Channel.maxVideoRetention,
+        Channel.Channel.maxClipRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
+    ).filter_by(channelLoc=channelLoc).first()
 
 
 @cache.memoize(timeout=600)
-def getChannelByStreamKey(StreamKey):
-    channelQuery = (
-        Channel.Channel.query.with_entities(
-            Channel.Channel.id,
-            Channel.Channel.owningUser,
-            Channel.Channel.channelName,
-            Channel.Channel.channelLoc,
-            Channel.Channel.topic,
-            Channel.Channel.views,
-            Channel.Channel.currentViewers,
-            Channel.Channel.record,
-            Channel.Channel.chatEnabled,
-            Channel.Channel.chatBG,
-            Channel.Channel.chatTextColor,
-            Channel.Channel.chatAnimation,
-            Channel.Channel.imageLocation,
-            Channel.Channel.offlineImageLocation,
-            Channel.Channel.description,
-            Channel.Channel.allowComments,
-            Channel.Channel.protected,
-            Channel.Channel.channelMuted,
-            Channel.Channel.showChatJoinLeaveNotification,
-            Channel.Channel.defaultStreamName,
-            Channel.Channel.autoPublish,
-            Channel.Channel.vanityURL,
-            Channel.Channel.private,
-            Channel.Channel.streamKey,
-            Channel.Channel.xmppToken,
-            Channel.Channel.chatFormat,
-            Channel.Channel.chatHistory,
-            Channel.Channel.allowGuestNickChange,
-            Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention,
-            Channel.Channel.maxClipRetention,
-            Channel.Channel.hubEnabled,
-            Channel.Channel.hubNSFW
-        )
-        .filter_by(streamKey=StreamKey)
-        .first()
-    )
-    return channelQuery
+def getChannelByStreamKey(StreamKey: str) -> Union[Channel.Channel, None]:
+    return Channel.Channel.query.with_entities(
+        Channel.Channel.id,
+        Channel.Channel.owningUser,
+        Channel.Channel.channelName,
+        Channel.Channel.channelLoc,
+        Channel.Channel.topic,
+        Channel.Channel.views,
+        Channel.Channel.currentViewers,
+        Channel.Channel.record,
+        Channel.Channel.chatEnabled,
+        Channel.Channel.chatBG,
+        Channel.Channel.chatTextColor,
+        Channel.Channel.chatAnimation,
+        Channel.Channel.imageLocation,
+        Channel.Channel.offlineImageLocation,
+        Channel.Channel.description,
+        Channel.Channel.allowComments,
+        Channel.Channel.protected,
+        Channel.Channel.channelMuted,
+        Channel.Channel.showChatJoinLeaveNotification,
+        Channel.Channel.defaultStreamName,
+        Channel.Channel.autoPublish,
+        Channel.Channel.vanityURL,
+        Channel.Channel.private,
+        Channel.Channel.streamKey,
+        Channel.Channel.xmppToken,
+        Channel.Channel.chatFormat,
+        Channel.Channel.chatHistory,
+        Channel.Channel.allowGuestNickChange,
+        Channel.Channel.showHome,
+        Channel.Channel.maxVideoRetention,
+        Channel.Channel.maxClipRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
+    ).filter_by(streamKey=StreamKey).first()
+
 
 
 @cache.memoize(timeout=600)
-def getChannelsByOwnerId(OwnerId):
-    channelQuery = (
-        Channel.Channel.query.with_entities(
-            Channel.Channel.id,
-            Channel.Channel.owningUser,
-            Channel.Channel.channelName,
-            Channel.Channel.channelLoc,
-            Channel.Channel.topic,
-            Channel.Channel.views,
-            Channel.Channel.currentViewers,
-            Channel.Channel.record,
-            Channel.Channel.chatEnabled,
-            Channel.Channel.chatBG,
-            Channel.Channel.chatTextColor,
-            Channel.Channel.chatAnimation,
-            Channel.Channel.imageLocation,
-            Channel.Channel.offlineImageLocation,
-            Channel.Channel.description,
-            Channel.Channel.allowComments,
-            Channel.Channel.protected,
-            Channel.Channel.channelMuted,
-            Channel.Channel.showChatJoinLeaveNotification,
-            Channel.Channel.defaultStreamName,
-            Channel.Channel.autoPublish,
-            Channel.Channel.vanityURL,
-            Channel.Channel.private,
-            Channel.Channel.streamKey,
-            Channel.Channel.xmppToken,
-            Channel.Channel.chatFormat,
-            Channel.Channel.chatHistory,
-            Channel.Channel.allowGuestNickChange,
-            Channel.Channel.showHome,
-            Channel.Channel.maxVideoRetention,
-            Channel.Channel.maxClipRetention,
-            Channel.Channel.hubEnabled,
-            Channel.Channel.hubNSFW
-        )
-        .filter_by(owningUser=OwnerId)
-        .all()
-    )
-    return channelQuery
+def getChannelsByOwnerId(OwnerId: int) -> Channel.Channel:
+    return Channel.Channel.query.with_entities(
+        Channel.Channel.id,
+        Channel.Channel.owningUser,
+        Channel.Channel.channelName,
+        Channel.Channel.channelLoc,
+        Channel.Channel.topic,
+        Channel.Channel.views,
+        Channel.Channel.currentViewers,
+        Channel.Channel.record,
+        Channel.Channel.chatEnabled,
+        Channel.Channel.chatBG,
+        Channel.Channel.chatTextColor,
+        Channel.Channel.chatAnimation,
+        Channel.Channel.imageLocation,
+        Channel.Channel.offlineImageLocation,
+        Channel.Channel.description,
+        Channel.Channel.allowComments,
+        Channel.Channel.protected,
+        Channel.Channel.channelMuted,
+        Channel.Channel.showChatJoinLeaveNotification,
+        Channel.Channel.defaultStreamName,
+        Channel.Channel.autoPublish,
+        Channel.Channel.vanityURL,
+        Channel.Channel.private,
+        Channel.Channel.streamKey,
+        Channel.Channel.xmppToken,
+        Channel.Channel.chatFormat,
+        Channel.Channel.chatHistory,
+        Channel.Channel.allowGuestNickChange,
+        Channel.Channel.showHome,
+        Channel.Channel.maxVideoRetention,
+        Channel.Channel.maxClipRetention,
+        Channel.Channel.hubEnabled,
+        Channel.Channel.hubNSFW
+    ).filter_by(owningUser=OwnerId).all()
 
 
 @cache.memoize(timeout=30)
-def serializeChannelByLocationID(channelLoc):
-    channel = getChannelByLoc(channelLoc)
-    return serializeChannel(channel.id)
+def serializeChannelByLocationID(channelLoc: str) -> dict:
+    channel: Channel.Channel = getChannelByLoc(channelLoc)
+    if channel != None:
+        return serializeChannel(channel.id)
+    else:
+        return {}
 
 
 @cache.memoize(timeout=30)
-def serializeChannel(channelID):
-    channelData = getChannel(channelID)
-    return {
-        "id": channelData.id,
-        "channelEndpointID": channelData.channelLoc,
-        "owningUser": channelData.owningUser,
-        "owningUsername": getUser(channelData.owningUser).username,
-        "owningUserImage": getUserPhotoLocation(channelData.owningUser),
-        "channelName": channelData.channelName,
-        "description": channelData.description,
-        "channelImage": "/images/" + str(channelData.imageLocation),
-        "offlineImageLocation": "/images/" + str(channelData.offlineImageLocation),
-        "topic": channelData.topic,
-        "views": channelData.views,
-        "currentViews": channelData.currentViewers,
-        "recordingEnabled": channelData.record,
-        "chatEnabled": channelData.chatEnabled,
-        "stream": [obj.id for obj in getChannelStreamIds(channelData.id)],
-        "recordedVideoIDs": [obj.id for obj in getChannelVideos(channelData.id)],
-        "upvotes": getChannelUpvotes(channelData.id),
-        "protected": channelData.protected,
-        "allowGuestNickChange": channelData.allowGuestNickChange,
-        "vanityURL": channelData.vanityURL,
-        "showHome": channelData.showHome,
-        "maxVideoRetention": channelData.maxVideoRetention,
-        "maxClipRetention": channelData.maxClipRetention,
-        "subscriptions": getChannelSubCount(channelID),
-        "hubEnabled": channelData.hubEnabled,
-        "hubNSFW": channelData.hubNSFW,
-        "tags": [getChannelTagName(obj.id) for obj in getChannelTagIds(channelData.id)],
-    }
+def serializeChannel(channelID: int) -> dict:
+    channelData: Channel.Channel = getChannel(channelID)
+    if channelData != None:
+        return {
+            "id": channelData.id,
+            "channelEndpointID": channelData.channelLoc,
+            "owningUser": channelData.owningUser,
+            "owningUsername": getUser(channelData.owningUser).username,
+            "owningUserImage": getUserPhotoLocation(channelData.owningUser),
+            "channelName": channelData.channelName,
+            "description": channelData.description,
+            "channelImage": "/images/" + str(channelData.imageLocation),
+            "offlineImageLocation": "/images/" + str(channelData.offlineImageLocation),
+            "topic": channelData.topic,
+            "views": channelData.views,
+            "currentViews": channelData.currentViewers,
+            "recordingEnabled": channelData.record,
+            "chatEnabled": channelData.chatEnabled,
+            "stream": [obj.id for obj in getChannelStreamIds(channelData.id)],
+            "recordedVideoIDs": [obj.id for obj in getChannelVideos(channelData.id)],
+            "upvotes": getChannelUpvotes(channelData.id),
+            "protected": channelData.protected,
+            "allowGuestNickChange": channelData.allowGuestNickChange,
+            "vanityURL": channelData.vanityURL,
+            "showHome": channelData.showHome,
+            "maxVideoRetention": channelData.maxVideoRetention,
+            "maxClipRetention": channelData.maxClipRetention,
+            "subscriptions": getChannelSubCount(channelID),
+            "hubEnabled": channelData.hubEnabled,
+            "hubNSFW": channelData.hubNSFW,
+            "tags": [getChannelTagName(obj.id) for obj in getChannelTagIds(channelData.id)],
+        }
+    else:
+        return {}
 
 
 @cache.memoize(timeout=30)
-def serializeChannels(hubCheck=False):
+def serializeChannels(hubCheck: bool = False) -> list:
     if hubCheck is True:
         ChannelQuery = (
             Channel.Channel.query.filter_by(private=False, hubEnabled=True)
@@ -372,7 +414,7 @@ def serializeChannels(hubCheck=False):
     return returnData
 
 @cache.memoize(timeout=30)
-def getLiveChannels(hubCheck=False):
+def getLiveChannels(hubCheck: bool = False) -> list:
     streamQuery = Stream.Stream.query.filter_by(active=True, complete=False).with_entities(Stream.Stream.id, Stream.Stream.linkedChannel).all()
     liveChannelIds = []
     for stream in streamQuery:
@@ -389,17 +431,15 @@ def getLiveChannels(hubCheck=False):
     return liveChannelReturn
 
 @cache.memoize(timeout=60)
-def getHubChannels():
-    channels = serializeChannels(hubCheck=True)
-    return channels
+def getHubChannels() -> list:
+    return serializeChannels(hubCheck=True)
 
 
 @cache.memoize(timeout=30)
-def getChannelSubCount(channelID):
-    SubscriptionQuery = subscriptions.channelSubs.query.filter_by(
+def getChannelSubCount(channelID: int) -> subscriptions.channelSubs:
+    return subscriptions.channelSubs.query.filter_by(
         channelID=channelID
     ).count()
-    return SubscriptionQuery
 
 
 @cache.memoize(timeout=60)
@@ -409,17 +449,16 @@ def getChannelUpvotes(channelID):
 
 
 @cache.memoize(timeout=5)
-def getChannelStreamIds(channelID):
-    StreamQuery = (
+def getChannelStreamIds(channelID: int) -> Stream.Stream:
+    return (
         Stream.Stream.query.filter_by(active=True, linkedChannel=channelID)
         .with_entities(Stream.Stream.id)
         .all()
     )
-    return StreamQuery
 
 
 @cache.memoize(timeout=5)
-def isChannelLive(channelID):
+def isChannelLive(channelID: int) -> bool:
     StreamQuery = Stream.Stream.query.filter_by(
         active=True, linkedChannel=channelID
     ).first()
@@ -430,26 +469,24 @@ def isChannelLive(channelID):
 
 
 @cache.memoize(timeout=30)
-def getChannelTagIds(channelID):
-    tagQuery = (
+def getChannelTagIds(channelID: int) -> Channel.channel_tags:
+    return (
         Channel.channel_tags.query.filter_by(channelID=channelID)
         .with_entities(Channel.channel_tags.id)
         .all()
     )
-    return tagQuery
 
 @cache.memoize(timeout=240)
-def getChannelTagName(tagId):
-    tagQuery = (
+def getChannelTagName(tagId: int) -> Channel.channel_tags:
+    return (
         Channel.channel_tags.query.filter_by(id=tagId)
         .with_entities(Channel.channel_tags.name)
         .first()
     )
-    return str(tagQuery.name)
 
 
 @cache.memoize(timeout=10)
-def getChannelVideos(channelID):
+def getChannelVideos(channelID: int) -> RecordedVideo.RecordedVideo:
     VideoQuery = (
         RecordedVideo.RecordedVideo.query.filter_by(channelID=channelID)
         .with_entities(
@@ -474,7 +511,7 @@ def getChannelVideos(channelID):
 
 
 @cache.memoize(timeout=1200)
-def getChannelLocationFromID(channelID):
+def getChannelLocationFromID(channelID: int) -> Union[str, None]:
     ChannelQuery = (
         Channel.Channel.query.filter_by(id=channelID)
         .with_entities(Channel.Channel.id, Channel.Channel.channelLoc)
@@ -487,7 +524,7 @@ def getChannelLocationFromID(channelID):
 
 
 @cache.memoize(timeout=1200)
-def getChannelIDFromLocation(channelLocation):
+def getChannelIDFromLocation(channelLocation: str) -> Union[int, None]:
     ChannelQuery = (
         Channel.Channel.query.filter_by(channelLoc=channelLocation)
         .with_entities(Channel.Channel.id, Channel.Channel.channelLoc)
@@ -500,7 +537,7 @@ def getChannelIDFromLocation(channelLocation):
 
 
 @cache.memoize(timeout=120)
-def searchChannels(term):
+def searchChannels(term: str) -> list:
     if term is not None:
         ChannelNameQuery = (
             Channel.Channel.query.filter(
@@ -619,29 +656,34 @@ def searchChannels(term):
         return []
 
 
-def invalidateChannelCache(channelId):
-    lastCachedKey = getChannel(channelId).streamKey
-    channelLoc = getChannelLocationFromID(channelId)
+def invalidateChannelCache(channelId: int) -> bool:
+    channelQuery = getChannel(channelId)
+    if channelQuery is not None:
+        lastCachedKey = channelQuery.streamKey
+        channelLoc = getChannelLocationFromID(channelId)
 
-    cache.delete_memoized(getChannel, channelId)
-    cache.delete_memoized(getChannelByLoc, channelLoc)
-    cache.delete_memoized(getChannelByStreamKey, lastCachedKey)
+        cache.delete_memoized(getChannel, channelId)
+        cache.delete_memoized(getChannelByLoc, channelLoc)
+        cache.delete_memoized(getChannelByStreamKey, lastCachedKey)
 
-    return True
+        return True
+    return False
 
 
-def invalidateVideoCache(videoId):
+def invalidateVideoCache(videoId: int) -> bool:
     cachedVideo = getVideo(videoId)
-    cache.delete_memoized(getVideo, videoId)
-    cache.delete_memoized(getAllVideoByOwnerId, cachedVideo.owningUser)
-    cache.delete_memoized(getChannelVideos, cachedVideo.channelID)
+    if cachedVideo is not None:
+        cache.delete_memoized(getVideo, videoId)
+        cache.delete_memoized(getAllVideoByOwnerId, cachedVideo.owningUser)
+        cache.delete_memoized(getChannelVideos, cachedVideo.channelID)
 
-    return True
+        return True
+    return False
 
 
 @cache.memoize(timeout=5)
-def getChanneActiveStreams(channelID):
-    StreamQuery = (
+def getChanneActiveStreams(channelID: int) -> Stream.Stream:
+    return (
         Stream.Stream.query.filter_by(
             linkedChannel=channelID, active=True, complete=False
         )
@@ -656,12 +698,11 @@ def getChanneActiveStreams(channelID):
         )
         .all()
     )
-    return StreamQuery
 
 
 @cache.memoize(timeout=10)
-def getAllStreams():
-    StreamQuery = (
+def getAllStreams() -> Stream.Stream:
+    return (
         Stream.Stream.query.filter_by(active=True, complete=False)
         .join(Channel.Channel, and_(Channel.Channel.id == Stream.Stream.linkedChannel, Channel.Channel.private == False, Channel.Channel.protected == False))
         .with_entities(
@@ -678,13 +719,11 @@ def getAllStreams():
         .all()
     )
 
-    return StreamQuery
-
 
 # Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
-def getAllVideo_View(channelID):
-    recordedVid = (
+def getAllVideo_View(channelID: int) -> RecordedVideo.RecordedVideo:
+    return (
         RecordedVideo.RecordedVideo.query.filter_by(
             channelID=channelID, pending=False, published=True
         )
@@ -709,12 +748,11 @@ def getAllVideo_View(channelID):
         )
         .all()
     )
-    return recordedVid
 
 
 @cache.memoize(timeout=60)
-def getVideo(videoID):
-    recordedVid = (
+def getVideo(videoID: int) -> RecordedVideo.RecordedVideo:
+    return (
         RecordedVideo.RecordedVideo.query.filter_by(id=videoID)
         .with_entities(
             RecordedVideo.RecordedVideo.id,
@@ -737,12 +775,11 @@ def getVideo(videoID):
         )
         .first()
     )
-    return recordedVid
 
 
 @cache.memoize(timeout=60)
-def getAllVideoByOwnerId(ownerId):
-    recordedVid = (
+def getAllVideoByOwnerId(ownerId: int) -> RecordedVideo.RecordedVideo:
+    return (
         RecordedVideo.RecordedVideo.query.filter_by(
             owningUser=ownerId, pending=False, published=True
         )
@@ -767,12 +804,11 @@ def getAllVideoByOwnerId(ownerId):
         )
         .all()
     )
-    return recordedVid
 
 
 @cache.memoize(timeout=60)
-def getAllVideo():
-    recordedVid = (
+def getAllVideo() -> RecordedVideo.RecordedVideo:
+    return (
         RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
         .join(
             Channel.Channel,
@@ -803,12 +839,11 @@ def getAllVideo():
         )
         .all()
     )
-    return recordedVid
 
 # Recorded Video Related DB Calls
 @cache.memoize(timeout=60)
-def getTopicsVideo_View(TopicID):
-    recordedVid = (
+def getTopicsVideo_View(TopicID: int) -> RecordedVideo.RecordedVideo:
+    return (
         RecordedVideo.RecordedVideo.query.filter_by(
             topic=TopicID, pending=False, published=True
         )
@@ -833,11 +868,10 @@ def getTopicsVideo_View(TopicID):
         )
         .all()
     )
-    return recordedVid
 
 
 cache.memoize(timeout=60)
-def getVideoDict(videoID):
+def getVideoDict(videoID: int) -> dict:
     videoReturn = getVideo(videoID)
     if videoReturn != None:
         return {
@@ -862,25 +896,22 @@ def getVideoDict(videoID):
         return {}
 
 @cache.memoize(timeout=30)
-def getVideoUpvotes(videoID):
-    VideoUpvotes = RecordedVideo.RecordedVideo.query.filter_by(id=videoID).count()
-    return VideoUpvotes
+def getVideoUpvotes(videoID: int) -> int:
+    return upvotes.videoUpvotes.query.filter_by(videoID=videoID).count()
 
 @cache.memoize(timeout=30)
-def getVideoTags(videoID):
-    TagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoID).with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name).all()
-    return TagQuery
+def getVideoTags(videoID: int) -> RecordedVideo.video_tags:
+    return RecordedVideo.video_tags.query.filter_by(videoID=videoID).with_entities(RecordedVideo.video_tags.id, RecordedVideo.video_tags.name).all()
 
 
 @cache.memoize(timeout=60)
-def getVideoCommentCount(videoID):
+def getVideoCommentCount(videoID: int) -> int:
     videoCommentsQuery = comments.videoComments.query.filter_by(videoID=videoID).count()
-    result = videoCommentsQuery
-    return result
+    return videoCommentsQuery
 
 
 @cache.memoize(timeout=120)
-def searchVideos(term):
+def searchVideos(term: str) -> list:
     if term is not None:
 
         VideoNameQuery = (
@@ -989,15 +1020,15 @@ def searchVideos(term):
 
 # Clip Related DB Calls
 @cache.memoize(timeout=30)
-def getClipChannelID(clipID):
+def getClipChannelID(clipID: int) -> Union[int, None]:
     ClipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
     if ClipQuery is None:
         return None
     return ClipQuery.channelID
 
 @cache.memoize(timeout=30)
-def getClipsForVideo(videoID):
-    ClipQuery = (
+def getClipsForVideo(videoID: int) -> RecordedVideo.Clips:
+    return (
         RecordedVideo.Clips.query.filter_by(parentVideo=videoID)
         .with_entities(
             RecordedVideo.Clips.id,
@@ -1015,17 +1046,16 @@ def getClipsForVideo(videoID):
             RecordedVideo.Clips.published
         ).all()
     )
-    return ClipQuery
 
 @cache.memoize(timeout=60)
-def getAllClipsForChannel_View(channelID):
+def getAllClipsForChannel_View(channelID: int) -> RecordedVideo.Clips:
     return RecordedVideo.Clips.query.filter_by(
         channelID=channelID, published=True
     ).all()
 
 
 @cache.memoize(timeout=60)
-def getAllClipsForUser(userId):
+def getAllClipsForUser(userId: int) -> RecordedVideo.Clips:
     return RecordedVideo.Clips.query.filter(
         RecordedVideo.Clips.published == True,
         RecordedVideo.Clips.owningUser == userId,
@@ -1050,15 +1080,15 @@ def getAllClipsForUser(userId):
         RecordedVideo.Clips.description,
         RecordedVideo.Clips.published,
     ).all()
-    return clips
 
 
 @cache.memoize(timeout=120)
-def searchClips(term):
+def searchClips(term: str) -> list:
     if term is None:
         return []
 
     containsTermLikeString = "%" + term + "%"
+    
     return RecordedVideo.Clips.query.filter(
         (RecordedVideo.Clips.clipName.like(containsTermLikeString) | RecordedVideo.Clips.description.like(containsTermLikeString)),
         RecordedVideo.Clips.published == True,
@@ -1082,18 +1112,17 @@ def searchClips(term):
         Sec.User.pictureLocation,
         RecordedVideo.Clips.parentVideo,
     ).all()
-    
 
 
 # Topic Related DB Calls
 @cache.memoize(timeout=120)
-def getAllTopics():
+def getAllTopics() -> topics.topics:
     topicQuery = topics.topics.query.all()
     return topicQuery
 
 
 @cache.memoize(timeout=120)
-def searchTopics(term):
+def searchTopics(term: str) -> list:
     if term is not None:
         topicNameQuery = (
             topics.topics.query.filter(topics.topics.name.like("%" + term + "%"))
@@ -1109,7 +1138,7 @@ def searchTopics(term):
 
 # User Related DB Calls
 @cache.memoize(timeout=300)
-def getUserPhotoLocation(userID):
+def getUserPhotoLocation(userID: int) -> str:
     UserQuery = (
         Sec.User.query.filter_by(id=userID)
         .with_entities(Sec.User.id, Sec.User.pictureLocation)
@@ -1124,7 +1153,7 @@ def getUserPhotoLocation(userID):
 
 
 @cache.memoize(timeout=30)
-def getUser(userID):
+def getUser(userID: int) -> Dict2Class:
     returnData = {}
     UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
     if UserQuery is not None:
@@ -1138,10 +1167,12 @@ def getUser(userID):
             "channels": OwnedChannels,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
-    return Dict2Class(returnData)
+        return Dict2Class(returnData)
+    else:
+        return Dict2Class({})
 
 @cache.memoize(timeout=30)
-def getUserByUsernameDict(username):
+def getUserByUsernameDict(username: str) -> dict:
     returnData = {}
     UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
     if UserQuery is not None:
@@ -1161,12 +1192,11 @@ def getUserByUsernameDict(username):
     return returnData
 
 @cache.memoize(timeout=60)
-def getUsers():
-    UserQuery = Sec.User.query.filter_by(active=True).with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid).all()
-    return UserQuery
+def getUsers() -> Sec.User:
+    return Sec.User.query.filter_by(active=True).with_entities(Sec.User.id, Sec.User.username, Sec.User.uuid).all()
 
 @cache.memoize(timeout=120)
-def searchUsers(term):
+def searchUsers(term: str) -> list:
     if term is not None:
         userNameQuery = (
             Sec.User.query.filter(
@@ -1194,30 +1224,25 @@ def searchUsers(term):
 
 
 @cache.memoize(timeout=30)
-def getGlobalPanel(panelId):
-    panelQuery = panel.globalPanel.query.filter_by(id=panelId).first()
-    return panelQuery
+def getGlobalPanel(panelId: int) -> panel.globalPanel:
+    return panel.globalPanel.query.filter_by(id=panelId).first()
 
 
 @cache.memoize(timeout=30)
-def getUserPanel(panelId):
-    panelQuery = panel.userPanel.query.filter_by(id=panelId).first()
-    return panelQuery
+def getUserPanel(panelId: int):
+    return panel.userPanel.query.filter_by(id=panelId).first()
 
 
 @cache.memoize(timeout=30)
-def getChannelPanel(panelId):
-    panelQuery = panel.channelPanel.query.filter_by(id=panelId).first()
-    return panelQuery
+def getChannelPanel(panelId: int):
+    return panel.channelPanel.query.filter_by(id=panelId).first()
 
 
 @cache.memoize(timeout=1200)
-def getStaticPages():
-    staticPageQuery = settings.static_page.query.all()
-    return staticPageQuery
+def getStaticPages() -> settings.static_page:
+    return settings.static_page.query.all()
 
 
 @cache.memoize(timeout=1200)
-def getStaticPage(pageName):
-    staticPageQuery = settings.static_page.query.filter_by(name=pageName).first()
-    return staticPageQuery
+def getStaticPage(pageName: str) -> settings.static_page:
+    return settings.static_page.query.filter_by(name=pageName).first()

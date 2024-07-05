@@ -821,7 +821,7 @@
                         {% for role in user.roles %}
                             <span class="badge badge-info">{{role.name}}
                                 {% if user.id != current_user.id %}
-                                <a href="/settings/admin?action=delete&setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="bi bi-x"></i></a>
+                                <a href="/settings/admin/action/delete?setting=userRole&userID={{user.id}}&roleID={{role.id}}"><i class="bi bi-x"></i></a>
                                 {% endif %}
                             </span><br>
                         {% endfor %}
@@ -830,13 +830,13 @@
                       <td>
                         <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Add Role</button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item " href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
-                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
+                            <a class="dropdown-item " href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                            <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
                               {% if user.has_role('Streamer') %}
-                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
-                                <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
+                                <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
+                                <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Uploader">Uploader</a>
                               {% endif %}
-                            <a class="dropdown-item" href="/settings/admin?action=add&setting=userRole&userID={{user.id}}&roleName=User">User</a>
+                            <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=User">User</a>
                         </div>
                         {% if user.tf_primary_method is not none %}
                         <button id="2fa-active-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Disable 2FA" onclick="disable2FAModal({{ user.id }});"><i class="bi bi-shield-slash-fill"></i></button>
@@ -845,8 +845,8 @@
                         <button id="forcepw-reset-button-{{ user.id }}" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Force Reset Password" onclick="resetPassword({{ user.id }});"><i class="fa-solid fa-key"></i></button>
                         {% endif %}
                         {% if user.id != current_user.id %}
-                        <a href="/settings/admin?action=toggleActive&setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="bi bi-person-plus-fill"></i></a>
-                        <a href="/settings/admin?action=delete&setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="bi bi-trash-fill"></i></a>
+                        <a href="/settings/admin/action/toggleActive?setting=users&userID={{user.id}}" class="btn btn-sm btn-success shadow" data-toggle="tooltip" data-placement="top" title="Toggle Active"><i class="bi bi-person-plus-fill"></i></a>
+                        <a href="/settings/admin/action/delete?setting=users&userID={{user.id}}" class="btn btn-sm btn-danger shadow" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="bi bi-trash-fill"></i></a>
                         {% endif %}
                       </td>
                    </tr>

@@ -204,6 +204,37 @@
 </script>
 {% endmacro %}
 
+{% macro featured_live_streams(streamList, title="Featured Streams") %}
+{%- set listClass = '' | generateRandomString %}
+<div id="{{ listClass }}" class="live-container boxShadow">
+  <h3 class="textShadow"><b>{{ title }}</b></h3>
+  <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-md-start justify-content-evenly list" style="width:100%">
+      {% for stream in streamList %}
+          {% if stream.linkedChannel | is_channelObjVisible %}
+            {{ cards.live_stream_card_xl(stream) }}
+          {% endif %}
+      {% endfor %}
+  </ul>
+  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+</div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_streamName', 'list_streamOwner', 'list_streamViewers', 'list_streamTopic'],
+        page: 10,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+    if (list_{{ listClass }}.items.length < 10) {
+        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    }
+    list_{{ listClass }}.on('updated', function(list) {
+        lazyLoadInstance.update();
+        resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
+    })
+</script>
+{% endmacro %}
+
 {% macro featured_streamer_panel(stream, panelContent, title="Featured Stream") %}
 <link href="/static/vendor/videojs/css/video-js.css" rel="stylesheet">
 <link href="/static/vendor/videojs-http-source-selector/videojs-http-source-selector.css" rel="stylesheet">

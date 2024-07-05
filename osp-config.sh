@@ -485,13 +485,14 @@ install_ejabberd_venv() {
   cd /opt/ejabberd
   sudo python3 -m venv venv >> $OSPLOG 2>&1
   source venv/bin/activate >> $OSPLOG 2>&1
-  pip3 install -r requests >> $OSPLOG 2>&1
+  pip3 install requests >> $OSPLOG 2>&1
   deactivate
 }
 
 install_ejabberd() {
   echo 5 | dialog --title "Installing ejabberd" --gauge "Installing Prereqs" 10 70 0
-  sudo pip3 install requests >> $OSPLOG 2>&1
+  sudo mkdir -p /opt/ejabberd
+  install_ejabberd_venv
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
@@ -747,6 +748,49 @@ upgrade_nginxcore() {
   sudo cp -rf $DIR/installs/nginx-core/nginx.conf /usr/local/nginx/conf >> $OSPLOG 2>&1
 }
 
+config_overwrite_warning_dialog() {
+  while true; do
+    exec 3>&1
+    dialog \
+      --backtitle "Open Streaming Platform" \
+      --title "SINGLE-SERVER INSTALL WARNING" \
+      --clear \
+      --yesno "If you have existing local installations of Nginx and MariaDB, they will be replaced/modified during the OSP single-server installation.\n\nDo you want to proceed?" $HEIGHT $WIDTH \
+      2>&1 1>&3
+    local exit_status=$?
+    exec 3>&-
+    case $exit_status in
+      $DIALOG_CANCEL)
+        clear
+        echo "Program terminated."
+        exit
+        ;;
+      $DIALOG_ESC)
+        clear
+        echo "Program aborted." >&2
+        exit 1
+        ;;
+    esac
+
+    return $exit_status
+  done
+}
+
+config_overwrite_warning_cli() {
+  local read_input=""
+  echo "If you have existing local installations of Nginx and MariaDB,"
+  echo "they will be replaced/modified during the OSP single-server installation."
+  echo ""
+
+  read -rp "Do you want to proceed? (Enter 'YES' to proceed, or anything else to abort)  " read_input
+  if [[ "$read_input" != "YES" ]]; then
+    echo "Program terminated."
+    exit
+  fi
+
+  return
+}
+
 ##########################################################
 # Menu Options
 ##########################################################
@@ -788,6 +832,7 @@ install_menu() {
         echo "Program terminated."
         ;;
       1 )
+        config_overwrite_warning_dialog
         echo 10 | dialog --title "Installing OSP" --gauge "Installing Nginx Core" 10 70 0
         install_nginx_core
         echo 20 | dialog --title "Installing OSP" --gauge "Installing Redis" 10 70 0
@@ -819,7 +864,7 @@ install_menu() {
         echo 95 | dialog --title "Installing OSP" --gauge "Starting Celery" 10 70 0
         sudo systemctl start osp-celery >> $OSPLOG 2>&1
         sudo systemctl start osp-celery-beat >> $OSPLOG 2>&1
-        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at /opt/osp/logs/install.log")
+        result=$(echo "OSP Install Completed! \n\nVisit http://FQDN to configure\n\nInstall Log can be found at ${OSPLOG}")
         display_result "Install OSP"
         ;;
       2 )
@@ -1075,6 +1120,8 @@ if [ $# -eq 0 ]
       install )
         case $2 in
           osp )
+            config_overwrite_warning_cli
+
             install_nginx_core
             install_redis
             install_ejabberd
