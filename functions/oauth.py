@@ -5,10 +5,11 @@ from classes.Sec import OAuth2Token
 from classes.shared import db
 from flask_security import current_user
 
+from classes import Sec
 from globals.globalvars import videoRoot
 
 
-def fetch_token(name):
+def fetch_token(name: str):
     model = OAuth2Token
 
     token = model.find(
@@ -18,7 +19,7 @@ def fetch_token(name):
     return token.to_token()
 
 
-def discord_processLogin(userDataDict, UserObj):
+def discord_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
     # Handle Discord Avatar Download
     avatarHash = userDataDict["avatar"]
     userID = userDataDict["id"]
@@ -40,7 +41,7 @@ def discord_processLogin(userDataDict, UserObj):
     return True
 
 
-def reddit_processLogin(userDataDict, UserObj):
+def reddit_processLogin(userDataDict: dict, UserObj: Sec.User) -> bool:
     # Handle Reddit Avatar Download
     image_url = userDataDict["icon_img"]
     img_data = requests.get(image_url).content
@@ -53,7 +54,7 @@ def reddit_processLogin(userDataDict, UserObj):
     return True
 
 
-def facebook_processLogin(apiLocation, userDataDict, UserObj):
+def facebook_processLogin(apiLocation: str, userDataDict: dict, UserObj: Sec.User) -> bool:
     image_url = (
         apiLocation
         + str(userDataDict["id"])

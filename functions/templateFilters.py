@@ -6,6 +6,8 @@ import pytz
 import random
 import string
 
+from typing import Union
+
 from flask_security import current_user
 from sqlalchemy import func
 import hashlib
@@ -110,17 +112,17 @@ def init(context):
 # ----------------------------------------------------------------------------#
 
 
-def generateRandomString(x):
+def generateRandomString(x: str) -> str:
     letters = string.ascii_lowercase
     randomString = "".join(random.choice(letters) for i in range(10))
     return randomString
 
 
-def normalize_uuid(uuidstr):
+def normalize_uuid(uuidstr: str) -> str:
     return uuidstr.replace("-", "")
 
 
-def normalize_urlroot(urlString):
+def normalize_urlroot(urlString: str) -> str:
     parsedURLRoot = urlparse(urlString)
     URLProtocol = None
     if parsedURLRoot.port == 80:
@@ -133,7 +135,7 @@ def normalize_urlroot(urlString):
     return str(reparsedString)
 
 
-def normalize_url(urlString):
+def normalize_url(urlString: str) -> str:
     parsedURL = urlparse(urlString)
     if parsedURL.port == 80:
         URLProtocol = "http"
@@ -147,31 +149,31 @@ def normalize_url(urlString):
     return str(reparsedString)
 
 
-def normalize_date(dateStr):
+def normalize_date(dateStr: str) -> str:
     return str(dateStr)[:16]
 
 
-def limit_title(titleStr):
+def limit_title(titleStr: str) -> str:
     if len(titleStr) > 40:
         return titleStr[:37] + "..."
     else:
         return titleStr
 
 
-def limit_title20(titleStr):
+def limit_title20(titleStr: str) -> str:
     if len(titleStr) > 20:
         return titleStr[:17] + "..."
     else:
         return titleStr
 
 
-def limit_string14(inputString):
+def limit_string14(inputString: str) -> str:
     if len(inputString) > 14:
         return inputString[:11] + "..."
     return inputString
 
 
-def formatSpace(B):
+def formatSpace(B: float) -> str:
     "Return the given bytes as a human friendly KB, MB, GB, or TB string"
     B = float(B)
     KB = float(1024)
@@ -189,14 +191,15 @@ def formatSpace(B):
         return "{0:.2f} GB".format(B / GB)
     elif TB <= B:
         return "{0:.2f} TB".format(B / TB)
+    else:
+        return ""
 
-
-def format_kbps(bits):
+def format_kbps(bits: int) -> int:
     bits = int(bits)
     return round(bits / 1000)
 
 
-def hms_format(seconds):
+def hms_format(seconds: int) -> str:
     val = "Unknown"
     if seconds is not None:
         seconds = int(seconds)
@@ -204,21 +207,21 @@ def hms_format(seconds):
     return val
 
 
-def format_clipLength(seconds):
+def format_clipLength(seconds: int) -> str:
     if int(seconds) == 301:
         return "Infinite"
     else:
         return hms_format(seconds)
 
 
-def get_topicName(topicID):
+def get_topicName(topicID: int) -> str:
     topicID = int(topicID)
     if topicID in globalvars.topicCache:
         return globalvars.topicCache[topicID]
     return "None"
 
 
-def get_userName(userID):
+def get_userName(userID: int) -> str:
     userQuery = cachedDbCalls.getUser(userID)
     if userQuery is None:
         return "Unknown User"
@@ -229,52 +232,50 @@ def get_userName(userID):
             return "Unknown User"
 
 
-def get_Video_Upvotes_Filter(videoID):
-    result = votes.get_Video_Upvotes(videoID)
-    return result
+def get_Video_Upvotes_Filter(videoID: int) -> int:
+    return votes.get_Video_Upvotes(videoID)
 
 
-def get_Stream_Upvotes_Filter(videoID):
-    result = votes.get_Stream_Upvotes(videoID)
-    return result
+def get_Stream_Upvotes_Filter(videoID: int) -> int:
+    return votes.get_Stream_Upvotes(videoID)
 
 
-def get_Clip_Upvotes_Filter(videoID):
-    result = votes.get_Clip_Upvotes(videoID)
-    return result
+def get_Clip_Upvotes_Filter(videoID: int) -> int:
+    return votes.get_Clip_Upvotes(videoID)
 
 
-def get_Video_Comments_Filter(videoID):
-    result = cachedDbCalls.getVideoCommentCount(videoID)
-    return result
+def get_Video_Comments_Filter(videoID: int) -> int:
+    return cachedDbCalls.getVideoCommentCount(videoID)
 
 
-def get_pictureLocation(userID):
-    pictureLocation = cachedDbCalls.getUserPhotoLocation(userID)
-    return pictureLocation
+def get_pictureLocation(userID: int) -> str:
+    return cachedDbCalls.getUserPhotoLocation(userID)
 
 
-def channeltoOwnerID(channelID):
-    channelObj = cachedDbCalls.getChannel(channelID)
-    return channelObj.owningUser
-
-
-def get_channelPrivateStatus(channelID):
+def channeltoOwnerID(channelID: int) -> Union[int, None]:
     channelObj = cachedDbCalls.getChannel(channelID)
     if channelObj is not None:
-        if channelObj.private is False:
-            return False
-        else:
-            return True
+        return channelObj.owningUser
+    else:
+        return None
+
+
+def get_channelPrivateStatus(channelID: int) -> bool:
+    channelObj = cachedDbCalls.getChannel(channelID)
+    if channelObj is not None:
+        return channelObj.private
     return True
 
 
-def get_channelTopic(channelID):
+def get_channelTopic(channelID: int) -> Union[int, None]:
     channelObj = cachedDbCalls.getChannel(channelID)
-    return channelObj.topic
+    if channelObj is not None:
+        return channelObj.topic
+    else:
+        return None
 
 
-def get_diskUsage(channelLocation):
+def get_diskUsage(channelLocation: str) -> int:
     videos_root = globalvars.videoRoot + "videos/"
     channelLocation = videos_root + channelLocation
 
@@ -286,14 +287,14 @@ def get_diskUsage(channelLocation):
     return total_size
 
 
-def testList(obj):
+def testList(obj) -> bool:
     if type(obj) == list:
         return True
     else:
         return False
 
 
-def processClientCount(data):
+def processClientCount(data) -> int:
     count = 0
     if type(data) == list:
         for client in data:
@@ -305,12 +306,12 @@ def processClientCount(data):
     return count
 
 
-def uuid_to_username(uuid):
+def uuid_to_username(uuid: str) -> Union[str, None]:
     if "@" in uuid:
         JID = uuid.split("@")[0]
     else:
         JID = uuid
-    userQuery = Sec.User.query.filter_by(uuid=JID).first()
+    userQuery = Sec.User.query.filter_by(uuid=JID).with_entities(Sec.User.id, Sec.User.username).first()
     if userQuery is not None:
         result = userQuery.username
     else:
@@ -318,7 +319,7 @@ def uuid_to_username(uuid):
     return result
 
 
-def get_webhookTrigger(webhookTrigger):
+def get_webhookTrigger(webhookTrigger: str) -> str:
 
     webhookTrigger = str(webhookTrigger)
     webhookNames = {
@@ -338,7 +339,7 @@ def get_webhookTrigger(webhookTrigger):
     return webhookNames[webhookTrigger]
 
 
-def get_logType(logType):
+def get_logType(logType: str) -> str:
 
     logType = str(logType)
     logTypeNames = {
@@ -357,53 +358,48 @@ def get_logType(logType):
     return logTypeNames[logType]
 
 
-def format_keyType(keyType):
+def format_keyType(keyType: str) -> str:
     keyType = str(keyType)
     keyTypeNames = {"1": "User", "2": "Admin"}
     return keyTypeNames[keyType]
 
 
-def get_channelSubCount(channelID):
-    subCount = cachedDbCalls.getChannelSubCount(channelID)
-    return subCount
+def get_channelSubCount(channelID: int) -> int:
+    return cachedDbCalls.getChannelSubCount(channelID)
 
 
-def get_channelLiveStatus(channelID):
-    isChannelLive = cachedDbCalls.isChannelLive(channelID)
-    return isChannelLive
+def get_channelLiveStatus(channelID: int):
+    return cachedDbCalls.isChannelLive(channelID)
 
 
-def get_channelName(channelID):
+def get_channelName(channelID: int) -> Union[str, None]:
     channelQuery = cachedDbCalls.getChannel(channelID)
-    return channelQuery.channelName
+    if channelQuery != None:
+        return channelQuery.channelName
+    return None
 
-
-def get_channelProtected(channelID):
+def get_channelProtected(channelID: int) -> bool:
     sysSettings = cachedDbCalls.getSystemSettings()
     channelQuery = cachedDbCalls.getChannel(channelID)
-    protected = False
-    if channelQuery != None:
+    if channelQuery is not None:
         if channelQuery.protected is True and sysSettings.protectionEnabled is True:
-            protected = True
-    return protected
+            return True
+    return False
 
 
-def get_channelLocationFromID(channelID):
-    channelQuery = cachedDbCalls.getChannelLocationFromID(channelID)
-    return channelQuery
+def get_channelLocationFromID(channelID: int) -> Union[str, None]:
+    return cachedDbCalls.getChannelLocationFromID(channelID)
 
 
-def get_videoComments(videoID):
-    commentsQuery = comments.videoComments.query.filter_by(videoID=videoID).all()
-    return commentsQuery
+def get_videoComments(videoID: int) -> comments.videoComments:
+    return comments.videoComments.query.filter_by(videoID=videoID).all()
 
 
-def get_clipTags(clipId):
-    tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
-    return tagQuery
+def get_clipTags(clipId: int) -> RecordedVideo.clip_tags:
+    return RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
 
 
-def get_clipTags_csv(clipId):
+def get_clipTags_csv(clipId: int) -> str:
     tagQuery = RecordedVideo.clip_tags.query.filter_by(clipID=clipId).all()
     tagArray = []
     for tag in tagQuery:
@@ -412,12 +408,11 @@ def get_clipTags_csv(clipId):
     return tagString
 
 
-def get_videoTags(videoId):
-    tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
-    return tagQuery
+def get_videoTags(videoId: int) -> RecordedVideo.video_tags:
+    return RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
 
 
-def get_videoTags_csv(videoId):
+def get_videoTags_csv(videoId: int) -> str:
     tagQuery = RecordedVideo.video_tags.query.filter_by(videoID=videoId).all()
     tagArray = []
     for tag in tagQuery:
@@ -426,12 +421,11 @@ def get_videoTags_csv(videoId):
     return tagString
 
 
-def get_channelTags(channelId):
-    tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
-    return tagQuery
+def get_channelTags(channelId: int) -> Channel.channel_tags:
+    return Channel.channel_tags.query.filter_by(channelID=channelId).all()
 
 
-def get_channelTags_csv(channelId):
+def get_channelTags_csv(channelId: int) -> str:
     tagQuery = Channel.channel_tags.query.filter_by(channelID=channelId).all()
     tagArray = []
     for tag in tagQuery:
@@ -440,12 +434,13 @@ def get_channelTags_csv(channelId):
     return tagString
 
 
-def get_channelPicture(channelID):
+def get_channelPicture(channelID: int) -> Union[str, None]:
     channelQuery = cachedDbCalls.getChannel(channelID)
-    return channelQuery.imageLocation
+    if channelQuery is not None:
+        return channelQuery.imageLocation
+    return None
 
-
-def is_channelObjVisible(channelID):
+def is_channelObjVisible(channelID: int) -> bool:
     channelQuery = cachedDbCalls.getChannel(channelID)
     visible = False
     if channelQuery != None:
@@ -460,20 +455,20 @@ def is_channelObjVisible(channelID):
     return visible
 
 
-def localize_time(timeObj):
+def localize_time(timeObj: datetime.datetime) -> datetime.datetime:
     sysSettings = cachedDbCalls.getSystemSettings()
     localtz = pytz.timezone(sysSettings.serverTimeZone)
     localized_datetime = localtz.localize(timeObj)
     return localized_datetime
 
 
-def epoch_to_datetime(timestamp):
+def epoch_to_datetime(timestamp: float) -> Union[datetime.datetime, str]:
     if timestamp is None:
         return "N/A"
     return datetime.datetime.fromtimestamp(timestamp)
 
 
-def convert_mins(timestamp):
+def convert_mins(timestamp: float) -> Union[int, str]:
     if timestamp is not None:
         minutes = round(timestamp / 60)
         return minutes
@@ -481,7 +476,7 @@ def convert_mins(timestamp):
         return "?"
 
 
-def globalPanelIdToPanelName(panelId):
+def globalPanelIdToPanelName(panelId: int) -> str:
 
     panelQuery = cachedDbCalls.getGlobalPanel(panelId)
     if panelQuery is not None:
@@ -490,7 +485,7 @@ def globalPanelIdToPanelName(panelId):
         return "Unknown Panel ID # " + str(panelId)
 
 
-def channelPanelIdToPanelName(panelId):
+def channelPanelIdToPanelName(panelId: int) -> str:
 
     panelQuery = cachedDbCalls.getChannelPanel(panelId)
     if panelQuery is not None:
@@ -499,7 +494,7 @@ def channelPanelIdToPanelName(panelId):
         return "Unknown Panel ID # " + str(panelId)
 
 
-def panelTypeIdToPanelTypeName(panelType):
+def panelTypeIdToPanelTypeName(panelType: int) -> str:
     panelTypeMap = {
         0: "Text/Markdown",
         1: "Live Stream List",
@@ -512,12 +507,12 @@ def panelTypeIdToPanelTypeName(panelType):
     return panelTypeMap[panelType]
 
 
-def panelOrderIdToPanelOrderName(panelOrder):
+def panelOrderIdToPanelOrderName(panelOrder: int) -> str:
     panelOrderMap = {0: "Most Views / Live Viewers", 1: "Most Recent", 2: "Random"}
     return panelOrderMap[panelOrder]
 
 
-def getPanel(panelId, panelType):
+def getPanel(panelId: int, panelType: int) -> Union[panel.channelPanel, panel.globalPanel, None]:
     panel = None
     if panelType == 0:
         panel = cachedDbCalls.getGlobalPanel(panelId)
@@ -526,13 +521,12 @@ def getPanel(panelId, panelType):
     return panel
 
 
-def getChannelPanels(channelId):
-    panelQuery = panel.channelPanel.query.filter_by(channelId=channelId).all()
-    return panelQuery
+def getChannelPanels(channelId: int) -> panel.channelPanel:
+    return panel.channelPanel.query.filter_by(channelId=channelId).all()
 
 
-def getLiveStream(channelId):
-    liveStreamQuery = (
+def getLiveStream(channelId: int) -> Stream.Stream:
+    return (
         Stream.Stream.query.filter_by(linkedChannel=channelId, active=True)
         .with_entities(
             Stream.Stream.streamName,
@@ -547,10 +541,9 @@ def getLiveStream(channelId):
         )
         .first()
     )
-    return liveStreamQuery
 
 
-def getLiveStreamURL(channel):
+def getLiveStreamURL(channel: Channel.Channel) -> str:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     # Stream URL Generation
@@ -575,19 +568,19 @@ def getLiveStreamURL(channel):
     return streamURL
 
 
-def getGlobalPanelArg(panelId, arg):
+def getGlobalPanelArg(panelId: int, arg: str) -> str:
     panel = cachedDbCalls.getGlobalPanel(panelId)
     result = getattr(panel, arg)
     return result
 
 
-def getChannelPanelArg(panelId, arg):
+def getChannelPanelArg(panelId: int, arg: str) -> str:
     panel = cachedDbCalls.getChannelPanel(panelId)
     result = getattr(panel, arg)
     return result
 
 
-def getPanelStreamList(order, limitTo):
+def getPanelStreamList(order: int, limitTo: int) -> Stream.Stream:
     if order == 0:
         activeStreams = (
             Stream.Stream.query.filter_by(active=True)
@@ -663,7 +656,7 @@ def getPanelStreamList(order, limitTo):
     return activeStreams
 
 
-def getPanelVideoList(order, limitTo):
+def getPanelVideoList(order: int, limitTo: int) -> RecordedVideo.RecordedVideo:
     if order == 0:
         recordedQuery = (
             RecordedVideo.RecordedVideo.query.filter_by(pending=False, published=True)
@@ -771,7 +764,7 @@ def getPanelVideoList(order, limitTo):
     return recordedQuery
 
 
-def getPanelClipList(order, limitTo):
+def getPanelClipList(order: int, limitTo: int) -> RecordedVideo.Clips:
     wipClipQuery = RecordedVideo.Clips.query.filter_by(
         published=True
     ).join(
@@ -806,7 +799,7 @@ def getPanelClipList(order, limitTo):
     return wipClipQuery.limit(limitTo).all()
 
 
-def getPanelChannelList(order, limitTo):
+def getPanelChannelList(order: int, limitTo: int) -> Channel.Channel:
     if order == 0:
         channelQuery = (
             Channel.Channel.query.with_entities(
@@ -942,7 +935,7 @@ def getPanelChannelList(order, limitTo):
     return channelQuery
 
 
-def orderVideoBy(videoList, orderById):
+def orderVideoBy(videoList: list, orderById: int) -> list:
     # Most Views
     if orderById == 0:
         return sorted(videoList, key=lambda x: x.views, reverse=True)
@@ -961,7 +954,7 @@ def orderVideoBy(videoList, orderById):
         return sorted(videoList, key=lambda x: x.views, reverse=True)
 
 
-def generatePlaybackAuthToken(channelLoc):
+def generatePlaybackAuthToken(channelLoc: str) -> str:
     validationToken = "NA"
     if current_user.is_authenticated:
         if current_user.authType == 0:
@@ -979,25 +972,22 @@ def generatePlaybackAuthToken(channelLoc):
     return validationToken
 
 
-def get_channelInviteCodes(channelID):
-    codeQuery = invites.inviteCode.query.filter_by(channelID=channelID).all()
-    return codeQuery
+def get_channelInviteCodes(channelID: int) -> invites.inviteCode:
+    return invites.inviteCode.query.filter_by(channelID=channelID).all()
 
 
-def get_channelInvitedUsers(channelID):
-    inviteQuery = invites.invitedViewer.query.filter_by(channelID=channelID).all()
-    return inviteQuery
+def get_channelInvitedUsers(channelID: int) -> invites.invitedViewer:
+    return invites.invitedViewer.query.filter_by(channelID=channelID).all()
 
 
-def get_channelRestreamDestinations(channelID):
-    restreamDestQuery = Channel.restreamDestinations.query.filter_by(
+def get_channelRestreamDestinations(channelID: int) -> Channel.restreamDestinations:
+    return Channel.restreamDestinations.query.filter_by(
         channel=channelID
     ).all()
-    return restreamDestQuery
 
 
-def get_channelWebhooks(channelID):
-    webhookQuery = (
+def get_channelWebhooks(channelID: int) -> webhook.webhook:
+    return (
         webhook.webhook.query.filter_by(channelID=channelID)
         .with_entities(
             webhook.webhook.id,
@@ -1011,15 +1001,13 @@ def get_channelWebhooks(channelID):
         )
         .all()
     )
-    return webhookQuery
 
 
-def get_channelVideos(channelID):
-    videosQuery = cachedDbCalls.getChannelVideos(channelID)
-    return videosQuery
+def get_channelVideos(channelID: int) -> RecordedVideo.RecordedVideo:
+    return cachedDbCalls.getChannelVideos(channelID)
 
 
-def get_channelClips(channelID):
+def get_channelClips(channelID: int) -> RecordedVideo.Clips:
     return (
         RecordedVideo.Clips.query.filter(
             RecordedVideo.Clips.channelID == channelID
@@ -1042,7 +1030,7 @@ def get_channelClips(channelID):
     )
 
 
-def get_flaggedForDeletion(userID):
+def get_flaggedForDeletion(userID: int) -> str:
     flagQuery = Sec.UsersFlaggedForDeletion.query.filter_by(userID=int(userID)).first()
     if flagQuery != None:
         return str(flagQuery.timestamp)
@@ -1050,13 +1038,12 @@ def get_flaggedForDeletion(userID):
         return ""
 
 
-def get_channelData(channelID):
-    channelQuery = cachedDbCalls.getChannel(int(channelID))
-    return channelQuery
+def get_channelData(channelID: int) -> Channel.Channel:
+    return cachedDbCalls.getChannel(int(channelID))
 
 
-def get_channelStickers(channelID):
-    stickerQuery = (
+def get_channelStickers(channelID: int) -> stickers.stickers:
+    return (
         stickers.stickers.query.filter_by(channelID=channelID)
         .with_entities(
             stickers.stickers.id,
@@ -1066,8 +1053,7 @@ def get_channelStickers(channelID):
         )
         .all()
     )
-    return stickerQuery
 
-def get_users(value):
+def get_users(value) -> Sec.User:
     users = cachedDbCalls.getUsers()
     return users

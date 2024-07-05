@@ -5,6 +5,8 @@ import datetime
 import logging
 import pathlib
 
+from typing import Union
+
 from celery import states
 from celery.exceptions import Ignore
 from flask import Blueprint, request, redirect, current_app, abort
@@ -34,7 +36,7 @@ from functions.scheduled_tasks import message_tasks
 log = logging.getLogger("app.functions.rtmpFunctions")
 
 
-def rtmp_stage1_streamkey_check(key, ipaddress):
+def rtmp_stage1_streamkey_check(key: str, ipaddress: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
@@ -144,7 +146,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
         return returnMessage
 
 
-def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
+def rtmp_stage2_user_auth_check(channelLoc: str, ipaddress: str, authorizedRTMP: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
@@ -296,7 +298,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
         return returnMessage
 
 
-def rtmp_record_auth_check(channelLoc):
+def rtmp_record_auth_check(channelLoc: str) -> dict:
 
     sysSettings = cachedDbCalls.getSystemSettings()
     channelRequest = cachedDbCalls.getChannelByLoc(channelLoc)
@@ -396,7 +398,7 @@ def rtmp_record_auth_check(channelLoc):
     return returnMessage
 
 
-def rtmp_user_deauth_check(key, ipaddress):
+def rtmp_user_deauth_check(key: str, ipaddress: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
@@ -566,10 +568,11 @@ def rtmp_user_deauth_check(key, ipaddress):
             db.session.commit()
             db.session.close()
             return returnMessage
+    return {}
 
 
 @celery.task(bind=True, max_retries=100)
-def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
+def rtmp_rec_Complete_handler(self, channelLoc: str, path: str, pendingVideoID: Union[int, None] = None) -> dict:
     try:
         sysSettings = cachedDbCalls.getSystemSettings()
 
@@ -801,3 +804,4 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             + str(ex)
         )
         self.retry(countdown=3**self.request.retries)
+    return {}

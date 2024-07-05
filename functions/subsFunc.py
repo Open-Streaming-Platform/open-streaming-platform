@@ -16,7 +16,7 @@ from classes.shared import db
 log = logging.getLogger("app.functions.subsFunc")
 
 
-def processSubscriptions(channelID, subject, message, type):
+def processSubscriptions(channelID: int, subject: str, message: str, type: int) -> bool:
     subscriptionQuery = (
         subscriptions.channelSubs.query.filter_by(channelID=channelID)
         .with_entities(subscriptions.channelSubs.id, subscriptions.channelSubs.userID)
