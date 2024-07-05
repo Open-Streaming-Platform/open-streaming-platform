@@ -234,7 +234,7 @@ def moveVideo(videoID: int, newChannel: int):
     return False
 
 
-def createClip(videoID: int, clipStart: float, clipStop: float, clipName: int, clipDescription: str) -> tuple[bool, int | None]:
+def createClip(videoID: int, clipStart: float, clipStop: float, clipName: int, clipDescription: str) -> tuple:
     settingsQuery = cachedDbCalls.getSystemSettings()
 
     # TODO Add Webhook for Clip Creation
