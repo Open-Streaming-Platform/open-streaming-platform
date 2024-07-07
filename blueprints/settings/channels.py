@@ -33,7 +33,7 @@ from classes.shared import cache
 from functions import system
 from functions import themes
 from functions import cachedDbCalls
-from functions import xmpp
+from functions.scheduled_tasks import channel_tasks
 
 from globals import globalvars
 
@@ -419,6 +419,8 @@ def settings_channels_page():
 
             db.session.add(newChannel)
             db.session.commit()
+
+            channel_tasks.new_channel_assign_global_chat_mods.delay(current_user.id, newChannel.channelLoc)
 
         elif requestType == "change":
             channelId = request.form["channelId"]
