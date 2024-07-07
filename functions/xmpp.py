@@ -12,6 +12,13 @@ from globals.globalvars import room_config, defaultChatDomain
 
 log = logging.getLogger("app.functions.xmpp")
 
+def set_user_affiliation(userUuid, channelLocation, new_affil) -> None:
+    ejabberd.set_room_affiliation(
+        channelLocation,
+        "conference." + defaultChatDomain,
+        userUuid + "@" + defaultChatDomain,
+        new_affil
+    )
 
 def sanityCheck() -> bool:
     buildMissingRooms()

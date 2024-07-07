@@ -66,3 +66,25 @@ def check_channel_stream_time(self, streamId):
         if channelQuery != None:
             streamTime = (datetime.datetime.utcnow() - activeStreamQuery.startTimeStamp)
             streamTimeMins = streamTime.total_seconds() / 60.0
+
+@celery.task(bind=True)
+def add_new_global_chat_mod_to_channels(self, user_id, user_uuid):
+    for channel in Channel.Channel.query.with_entities(
+        Channel.Channel.owningUser, Channel.Channel.channelLoc,
+    ).all():
+        new_affiliation = "admin"
+        if channel.owningUser == user_id:
+            new_affiliation = "owner"
+
+        xmpp.set_user_affiliation(user_uuid, channel.channelLoc, new_affiliation)
+
+@celery.task(bind=True)
+def remove_global_chat_mod_from_channels(self, user_id, user_uuid):
+    for channel in Channel.Channel.query.with_entities(
+        Channel.Channel.owningUser, Channel.Channel.channelLoc,
+    ).all():
+        new_affiliation = "member"
+        if channel.owningUser == user_id:
+            new_affiliation = "owner"
+
+        xmpp.set_user_affiliation(user_uuid, channel.channelLoc, new_affiliation)
