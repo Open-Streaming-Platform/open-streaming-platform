@@ -1751,6 +1751,22 @@
                         <div class="col-12">
                           <div class="card">
                             <div class="card-body">
+                              {% if gcm_users|length > 0 %}
+                              <div class="row">
+                                <div class="col-12" class="global-chat-mods">
+                                  <div class="row">
+                                    <div class="col-12 mb-2"><b>Global Chat Mods</b></div>
+                                  </div>
+                                  {% for gcm_user in gcm_users %}
+                                  <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                      <p>{{gcm_user.username}}</p>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                </div>
+                              </div>
+                              {% endif %}
                               <div class="form-row">
                                 <div class="form-group col-12 col-lg-6">
                                   <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add

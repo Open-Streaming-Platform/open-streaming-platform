@@ -17,37 +17,54 @@ from globals import globalvars
 
 @socketio.on("addMod")
 def addMod(message):
+    if not current_user.is_authenticated:
+        return "Must be logged in."
+
     sysSettings = cachedDbCalls.getSystemSettings()
     JID = None
     username = str(message["JID"])
     userQuery = Sec.User.query.filter(
         func.lower(Sec.User.username) == func.lower(username)
     ).first()
-    if userQuery is not None:
-        JID = userQuery.uuid + "@" + globalvars.defaultChatDomain
+    if userQuery is None:
+        db.session.close()
+        return f"'{username}' does not exist."
+    
+    if cachedDbCalls.IsUserGCMByUUID(userQuery.uuid):
+        db.session.close()
+        return "Cannot add a Global Chat Mod"
+    
+    JID = userQuery.uuid + "@" + globalvars.defaultChatDomain
 
     channelLoc = str(message["channelLoc"])
     channelQuery = Channel.Channel.query.filter_by(
         channelLoc=channelLoc, owningUser=current_user.id
     ).first()
 
-    if channelQuery is not None and JID is not None:
-        from app import ejabberd
+    if channelQuery is None:
+        db.session.close()
+        return "Channel does not exist."
+    
+    if channelQuery.owningUser == userQuery.id:
+        db.session.close()
+        return "You're already the channel's owner."
+    
+    xmpp.set_user_affiliation(
+        userQuery.uuid,
+        channelLoc,
+        "admin"
+    )
 
-        ejabberd.set_room_affiliation(
-            channelLoc, "conference." + globalvars.defaultChatDomain, JID, "admin"
-        )
-        emit(
-            "addMod",
-            {
-                "mod": str(JID),
-                "channelLoc": str(channelLoc),
-                "username": str(userQuery.username),
-            },
-            broadcast=False,
-        )
-    else:
-        pass
+    emit(
+        "addMod",
+        {
+            "mod": str(JID),
+            "channelLoc": str(channelLoc),
+            "username": str(userQuery.username),
+        },
+        broadcast=False,
+    )
+
     db.session.commit()
     db.session.close()
     return "OK"
@@ -55,27 +72,39 @@ def addMod(message):
 
 @socketio.on("deleteMod")
 def deleteMod(message):
+    if not current_user.is_authenticated:
+        return "Must be logged in."
+
     sysSettings = cachedDbCalls.getSystemSettings()
     JID = str(message["JID"])
+    user_uuid = JID.split("@",1)[0]
+
+    if cachedDbCalls.IsUserGCMByUUID(user_uuid):
+        db.session.close()
+        return "Cannot de-mod a Global Chat Mod"
+
     channelLoc = str(message["channelLoc"])
 
     channelQuery = Channel.Channel.query.filter_by(
         channelLoc=channelLoc, owningUser=current_user.id
     ).first()
 
-    user = JID.split("@")[0]
+    if channelQuery is None:
+        db.session.close()
+        return "Channel does not exist."
 
-    if channelQuery is not None:
-        from app import ejabberd
+    xmpp.set_user_affiliation(
+        user_uuid,
+        channelLoc,
+        "member"
+    )
 
-        ejabberd.set_room_affiliation(
-            channelLoc, "conference." + globalvars.defaultChatDomain, JID, "none"
-        )
-        emit(
-            "deleteMod",
-            {"mod": str(JID), "channelLoc": str(channelLoc)},
-            broadcast=False,
-        )
+    emit(
+        "deleteMod",
+        {"mod": str(JID), "channelLoc": str(channelLoc)},
+        broadcast=False,
+    )
+
     db.session.commit()
     db.session.close()
     return "OK"

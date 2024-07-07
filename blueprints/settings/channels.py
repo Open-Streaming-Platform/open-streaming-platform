@@ -28,6 +28,7 @@ from classes import settings
 from classes import views
 from classes import stickers
 from classes import panel
+from classes import Sec
 from classes.shared import cache
 
 from functions import system
@@ -100,6 +101,12 @@ def settings_channels_page():
         # Get xmpp room options
         from app import ejabberd
 
+        gcm_users = Sec.Role.query.filter_by(
+            name="GlobalChatMod"
+        ).one().users.with_entities(
+            Sec.User.uuid,
+            Sec.User.username,
+        )
         channelRooms = {}
         channelMods = {}
         for chan in user_channels:
@@ -144,7 +151,10 @@ def settings_channels_page():
 
             channelModList = []
             for user in affiliationList:
-                if user["affiliation"] == "admin":
+                if (
+                    user["affiliation"] == "admin" and
+                    gcm_users.filter_by(uuid=user['username']).first() is None
+                ):
                     channelModList.append(user["username"] + "@" + user["domain"])
             channelMods[chan.channelLoc] = channelModList
 
@@ -208,6 +218,7 @@ def settings_channels_page():
             channels=user_channels,
             topics=topicList,
             channelRooms=channelRooms,
+            gcm_users=gcm_users.all(),
             channelMods=channelMods,
             viewStats=user_channels_stats,
             rtmpList=activeRTMPList,

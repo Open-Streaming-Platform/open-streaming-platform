@@ -684,15 +684,25 @@ function deleteClip() {
 function addMod(channelLoc) {
     var addModTextInput = document.getElementById('addModText-' + channelLoc);
     var JID = addModTextInput.value;
-    socket.emit('addMod', {JID: JID, channelLoc: channelLoc});
+    socket.emit('addMod', {JID: JID, channelLoc: channelLoc}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
     addModTextInput.value = "";
 }
 
 function deleteMod(mod, channelLoc) {
-    socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc});
-    var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
-    modRow.parentNode.removeChild(modRow);
-    createNewBSAlert("Moderator permission revoked", "Success");
+    socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
+        modRow.parentNode.removeChild(modRow);
+        createNewBSAlert("Moderator permission revoked", "Success");
+    });
 }
 
 function generateInviteCode() {
