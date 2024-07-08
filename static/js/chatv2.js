@@ -671,17 +671,31 @@ function hideUserMessages(nickname) {
 
 // Mod Controls
 function ban(username) {
-    if (typeof(connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid']) !== 'undefined') {
-        var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid'].split('@')[0]
-        connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
-        socket.emit('banUser', {channelLoc: ROOMNAME, banUsername: username, banUserUUID: userUUID});
-        return true;
+    const banPackage = { "channelLoc": ROOMNAME, "banUsername": username };
+    if (connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster.hasOwnProperty(username)) {
+        const userData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
+        if (userData['jid'] !== null) {
+            banPackage['banUserUUID'] = userData['jid'].split('@')[0];
+        }
     }
+
+    socket.emit('banUser', banPackage, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert(`${username} banned!`, "Success");
+    });
+    return true;
 }
 
 function unban(uuid) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(uuid + '@' + server, 'none');
-    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid});
+    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
     return true;
 }
 

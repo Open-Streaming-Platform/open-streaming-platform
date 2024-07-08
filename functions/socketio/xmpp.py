@@ -155,58 +155,105 @@ def deleteMod(message):
 
 @socketio.on("banUser")
 def socketio_xmpp_banUser(message):
-    if current_user.is_authenticated:
-        if "channelLoc" in message:
-            from app import ejabberd
+    if not current_user.is_authenticated:
+        return "Must be logged in."
 
-            channelLoc = str(message["channelLoc"])
-            channelQuery = Channel.Channel.query.filter_by(
-                channelLoc=channelLoc
-            ).first()
-            if channelQuery is not None:
-                user = Sec.User.query.filter_by(id=current_user.id).first()
-                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
-                if user.uuid in channelAffiliations:
-                    userAffiliation = channelAffiliations[user.uuid]
-                    if userAffiliation == "owner" or userAffiliation == "admin":
-                        banUsername = str(message["banUsername"])
-                        banUserUUID = str(message["banUserUUID"])
-                        existingBan = banList.channelBanList.query.filter_by(
-                            userUUID=banUserUUID, channelLoc=channelLoc
-                        ).first()
-                        if existingBan is None:
-                            newBan = banList.channelBanList(
-                                channelLoc, banUsername, banUserUUID
-                            )
-                            db.session.add(newBan)
-                            db.session.commit()
+    if "channelLoc" not in message:
+        db.session.close()
+        return "Cannot find channel"
+
+    channelLoc = str(message["channelLoc"])
+    channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+    if channelQuery is None:
+        db.session.close()
+        return "Channel does not exist."
+
+    if not xmpp.have_admin_authority(channelQuery):
+        db.session.close()
+        return "Not authorized to ban users"
+
+    banUsername = str(message["banUsername"])
+    banUserUUID = None
+
+    targetQuery = Sec.User.query.filter_by(
+        username=banUsername
+    ).with_entities(Sec.User.id, Sec.User.uuid).first()
+    is_registered = targetQuery is not None
+    if not is_registered:
+        # May still be a Guest; check if banUserUUID is in the message.
+        if "banUserUUID" not in message:
+            return f"'{banUsername}' does not exist"
+
+        banUserUUID = str(message["banUserUUID"])
+    else:
+        banUserUUID = targetQuery.uuid
+
+    if current_user.uuid == banUserUUID:
+        db.session.close()
+        return "Cannot ban yourself."
+
+    if is_registered:
+        if channelQuery.owningUser == targetQuery.id:
+            db.session.close()
+            return "Cannot ban the Channel Owner"
+
+        if cachedDbCalls.IsUserGCMByUUID(banUserUUID):
+            db.session.close()
+            return "Cannot ban a Global Chat Mod"
+
+    if banList.channelBanList.query.filter_by(
+        userUUID=banUserUUID, channelLoc=channelLoc
+    ).with_entities(banList.channelBanList.id).first() is not None:
+        db.session.close()
+        return "That user is already banned."
+
+    xmpp.set_user_affiliation(banUserUUID, channelLoc, "outcast")
+    newBan = banList.channelBanList(
+        channelLoc, banUsername, banUserUUID
+    )
+    db.session.add(newBan)
+    db.session.commit()
     db.session.close()
     return "OK"
 
 
 @socketio.on("unbanUser")
 def socketio_xmpp_unbanUser(message):
-    if current_user.is_authenticated:
-        if "channelLoc" in message:
-            from app import ejabberd
+    if not current_user.is_authenticated:
+        return "Must be logged in."
 
-            channelLoc = str(message["channelLoc"])
-            channelQuery = Channel.Channel.query.filter_by(
-                channelLoc=channelLoc
-            ).first()
-            if channelQuery is not None:
-                user = Sec.User.query.filter_by(id=current_user.id).first()
-                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
-                if user.uuid in channelAffiliations:
-                    userAffiliation = channelAffiliations[user.uuid]
-                    if userAffiliation == "owner" or userAffiliation == "admin":
-                        unbanUserUUID = str(message["userUUID"])
-                        existingBanQuery = banList.channelBanList.query.filter_by(
-                            channelLoc=channelLoc, userUUID=unbanUserUUID
-                        ).first()
-                        if existingBanQuery is not None:
-                            db.session.delete(existingBanQuery)
-                            db.session.commit()
+    if "channelLoc" not in message:
+        db.session.close()
+        return "Cannot find channel"
+
+    channelLoc = str(message["channelLoc"])
+    channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+    if channelQuery is None:
+        db.session.close()
+        return "Channel does not exist."
+
+    if not xmpp.have_admin_authority(channelQuery):
+        db.session.close()
+        return "Not authorized to un-ban users"
+
+    unbanUserUUID = str(message["userUUID"])
+
+    existingBanQuery = banList.channelBanList.query.filter_by(
+        channelLoc=channelLoc, userUUID=unbanUserUUID
+    ).first()
+    if existingBanQuery is None:
+        db.session.close()
+        return "That user is already un-banned."
+    
+    new_affil = "none"
+    if Sec.User.query.filter_by(
+        uuid=unbanUserUUID
+    ).with_entities(Sec.User.id).first() is not None:
+        new_affil = "member"
+        
+    xmpp.set_user_affiliation(unbanUserUUID, channelLoc, new_affil)
+    db.session.delete(existingBanQuery)
+    db.session.commit()
     db.session.close()
     return "OK"
 
