@@ -814,9 +814,16 @@ function displayProfileBox(elem) {
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
     var deleteMessageButton = div.querySelector('div#profileBox-deleteMessage');
-    if (CHATSTATUS.role === "moderator") {
-        // Prevent Owner from Showing Controls on Themselves
-        if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
+
+    modControlsBox.style.display = "none";
+    if (CHATSTATUS['affiliation'] !== "member" && CHATSTATUS['affiliation'] !== "none") {
+        if (document.getElementById(`a-gcm-${username}`) !== null) {
+            // Never display controls when looking at a Global Chat Mod
+            modControlsBox.style.display = "none";
+        } else if (username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner") {
+            // Prevent Owner from Showing Controls on Themselves
+            modControlsBox.style.display = "none";
+        } else {
             modControlsBox.style.display = "block";
         }
         if (messageDivId != undefined) {
