@@ -232,43 +232,74 @@ def socketio_xmpp_getBanList(message):
 
 @socketio.on("deleteMessageRequest")
 def deleteMessageRequest(message):
-    if current_user.is_authenticated:
-        if "channelLoc" in message and "messageId" in message:
-            from app import ejabberd
+    if not current_user.is_authenticated:
+        return "Must be logged in."
 
-            messageId = str(message["messageId"])
-            channelLoc = str(message["channelLoc"])
-            timestamp = datetime.datetime.utcnow()
-            channelQuery = Channel.Channel.query.filter_by(
+    if "channelLoc" not in message:
+        db.session.close()
+        return "No channel location"
+
+    channelLoc = str(message["channelLoc"])
+    channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
+    if channelQuery is None:
+        db.session.close()
+        return "Channel does not exist"
+
+    if not xmpp.have_admin_authority(channelQuery):
+        db.session.close()
+        return "Not authorized to delete messages"
+
+    if "messageId" not in message:
+        db.session.close()
+        return "No message to delete"
+    messageId = str(message["messageId"])
+
+    if "messageUser" not in message:
+        db.session.close()
+        return "No user with that message"
+    messagerUsername = str(message["messageUser"])
+
+    userQuery = Sec.User.query.filter_by(
+        username=messagerUsername
+    ).with_entities(Sec.User.id, Sec.User.uuid).first()
+
+    # Messages belonging to existing users should be double-checked before deletion.
+    if userQuery is not None:
+        # You may delete your own message.
+        if current_user.id != userQuery.id:
+            if not cachedDbCalls.IsUserGCMByUUID(current_user.uuid):
+                if channelQuery.owningUser == userQuery.id:
+                    db.session.close()
+                    return "Cannot delete Channel Owner's message."
+
+                if cachedDbCalls.IsUserGCMByUUID(userQuery.uuid):
+                    db.session.close()
+                    return "Cannot delete Global Chat Mod's message."
+
+    timestamp = datetime.datetime.utcnow()
+
+    newBannedMessage = banList.chatBannedMessages(
+        messageId, timestamp, channelLoc
+    )
+    db.session.add(newBannedMessage)
+    db.session.commit()
+
+    banListOverflowQuery = (
+        banList.chatBannedMessages.query.filter_by(
+            channelLoc=channelLoc
+        ).count()
+    )
+    if banListOverflowQuery > 20:
+        banListOverflowMessageQuery = (
+            banList.chatBannedMessages.query.filter_by(
                 channelLoc=channelLoc
-            ).first()
-            if channelQuery is not None:
-                user = Sec.User.query.filter_by(id=current_user.id).first()
-                channelAffiliations = xmpp.getChannelAffiliations(channelLoc)
-                if user.uuid in channelAffiliations:
-                    userAffiliation = channelAffiliations[user.uuid]
-                    if userAffiliation == "owner" or userAffiliation == "admin":
-                        newBannedMessage = banList.chatBannedMessages(
-                            messageId, timestamp, channelLoc
-                        )
-                        db.session.add(newBannedMessage)
-                        db.session.commit()
-                        banListOverflowQuery = (
-                            banList.chatBannedMessages.query.filter_by(
-                                channelLoc=channelLoc
-                            ).count()
-                        )
-                        if banListOverflowQuery > 20:
-                            banListOverflowMessageQuery = (
-                                banList.chatBannedMessages.query.filter_by(
-                                    channelLoc=channelLoc
-                                )
-                                .order_by(banList.chatBannedMessages.timestamp.asc())
-                                .first()
-                            )
-                            if banListOverflowMessageQuery != None:
-                                db.session.delete(banListOverflowMessageQuery)
-                                db.session.commit()
-                        emit("deleteMessage", messageId, broadcast=True)
+            )
+            .order_by(banList.chatBannedMessages.timestamp.asc())
+            .first()
+        )
+        if banListOverflowMessageQuery != None:
+            db.session.delete(banListOverflowMessageQuery)
+            db.session.commit()
+    emit("deleteMessage", messageId, broadcast=True)
     db.session.close()
     return "OK"

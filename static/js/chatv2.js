@@ -828,7 +828,7 @@ function displayProfileBox(elem) {
         }
         if (messageDivId != undefined) {
             deleteMessageButton.style.display = "block";
-            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
+            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId, username); });
         }
     }
 
@@ -871,8 +871,12 @@ function changeNickName() {
     showLoginWindow();
 }
 
-function messageDeleteRequest(messageDivId) {
-    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId });
+function messageDeleteRequest(messageDivId, messageUsername) {
+    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId, messageUser: messageUsername }, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
 }
 
 socket.on('deleteMessage', function (messageId) {
