@@ -547,33 +547,46 @@ function queryOccupants() {
   return true;
 }
 
-// Update CHATSTATUS Variable with JID, Username, Role, & Affiliation
+// Send query to update CHATSTATUS Variable
 function statusCheck() {
-  var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-
-  CHATSTATUS['username'] = roomsData.nick;
-  var presumedUserObj = roomsData.roster[CHATSTATUS['username']];
-  if (presumedUserObj != undefined) {
-      if (presumedUserObj.jid === CHATSTATUS['jid']) {
-          CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
-          CHATSTATUS['role'] = presumedUserObj.role;
-      }
-  } else {
+    const roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
+    CHATSTATUS['username'] = roomsData.nick;
+    if (!roomsData.roster.hasOwnProperty(CHATSTATUS['username'])){
       CHATSTATUS['affiliation'] = "none";
       CHATSTATUS['role'] = "none";
-  }
 
-  // Update UI based on Roles
-    if (CHATSTATUS['role'] === "moderator") {
-      document.getElementById('joinPartButton').style.display = "inline";
-      document.getElementById('modDisplayButton').style.display = "inline";
-    } else {
       document.getElementById('joinPartButton').style.display = "none";
       document.getElementById('modDisplayButton').style.display = "none";
-  }
 
-  return true;
+      return;
+    }
+
+    const presumedUserObj = roomsData.roster[CHATSTATUS['username']];
+    CHATSTATUS['role'] = presumedUserObj['role'];
+
+    socket.emit('statusTrueAffil', {
+        "channelLoc": ROOMNAME,
+        "uuid": CHATSTATUS['jid'].split('@',2)[0]
+    }, (responseMsg) => {
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Status Check Failed");
+            return;
+        }
+    });
+    return true;
 }
+
+// Update CHATSTATUS Variable with Username, Role, & Affiliation
+socket.on('trueAffilUpdate', function (trueAffil) {
+    if (trueAffil !== "member" && trueAffil !== "none") {
+        document.getElementById('joinPartButton').style.display = "inline";
+        document.getElementById('modDisplayButton').style.display = "inline";
+    }
+
+    CHATSTATUS['affiliation'] = trueAffil;
+
+    return true;
+});
 
 socket.on('channelOccups', function (occupantsString) {
   const occupantsRaw = JSON.parse(occupantsString);

@@ -34,6 +34,30 @@ def getChannelOccups(message):
 
     return "OK"
 
+@socketio.on("statusTrueAffil")
+def statusTrueAffil(message):
+    if "channelLoc" not in message:
+        return "No channel provided"
+    if "uuid" not in message:
+        return "No uuid provided"
+
+    channelLoc = str(message["channelLoc"])
+    user_uuid = str(message["uuid"])
+
+    true_affil = 'none'
+    if cachedDbCalls.IsUserGCMByUUID(user_uuid):
+        true_affil = 'gcm'
+    else:
+        true_affil = xmpp.getChannelAffiliation(channelLoc, user_uuid)
+
+    emit(
+        "trueAffilUpdate",
+        true_affil,
+        broadcast=False,
+    )
+
+    return "OK"
+
 @socketio.on("addMod")
 def addMod(message):
     if not current_user.is_authenticated:

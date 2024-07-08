@@ -237,6 +237,13 @@ def getChannelOptions(channelLoc: str) -> dict:
 
     return optionsDict
 
+def getChannelAffiliation(channelLoc: str, user_uuid: str) -> str:
+    return ejabberd.get_room_affiliation(
+        channelLoc,
+        f"conference.{defaultChatDomain}",
+        user_uuid + "@" + defaultChatDomain
+    )['affiliation']
+
 def getChannelAffiliations(channelLoc: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
     roomAffiliationJSON = ejabberd.get_room_affiliations(
