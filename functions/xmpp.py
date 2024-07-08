@@ -2,6 +2,7 @@ from collections.abc import Iterator
 
 import logging
 from flask import current_app
+from flask_security import current_user
 from classes.settings import settings
 from classes import Channel
 from classes.Sec import User
@@ -13,6 +14,24 @@ from app import ejabberd
 from globals.globalvars import room_config, defaultChatDomain
 
 log = logging.getLogger("app.functions.xmpp")
+
+def have_admin_authority(channelQuery) -> bool:
+    if cachedDbCalls.IsUserGCMByUUID(current_user.uuid):
+        return True
+
+    if channelQuery.owningUser == current_user.id:
+        return True
+
+    channelAffiliations = getChannelAffiliations(channelQuery.channelLoc)
+    if current_user.uuid not in channelAffiliations:
+        # This can happen if the user is a Guest - i.e. has an affiliation of "none".
+        return False
+
+    userAffiliation = channelAffiliations[current_user.uuid]
+    if not (userAffiliation == "owner" or userAffiliation == "admin"):
+        return False
+
+    return True
 
 def set_user_affiliation(userUuid, channelLocation, new_affil) -> None:
     ejabberd.set_room_affiliation(
