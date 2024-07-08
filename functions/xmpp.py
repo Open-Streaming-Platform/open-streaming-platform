@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+
 import logging
 from flask import current_app
 from classes.settings import settings
@@ -185,6 +187,26 @@ def cleanInvalidRooms() -> None:
         {"level": "info", "message": f"Completed Pruning Invalid Rooms - {str(count)}"}
     )
 
+def getChannelOccupants(channelLoc) -> Iterator[dict]:
+    affiliations = getChannelAffiliations(channelLoc)
+
+    for item in ejabberd.get_room_occupants(
+        channelLoc, "conference." + defaultChatDomain
+    )['occupants']:
+        occupant = {}
+        for kv_item in item['occupant']: # A list of dictionaries, each with only one key-value pair.
+            for key, val in kv_item.items():
+                occupant[key] = val
+        
+        user_uuid = occupant['jid'].split('@',1)[0]
+        if cachedDbCalls.IsUserGCMByUUID(user_uuid):
+            occupant['affiliation'] = 'gcm'
+        elif user_uuid in affiliations:
+            occupant['affiliation'] = affiliations[user_uuid]
+        else:
+            occupant['affiliation'] = "none"
+
+        yield occupant
 
 def getChannelCounts(channelLoc: str) -> int:
     sysSettings = cachedDbCalls.getSystemSettings()

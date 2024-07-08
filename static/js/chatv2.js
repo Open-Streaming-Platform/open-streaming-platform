@@ -1,7 +1,6 @@
 var debug = false;
 var connection = null;
 var fullJID = null;
-var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 var modDisplayActive = false;
@@ -539,8 +538,12 @@ function scrollChatWindow() {
 
 // Retrieve Room Roster and Pass to Function to Parse Occupants
 function queryOccupants() {
-  var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-  parseOccupants(roomsData);
+    socket.emit('getChannelOccups', {channelLoc: ROOMNAME}, (responseMsg) => {
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Query Occupants Failed");
+            return;
+        }
+    });
   return true;
 }
 
@@ -572,75 +575,63 @@ function statusCheck() {
   return true;
 }
 
-function parseOccupants(resp) {
-  OccupantsArray = [];
-  var elements = resp['roster'];
+socket.on('channelOccups', function (occupantsString) {
+  const occupantsRaw = JSON.parse(occupantsString);
+  const OccupantsArray = [];
 
   // Parse Occupant Data and Store in Occupants Array
-  for (user in elements) {
-      var username = sanitize(elements[user]['nick']);
-      var affiliation = elements[user]['affiliation'];
-      var role = elements[user]['role'];
-      var jid = elements[user]['jid']
-      addUser(username, affiliation, role, jid);
+  for (const user of occupantsRaw) {
+      var role = user['role'];
+      if (role == null) {
+        continue;
+      }
+      var username = sanitize(user['nick']);
+      if (OccupantsArray.some(el => el.username === username)) {
+        continue;
+      }
+
+      OccupantsArray.push({
+        "username": username,
+        "affiliation": user['affiliation'],
+        "role": role,
+        "jid": user['jid']
+    });
   }
   // Handle User Count
   var userCount = OccupantsArray.length;
   document.getElementById('chatTotal').innerHTML = userCount;
 
-  var chatMembersArray = {moderator:[], participant:[], visitor:[], none:[]};
-  for (let i = 0; i < OccupantsArray.length; i++) {
-      chatMembersArray[OccupantsArray[i]['role']].push(OccupantsArray[i]);
-  }
+  const chatListMap = {
+    "gcm":'GlobalChatModList',
+    "owner":'OwnerList',
+    "admin":'ModeratorList',
+    "member":'ParticipantList',
+    "none":'VisitorList'
+  };
+
   // Update the chatMembers Div with listing of Members
-
-  // Moderators
-  document.getElementById('ModeratorList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['moderator'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
-      document.getElementById('ModeratorList').appendChild(userEntry)
+  for (const affil in chatListMap) {
+    document.getElementById(chatListMap[affil]).textContent = "";
   }
+  for (const user of OccupantsArray) {
+    const userDiv = document.createElement('div');
+    userDiv.className = "member my-1";
 
-  // Admins
-  document.getElementById('ParticipantList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['participant'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
-      document.getElementById('ParticipantList').appendChild(userEntry)
-  }
+    const { username, affiliation } = user;
 
-  // Visitor
-  document.getElementById('VisitorList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['visitor'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
-      document.getElementById('VisitorList').appendChild(userEntry)
+    let htmlString = `<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">${username}</a></span>`;
+    if (affiliation === 'owner') {
+        htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-owner-${username}">${username}</a></span>`;
+    } else if (affiliation === 'gcm') {
+        htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-gcm-${username}">${username}</a></span>`;
+    }
+    userDiv.innerHTML = htmlString;
+
+    document.getElementById(chatListMap[affiliation]).appendChild(userDiv);
   }
 
   return true;
-}
-
-function userExists(username) {
-  return OccupantsArray.some(function(el) {
-    return el.username === username;
-  });
-}
-
-function addUser(username, affiliation, role, jid) {
-  if (userExists(username)) {
-    return false;
-  } else if (role == null) {
-      return false;
-  } else {
-      OccupantsArray.push({ username: username, affiliation: affiliation, role: role, jid: jid });
-  }
-
-  return true;
-}
+});
 
 function exitRoom(room) {
   console.log("Left Room: " + room);

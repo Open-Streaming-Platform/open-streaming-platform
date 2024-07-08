@@ -3,6 +3,7 @@ from flask_socketio import emit, join_room
 from sqlalchemy.sql.expression import func
 from sqlalchemy import asc
 import datetime
+from json import dumps as json_dumps
 
 from classes.shared import db, socketio
 from classes import Channel
@@ -14,6 +15,24 @@ from functions import xmpp
 from functions import cachedDbCalls
 
 from globals import globalvars
+
+@socketio.on("getChannelOccups")
+def getChannelOccups(message):
+    channelLoc = str(message["channelLoc"])
+    if cachedDbCalls.getChannelIDFromLocation(channelLoc) is None:
+        return "Channel does not exist."
+
+    final_list = []
+    for occupant in xmpp.getChannelOccupants(channelLoc):
+        final_list.append(occupant)
+
+    emit(
+        "channelOccups",
+        json_dumps(final_list),
+        broadcast=False,
+    )
+
+    return "OK"
 
 @socketio.on("addMod")
 def addMod(message):
