@@ -306,10 +306,7 @@ function room_pres_handler(a, b, c) {
   var messageTimestamp = moment().format('hh:mm A');
     if (presenceType === "unavailable") {
         var msgfrom = "SERVER";
-        if (status.includes("307")) {
-            msg = Strophe.getResourceFromJid(from) + " was kicked from the room.";
-            serverMessage(msg);
-        } else if (status.includes("301")) {
+        if (status.includes("301")) {
             msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
             serverMessage(msg);
         } else if (showpartjoin == "True") {
@@ -342,10 +339,7 @@ function room_pres_handler(a, b, c) {
           reasonCodeSpan = document.getElementById('reasonCode');
           reasonTextSpan = document.getElementById('reasonText');
 
-          if (status.includes("307")) {
-              reasonCodeSpan.textContent = "307";
-              reasonTextSpan.textContent = "You have been kicked from the room.";
-          } else if (status.includes("301")) {
+          if (status.includes("301")) {
               reasonCodeSpan.textContent = "301";
               reasonTextSpan.textContent = "You have been banned from the room.";
           } else if (status.includes("321")) {
@@ -701,11 +695,6 @@ function deop(username) {
     return true;
 }
 
-function kick(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].kick();
-    return true;
-}
-
 function makeMember(username) {
     connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].member();
     return true;
@@ -765,21 +754,9 @@ function toggleMute() {
     }
 }
 
-function modKick() {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    kick(username);
-    closeProfileBox();
-}
-
 function modBan() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     ban(username);
-    closeProfileBox();
-}
-
-function modSetAffiliation(affiliation) {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyAffiliation(affiliation);
     closeProfileBox();
 }
 
