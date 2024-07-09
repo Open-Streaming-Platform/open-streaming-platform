@@ -775,8 +775,15 @@ function modBan() {
 }
 
 function modSetRole(role) {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyRole(role);
+    const username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    const roster = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster;
+    if (
+        !roster.hasOwnProperty(username)
+    ) {
+        createNewBSAlert(`${username} not found!`, "Failed");
+        return;
+    }
+    roster[username].modifyRole(role);
     closeProfileBox();
 }
 
