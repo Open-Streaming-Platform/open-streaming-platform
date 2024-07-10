@@ -154,7 +154,9 @@ function onConnect(status) {
     CHATSTATUS['jid'] = fullJID;
     jointime = moment();
     messageDisplayThreshold = moment().subtract(chatHistory, 'days');
-    occupantCheck = setInterval(queryOccupants, 5000);
+    setTimeout(() => {
+        occupantCheck = setInterval(queryOccupants, 5000);
+    }, 3000);
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
@@ -536,9 +538,23 @@ function scrollChatWindow() {
   ChatContentWindow.scrollTop = ChatContentWindow.scrollHeight - ChatContentWindow.clientHeight;
 }
 
+function clickRefreshMembers() {
+    clearInterval(occupantCheck);
+    queryOccupants();
+    occupantCheck = setInterval(queryOccupants, 5000);
+}
+
+function clickRefreshStatus() {
+    clearInterval(chatDataUpdate);
+    statusCheck();
+    chatDataUpdate = setInterval(statusCheck, 5000);
+}
+
 // Retrieve Room Roster and Pass to Function to Parse Occupants
 function queryOccupants() {
+    document.getElementById('btnRefreshMembers').disabled = true;
     socket.emit('getChannelOccups', {channelLoc: ROOMNAME}, (responseMsg) => {
+        document.getElementById('btnRefreshMembers').disabled = false;
         if (responseMsg !== 'OK') {
             createNewBSAlert(responseMsg, "Query Occupants Failed");
             return;
@@ -549,6 +565,7 @@ function queryOccupants() {
 
 // Send query to update CHATSTATUS Variable
 function statusCheck() {
+    document.getElementById('btnRefreshSelf').disabled = true;
     const roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
     CHATSTATUS['username'] = roomsData.nick;
     if (!roomsData.roster.hasOwnProperty(CHATSTATUS['username'])){
@@ -568,6 +585,7 @@ function statusCheck() {
         "channelLoc": ROOMNAME,
         "uuid": CHATSTATUS['jid'].split('@',2)[0]
     }, (responseMsg) => {
+        document.getElementById('btnRefreshSelf').disabled = false;
         if (responseMsg !== 'OK') {
             createNewBSAlert(responseMsg, "Status Check Failed");
             return;

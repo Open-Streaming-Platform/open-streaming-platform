@@ -966,6 +966,10 @@
 
 {% macro core_chat_members_view() %}
 <div id="chatMembers" class="chatMembersOverlay">
+  <div class="row w-100">
+    <button id="btnRefreshMembers" onclick="clickRefreshMembers();" class="col-6 btn btn-warning">Refresh Members</button>
+    <button id="btnRefreshSelf" onclick="clickRefreshStatus();" class="col-6 btn btn-warning">Refresh Own Status</button>
+  </div>
   <div class="membersList card my-3">
       <div class="card-header bg-primary"><b>Global Chat Mod</b></div>
       <div id="GlobalChatModList" class="card-body"></div>
