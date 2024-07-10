@@ -699,46 +699,6 @@ function unban(uuid) {
     return true;
 }
 
-function admin(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].admin();
-    return true;
-}
-
-function deop(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].deop();
-    return true;
-}
-
-function makeMember(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].member();
-    return true;
-}
-
-function op(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].op();
-    return true;
-}
-
-function revoke(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].revoke();
-    return true;
-}
-
-function devoice(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].mute();
-    return true;
-}
-
-function voice(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].voice();
-    return true;
-}
-
-function setAffiliation(username, affiliation) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(username + '@' + server, affiliation);
-    return true;
-}
-
 // User Controls
 function mute(username) {
     CHATSTATUS.muteList.push(username);
