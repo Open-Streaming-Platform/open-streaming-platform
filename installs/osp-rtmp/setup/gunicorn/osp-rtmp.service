@@ -7,7 +7,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/opt/osp-rtmp
 Environment="PATH=/opt/osp-rtmp/venv/bin"
-ExecStart=/opt/osp-rtmp/venv/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:5099 --reload
+ExecStart=/opt/osp-rtmp/venv/bin/gunicorn app:app -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --bind 0.0.0.0:5099 --reload --access-logfile /opt/osp-rtmp/logs/access.log --error-logfile /opt/osp-rtmp/logs/error.log
 
 [Install]
 WantedBy=multi-user.target
