@@ -436,20 +436,6 @@ def init(app, user_datastore):
         sysSettings = settings.settings.query.first()
 
         app.config["SERVER_NAME"] = None
-        app.config["SECURITY_EMAIL_SENDER"] = config.smtpSendAs
-        app.config["MAIL_DEFAULT_SENDER"] = config.smtpSendAs
-        app.config["MAIL_SERVER"] = config.smtpServerAddress
-        app.config["MAIL_PORT"] = int(config.smtpServerPort)
-        if config.smtpEncryption == "ssl":
-            app.config["MAIL_USE_SSL"] = True
-        else:
-            app.config["MAIL_USE_SSL"] = False
-        if config.smtpEncryption == "tls":
-            app.config["MAIL_USE_TLS"] = True
-        else:
-            app.config["MAIL_USE_TLS"] = False
-        app.config["MAIL_USERNAME"] = config.smtpUsername
-        app.config["MAIL_PASSWORD"] = config.smtpPassword
         app.config[
             "SECURITY_FORGOT_PASSWORD_TEMPLATE"
         ] = "security/forgot_password.html"
