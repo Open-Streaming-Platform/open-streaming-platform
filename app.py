@@ -209,6 +209,20 @@ app.config["SECURITY_CONFIRMABLE"] = config.requireEmailRegistration
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = config.requireEmailRegistration
 app.config["SECURITY_CHANGABLE"] = True
 app.config["SECURITY_TRACKABLE"] = True
+app.config["SECURITY_EMAIL_SENDER"] = config.smtpSendAs
+app.config["MAIL_DEFAULT_SENDER"] = config.smtpSendAs
+app.config["MAIL_SERVER"] = config.smtpServerAddress
+app.config["MAIL_PORT"] = int(config.smtpServerPort)
+if config.smtpEncryption == "ssl":
+    app.config["MAIL_USE_SSL"] = True
+else:
+    app.config["MAIL_USE_SSL"] = False
+if config.smtpEncryption == "tls":
+    app.config["MAIL_USE_TLS"] = True
+else:
+    app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USERNAME"] = config.smtpUsername
+app.config["MAIL_PASSWORD"] = config.smtpPassword
 app.config["SECURITY_TWO_FACTOR_ENABLED_METHODS"] = ["authenticator"]
 app.config["SECURITY_TWO_FACTOR"] = True
 app.config["SECURITY_TWO_FACTOR_ALWAYS_VALIDATE"] = False
