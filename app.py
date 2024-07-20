@@ -625,6 +625,34 @@ from classes.shared import email
 email.init_app(app)
 email.app = app
 
+sysSettings = cachedDbCalls.getSystemSettings()
+
+app.config["SERVER_NAME"] = None
+try:
+    app.config[
+        "SECURITY_FORGOT_PASSWORD_TEMPLATE"
+    ] = "security/forgot_password.html"
+    app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
+    app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
+    app.config[
+        "SECURITY_SEND_CONFIRMATION_TEMPLATE"
+    ] = "security/send_confirmation.html"
+    app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
+        sysSettings.siteName + " - Password Reset Request"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
+        sysSettings.siteName + " - Welcome!"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
+        sysSettings.siteName + " - Password Reset Notification"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
+        sysSettings.siteName + " - Email Confirmation Request"
+    )
+except:
+    pass
+
 app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
 try:

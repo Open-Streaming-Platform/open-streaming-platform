@@ -435,29 +435,6 @@ def init(app, user_datastore):
         log.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
 
-        app.config["SERVER_NAME"] = None
-        app.config[
-            "SECURITY_FORGOT_PASSWORD_TEMPLATE"
-        ] = "security/forgot_password.html"
-        app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
-        app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
-        app.config[
-            "SECURITY_SEND_CONFIRMATION_TEMPLATE"
-        ] = "security/send_confirmation.html"
-        app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
-            sysSettings.siteName + " - Password Reset Request"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
-            sysSettings.siteName + " - Welcome!"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
-            sysSettings.siteName + " - Password Reset Notification"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
-            sysSettings.siteName + " - Email Confirmation Request"
-        )
-
         log.info({"level": "info", "message": "Database Initialization Completed"})
 
         return True
