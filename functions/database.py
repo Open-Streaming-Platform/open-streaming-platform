@@ -298,7 +298,7 @@ def dbFixes():
     clipQuery = RecordedVideo.Clips.query.filter_by(published=None).update(dict(published=True))
     db.session.commit()
 
-    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).update(dict(autoPublish=True)).all()
+    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).update(dict(autoPublish=True))
     db.session.commit()
 
     # Fixes for Channels that do not have the restream settings initialized
