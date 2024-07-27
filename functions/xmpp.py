@@ -38,26 +38,48 @@ def buildMissingRooms() -> bool:
                     + str(channel.channelLoc),
                 }
             )
-            ejabberd.create_room(
-                channel.channelLoc,
-                f"conference.{defaultChatDomain}",
-                defaultChatDomain,
-            )
 
-            for key, value in room_config.items():
-                ejabberd.change_room_option(
-                    channel.channelLoc,
-                    f"conference.{defaultChatDomain}",
-                    key,
-                    value,
-                )
+            buildRoom(channel.channelLoc, channel.userUUID)
 
-            ejabberd.set_room_affiliation(
-                channel.channelLoc,
-                f"conference.{defaultChatDomain}",
-                f"{channel.userUUID}@{defaultChatDomain}",
-                "owner",
-            )
+    return True
+
+
+def buildRoom(channel_loc, owner_uuid, channel_title = "", channel_desc = "") -> bool:
+    ejabberd.create_room(
+        channel_loc,
+        f"conference.{defaultChatDomain}",
+        defaultChatDomain,
+    )
+
+    for key, value in room_config.items():
+        ejabberd.change_room_option(
+            channel_loc,
+            f"conference.{defaultChatDomain}",
+            key,
+            value,
+        )
+
+    if channel_title != "":
+        ejabberd.change_room_option(
+            channel_loc,
+            f"conference.{defaultChatDomain}",
+            "title",
+            channel_title,
+        )
+    if channel_desc != "":
+        ejabberd.change_room_option(
+            channel_loc,
+            f"conference.{defaultChatDomain}",
+            "description",
+            channel_desc,
+        )
+
+    ejabberd.set_room_affiliation(
+        channel_loc,
+        f"conference.{defaultChatDomain}",
+        f"{owner_uuid}@{defaultChatDomain}",
+        "owner",
+    )
 
     return True
 
@@ -166,6 +188,25 @@ def getChannelCounts(channelLoc: str) -> int:
 
     return currentViewers
 
+def getChannelOptions(channelLoc: str) -> dict:
+    optionsDict = {}
+
+    xmppQuery = ejabberd.get_room_options(
+        channelLoc, f"conference.{defaultChatDomain}"
+    )
+    if "options" in xmppQuery:
+        for option in xmppQuery["options"]:
+            key = None
+            value = None
+            for entry in option["option"]:
+                if "name" in entry:
+                    key = entry["name"]
+                elif "value" in entry:
+                    value = entry["value"]
+            if key is not None and value is not None:
+                optionsDict[key] = value
+
+    return optionsDict
 
 def getChannelAffiliations(channelLoc: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
