@@ -515,6 +515,7 @@ app.logger.info(
 try:
     database.init(app, user_datastore)
 except Exception as e:
+    db.session.rollback()
     app.logger.error(
         {
             "level": "error",
