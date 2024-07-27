@@ -3,6 +3,7 @@ import json
 import uuid
 import re
 import bleach
+import xmlrpc.client
 
 from flask import (
     request,
@@ -106,14 +107,22 @@ def settings_channels_page():
                 xmppQuery = ejabberd.get_room_options(
                     chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
-            except AttributeError:
-                # If Channel Doesn't Exist in ejabberd, Create
-                xmpp.buildRoom(
-                    chan.channelLoc,
-                    current_user.uuid,
-                    channel_title=chan.channelName,
-                    channel_desc=current_user.username + 's chat room for the channel "' + chan.channelName + '"'
+                xmppQuery = ejabberd.get_room_affiliations(
+                    chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
+            except (AttributeError, xmlrpc.client.Fault):
+                # If Channel Doesn't Exist in ejabberd, Create
+                try:
+                    xmpp.buildRoom(
+                        chan.channelLoc,
+                        current_user.uuid,
+                        channel_title=chan.channelName,
+                        channel_desc=current_user.username + 's chat room for the channel "' + chan.channelName + '"'
+                    )
+                except:
+                    # Attempting to create a chat-room that already exists...
+                    # raises a "Room Already Exists" xmlrpc.client.Fault.
+                    pass
             except:
                 # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
                 return redirect(url_for(".settings_channels_page"))

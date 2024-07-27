@@ -49,7 +49,7 @@ class ejabberdctl(object):
         except BadStatusLine as e:
             raise Exception("{}\n{}".format(self.errors["connect"], str(e)))
         except xmlrpc.client.Fault as e:
-            raise Exception(e)
+            raise e
 
     def add_rosteritem(self, localuser, localserver, user, server, nick, group, subs):
         """
