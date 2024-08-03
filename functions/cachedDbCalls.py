@@ -479,7 +479,7 @@ def getChannelTagName(tagId: int):
     return (
         Channel.channel_tags.query.filter_by(id=tagId)
         .with_entities(Channel.channel_tags.name)
-        .first()
+        .scalar()
     )
 
 
