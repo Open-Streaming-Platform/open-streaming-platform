@@ -170,7 +170,7 @@ class api_1_ListUser(Resource):
 @api.doc(
     params={
         "username": "Username of OSP User",
-        "role": "Role being added or deleted. (Admin, User, Streamer, Recorder, Uploader)",
+        "role": "Role being added or deleted. (Admin, Global Chat Mod, User, Streamer, Recorder, Uploader)",
     }
 )
 class api_1_RoleMgmt(Resource):

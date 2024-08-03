@@ -264,13 +264,18 @@ class ejabberdctl(object):
     # TODO def get_offline_count(self):
     # Get the number of unread offline messages
 
+    def get_room_affiliation(self, name, service, jid):
+        return self.ctl("get_room_affiliation", {"name": name, "service": service, "jid": jid})
+        # Returns a single string with the user's affiliation.
+
     def get_room_affiliations(self, name, service):
         return self.ctl("get_room_affiliations", {"name": name, "service": service})
 
     # Get the list of affiliations of a MUC room
 
-    # TODO def get_room_occupants(self, name, service):
     # Get the list of occupants of a MUC room
+    def get_room_occupants(self, name, service):
+        return self.ctl("get_room_occupants", {"name": name, "service": service})
 
     def get_room_occupants_number(self, name, service):
         return self.ctl("get_room_occupants_number", {"name": name, "service": service})

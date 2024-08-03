@@ -40,6 +40,9 @@ def checkDefaults(user_datastore):
     user_datastore.find_or_create_role(
         name="Uploader", description="Uploader", default=False
     )
+    user_datastore.find_or_create_role(
+        name="GlobalChatMod", description="Global Chat Moderator", default=False
+    )
 
     log.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]

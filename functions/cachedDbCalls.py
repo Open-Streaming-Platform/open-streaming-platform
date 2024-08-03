@@ -667,6 +667,15 @@ def invalidateChannelCache(channelId: int) -> bool:
         return True
     return False
 
+def invalidateGCMCache(user_uuid: str) -> bool:
+    if Sec.User.query.filter_by(
+        uuid=user_uuid
+    ).with_entities(Sec.User.id).first() is None:
+        return False
+    
+    cache.delete_memoized(IsUserGCMByUUID, user_uuid)
+
+    return True
 
 def invalidateVideoCache(videoId: int) -> bool:
     cachedVideo = getVideo(videoId)
@@ -1188,6 +1197,14 @@ def getUserByUsernameDict(username: str) -> dict:
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
     return returnData
+
+@cache.memoize(timeout=600)
+def IsUserGCMByUUID(user_uuid: str) -> bool:
+    return Sec.Role.query.filter_by(
+        name="GlobalChatMod"
+    ).one().users.filter_by(
+        uuid=user_uuid
+    ).with_entities(Sec.User.id).first() is not None
 
 @cache.memoize(timeout=60)
 def getUsers() -> list:

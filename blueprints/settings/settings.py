@@ -161,9 +161,11 @@ def initialSetup():
             user_datastore.find_or_create_role(name="User", description="User")
             user_datastore.find_or_create_role(name="Streamer", description="Streamer")
             user_datastore.find_or_create_role(name="Recorder", description="Recorder")
+            user_datastore.find_or_create_role(name="GlobalChatMod", description="Global Chat Moderator")
             user_datastore.find_or_create_role(name="Uploader", description="Uploader")
 
             user_datastore.add_role_to_user(user, "Admin")
+            user_datastore.add_role_to_user(user, "GlobalChatMod")
             user_datastore.add_role_to_user(user, "Streamer")
             user_datastore.add_role_to_user(user, "Recorder")
             user_datastore.add_role_to_user(user, "Uploader")

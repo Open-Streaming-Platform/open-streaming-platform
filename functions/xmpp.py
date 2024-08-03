@@ -1,5 +1,8 @@
+from collections.abc import Iterator
+
 import logging
 from flask import current_app
+from flask_security import current_user
 from classes.settings import settings
 from classes import Channel
 from classes.Sec import User
@@ -12,6 +15,31 @@ from globals.globalvars import room_config, defaultChatDomain
 
 log = logging.getLogger("app.functions.xmpp")
 
+def have_admin_authority(channelQuery) -> bool:
+    if cachedDbCalls.IsUserGCMByUUID(current_user.uuid):
+        return True
+
+    if channelQuery.owningUser == current_user.id:
+        return True
+
+    channelAffiliations = getChannelAffiliations(channelQuery.channelLoc)
+    if current_user.uuid not in channelAffiliations:
+        # This can happen if the user is a Guest - i.e. has an affiliation of "none".
+        return False
+
+    userAffiliation = channelAffiliations[current_user.uuid]
+    if not (userAffiliation == "owner" or userAffiliation == "admin"):
+        return False
+
+    return True
+
+def set_user_affiliation(userUuid, channelLocation, new_affil) -> None:
+    ejabberd.set_room_affiliation(
+        channelLocation,
+        "conference." + defaultChatDomain,
+        userUuid + "@" + defaultChatDomain,
+        new_affil
+    )
 
 def sanityCheck() -> bool:
     buildMissingRooms()
@@ -178,6 +206,26 @@ def cleanInvalidRooms() -> None:
         {"level": "info", "message": f"Completed Pruning Invalid Rooms - {str(count)}"}
     )
 
+def getChannelOccupants(channelLoc) -> Iterator[dict]:
+    affiliations = getChannelAffiliations(channelLoc)
+
+    for item in ejabberd.get_room_occupants(
+        channelLoc, "conference." + defaultChatDomain
+    )['occupants']:
+        occupant = {}
+        for kv_item in item['occupant']: # A list of dictionaries, each with only one key-value pair.
+            for key, val in kv_item.items():
+                occupant[key] = val
+        
+        user_uuid = occupant['jid'].split('@',1)[0]
+        if cachedDbCalls.IsUserGCMByUUID(user_uuid):
+            occupant['affiliation'] = 'gcm'
+        elif user_uuid in affiliations:
+            occupant['affiliation'] = affiliations[user_uuid]
+        else:
+            occupant['affiliation'] = "none"
+
+        yield occupant
 
 def getChannelCounts(channelLoc: str) -> int:
     sysSettings = cachedDbCalls.getSystemSettings()
@@ -207,6 +255,13 @@ def getChannelOptions(channelLoc: str) -> dict:
                 optionsDict[key] = value
 
     return optionsDict
+
+def getChannelAffiliation(channelLoc: str, user_uuid: str) -> str:
+    return ejabberd.get_room_affiliation(
+        channelLoc,
+        f"conference.{defaultChatDomain}",
+        user_uuid + "@" + defaultChatDomain
+    )['affiliation']
 
 def getChannelAffiliations(channelLoc: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()

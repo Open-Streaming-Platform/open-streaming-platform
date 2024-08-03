@@ -1,7 +1,6 @@
 var debug = false;
 var connection = null;
 var fullJID = null;
-var OccupantsArray = [];
 var AvatarCache = {};
 var userListActive = false;
 var modDisplayActive = false;
@@ -155,7 +154,9 @@ function onConnect(status) {
     CHATSTATUS['jid'] = fullJID;
     jointime = moment();
     messageDisplayThreshold = moment().subtract(chatHistory, 'days');
-    occupantCheck = setInterval(queryOccupants, 5000);
+    setTimeout(() => {
+        occupantCheck = setInterval(queryOccupants, 5000);
+    }, 3000);
     chatDataUpdate = setInterval(statusCheck, 5000);
     return true;
   }
@@ -305,10 +306,7 @@ function room_pres_handler(a, b, c) {
   var messageTimestamp = moment().format('hh:mm A');
     if (presenceType === "unavailable") {
         var msgfrom = "SERVER";
-        if (status.includes("307")) {
-            msg = Strophe.getResourceFromJid(from) + " was kicked from the room.";
-            serverMessage(msg);
-        } else if (status.includes("301")) {
+        if (status.includes("301")) {
             msg = Strophe.getResourceFromJid(from) + " was banned from the room.";
             serverMessage(msg);
         } else if (showpartjoin == "True") {
@@ -341,10 +339,7 @@ function room_pres_handler(a, b, c) {
           reasonCodeSpan = document.getElementById('reasonCode');
           reasonTextSpan = document.getElementById('reasonText');
 
-          if (status.includes("307")) {
-              reasonCodeSpan.textContent = "307";
-              reasonTextSpan.textContent = "You have been kicked from the room.";
-          } else if (status.includes("301")) {
+          if (status.includes("301")) {
               reasonCodeSpan.textContent = "301";
               reasonTextSpan.textContent = "You have been banned from the room.";
           } else if (status.includes("321")) {
@@ -537,110 +532,131 @@ function scrollChatWindow() {
   ChatContentWindow.scrollTop = ChatContentWindow.scrollHeight - ChatContentWindow.clientHeight;
 }
 
+function clickRefreshMembers() {
+    clearInterval(occupantCheck);
+    queryOccupants();
+    occupantCheck = setInterval(queryOccupants, 5000);
+}
+
+function clickRefreshStatus() {
+    clearInterval(chatDataUpdate);
+    statusCheck();
+    chatDataUpdate = setInterval(statusCheck, 5000);
+}
+
 // Retrieve Room Roster and Pass to Function to Parse Occupants
 function queryOccupants() {
-  var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-  parseOccupants(roomsData);
+    document.getElementById('btnRefreshMembers').disabled = true;
+    socket.emit('getChannelOccups', {channelLoc: ROOMNAME}, (responseMsg) => {
+        document.getElementById('btnRefreshMembers').disabled = false;
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Query Occupants Failed");
+            return;
+        }
+    });
   return true;
 }
 
-// Update CHATSTATUS Variable with JID, Username, Role, & Affiliation
+// Send query to update CHATSTATUS Variable
 function statusCheck() {
-  var roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
-
-  CHATSTATUS['username'] = roomsData.nick;
-  var presumedUserObj = roomsData.roster[CHATSTATUS['username']];
-  if (presumedUserObj != undefined) {
-      if (presumedUserObj.jid === CHATSTATUS['jid']) {
-          CHATSTATUS['affiliation'] = presumedUserObj.affiliation;
-          CHATSTATUS['role'] = presumedUserObj.role;
-      }
-  } else {
+    document.getElementById('btnRefreshSelf').disabled = true;
+    const roomsData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE];
+    CHATSTATUS['username'] = roomsData.nick;
+    if (!roomsData.roster.hasOwnProperty(CHATSTATUS['username'])){
       CHATSTATUS['affiliation'] = "none";
       CHATSTATUS['role'] = "none";
-  }
 
-  // Update UI based on Roles
-    if (CHATSTATUS['role'] === "moderator") {
-      document.getElementById('joinPartButton').style.display = "inline";
-      document.getElementById('modDisplayButton').style.display = "inline";
-    } else {
       document.getElementById('joinPartButton').style.display = "none";
       document.getElementById('modDisplayButton').style.display = "none";
-  }
 
-  return true;
+      return;
+    }
+
+    const presumedUserObj = roomsData.roster[CHATSTATUS['username']];
+    CHATSTATUS['role'] = presumedUserObj['role'];
+
+    socket.emit('statusTrueAffil', {
+        "channelLoc": ROOMNAME,
+        "uuid": CHATSTATUS['jid'].split('@',2)[0]
+    }, (responseMsg) => {
+        document.getElementById('btnRefreshSelf').disabled = false;
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Status Check Failed");
+            return;
+        }
+    });
+    return true;
 }
 
-function parseOccupants(resp) {
-  OccupantsArray = [];
-  var elements = resp['roster'];
+// Update CHATSTATUS Variable with Username, Role, & Affiliation
+socket.on('trueAffilUpdate', function (trueAffil) {
+    if (trueAffil !== "member" && trueAffil !== "none") {
+        document.getElementById('joinPartButton').style.display = "inline";
+        document.getElementById('modDisplayButton').style.display = "inline";
+    }
+
+    CHATSTATUS['affiliation'] = trueAffil;
+
+    return true;
+});
+
+socket.on('channelOccups', function (occupantsString) {
+  const occupantsRaw = JSON.parse(occupantsString);
+  const OccupantsArray = [];
 
   // Parse Occupant Data and Store in Occupants Array
-  for (user in elements) {
-      var username = sanitize(elements[user]['nick']);
-      var affiliation = elements[user]['affiliation'];
-      var role = elements[user]['role'];
-      var jid = elements[user]['jid']
-      addUser(username, affiliation, role, jid);
+  for (const user of occupantsRaw) {
+      var role = user['role'];
+      if (role == null) {
+        continue;
+      }
+      var username = sanitize(user['nick']);
+      if (OccupantsArray.some(el => el.username === username)) {
+        continue;
+      }
+
+      OccupantsArray.push({
+        "username": username,
+        "affiliation": user['affiliation'],
+        "role": role,
+        "jid": user['jid']
+    });
   }
   // Handle User Count
   var userCount = OccupantsArray.length;
   document.getElementById('chatTotal').innerHTML = userCount;
 
-  var chatMembersArray = {moderator:[], participant:[], visitor:[], none:[]};
-  for (let i = 0; i < OccupantsArray.length; i++) {
-      chatMembersArray[OccupantsArray[i]['role']].push(OccupantsArray[i]);
-  }
+  const chatListMap = {
+    "gcm":'GlobalChatModList',
+    "owner":'OwnerList',
+    "admin":'ModeratorList',
+    "member":'ParticipantList',
+    "none":'VisitorList'
+  };
+
   // Update the chatMembers Div with listing of Members
-
-  // Moderators
-  document.getElementById('ModeratorList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['moderator'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['moderator'][i]['username'] + '</a></span>';
-      document.getElementById('ModeratorList').appendChild(userEntry)
+  for (const affil in chatListMap) {
+    document.getElementById(chatListMap[affil]).textContent = "";
   }
+  for (const user of OccupantsArray) {
+    const userDiv = document.createElement('div');
+    userDiv.className = "member my-1";
 
-  // Admins
-  document.getElementById('ParticipantList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['participant'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['participant'][i]['username'] + '</a></span>';
-      document.getElementById('ParticipantList').appendChild(userEntry)
-  }
+    const { username, affiliation } = user;
 
-  // Visitor
-  document.getElementById('VisitorList').innerHTML="";
-  for (let i = 0; i < chatMembersArray['visitor'].length; i++) {
-      var userEntry = document.createElement('div');
-      userEntry.className = "member my-1";
-      userEntry.innerHTML = '<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">' + chatMembersArray['visitor'][i]['username'] + '</a></span>';
-      document.getElementById('VisitorList').appendChild(userEntry)
+    let htmlString = `<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">${username}</a></span>`;
+    if (affiliation === 'owner') {
+        htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-owner-${username}">${username}</a></span>`;
+    } else if (affiliation === 'gcm') {
+        htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-gcm-${username}">${username}</a></span>`;
+    }
+    userDiv.innerHTML = htmlString;
+
+    document.getElementById(chatListMap[affiliation]).appendChild(userDiv);
   }
 
   return true;
-}
-
-function userExists(username) {
-  return OccupantsArray.some(function(el) {
-    return el.username === username;
-  });
-}
-
-function addUser(username, affiliation, role, jid) {
-  if (userExists(username)) {
-    return false;
-  } else if (role == null) {
-      return false;
-  } else {
-      OccupantsArray.push({ username: username, affiliation: affiliation, role: role, jid: jid });
-  }
-
-  return true;
-}
+});
 
 function exitRoom(room) {
   console.log("Left Room: " + room);
@@ -655,62 +671,31 @@ function hideUserMessages(nickname) {
 
 // Mod Controls
 function ban(username) {
-    if (typeof(connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid']) !== 'undefined') {
-        var userUUID = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username]['jid'].split('@')[0]
-        connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].ban();
-        socket.emit('banUser', {channelLoc: ROOMNAME, banUsername: username, banUserUUID: userUUID});
-        return true;
+    const banPackage = { "channelLoc": ROOMNAME, "banUsername": username };
+    if (connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster.hasOwnProperty(username)) {
+        const userData = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username];
+        if (userData['jid'] !== null) {
+            banPackage['banUserUUID'] = userData['jid'].split('@')[0];
+        }
     }
+
+    socket.emit('banUser', banPackage, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert(`${username} banned!`, "Success");
+    });
+    return true;
 }
 
 function unban(uuid) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(uuid + '@' + server, 'none');
-    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid});
-    return true;
-}
-
-function admin(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].admin();
-    return true;
-}
-
-function deop(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].deop();
-    return true;
-}
-
-function kick(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].kick();
-    return true;
-}
-
-function makeMember(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].member();
-    return true;
-}
-
-function op(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].op();
-    return true;
-}
-
-function revoke(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].revoke();
-    return true;
-}
-
-function devoice(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].mute();
-    return true;
-}
-
-function voice(username) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].voice();
-    return true;
-}
-
-function setAffiliation(username, affiliation) {
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].modifyAffiliation(username + '@' + server, affiliation);
+    socket.emit('unbanUser', {channelLoc: ROOMNAME, userUUID: uuid}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
     return true;
 }
 
@@ -743,27 +728,22 @@ function toggleMute() {
     }
 }
 
-function modKick() {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    kick(username);
-    closeProfileBox();
-}
-
 function modBan() {
     var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
     ban(username);
     closeProfileBox();
 }
 
-function modSetAffiliation(affiliation) {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyAffiliation(affiliation);
-    closeProfileBox();
-}
-
 function modSetRole(role) {
-    var username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
-    connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster[username].modifyRole(role);
+    const username = document.getElementById('newProfileBox').querySelector("span#profileBox-username").textContent;
+    const roster = connection.muc.rooms[ROOMNAME + '@' + ROOM_SERVICE].roster;
+    if (
+        !roster.hasOwnProperty(username)
+    ) {
+        createNewBSAlert(`${username} not found!`, "Failed");
+        return;
+    }
+    roster[username].modifyRole(role);
     closeProfileBox();
 }
 
@@ -815,14 +795,18 @@ function displayProfileBox(elem) {
 
     var modControlsBox = div.querySelector('div#profileBox-modControls');
     var deleteMessageButton = div.querySelector('div#profileBox-deleteMessage');
-    if (CHATSTATUS.role === "moderator") {
-        // Prevent Owner from Showing Controls on Themselves
-        if (!(username === CHATSTATUS['username'] && CHATSTATUS['affiliation'] === "owner")) {
+
+    modControlsBox.style.display = "none";
+    if (CHATSTATUS['affiliation'] !== "member" && CHATSTATUS['affiliation'] !== "none") {
+        if (document.getElementById(`a-gcm-${username}`) !== null) {
+            // Never display controls when looking at a Global Chat Mod
+            modControlsBox.style.display = "none";
+        } else {
             modControlsBox.style.display = "block";
         }
         if (messageDivId != undefined) {
             deleteMessageButton.style.display = "block";
-            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId); });
+            $(deleteMessageButton).click(function () { messageDeleteRequest(messageDivId, username); });
         }
     }
 
@@ -865,8 +849,12 @@ function changeNickName() {
     showLoginWindow();
 }
 
-function messageDeleteRequest(messageDivId) {
-    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId });
+function messageDeleteRequest(messageDivId, messageUsername) {
+    socket.emit('deleteMessageRequest', { channelLoc: channelLocation, messageId: messageDivId, messageUser: messageUsername }, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
 }
 
 socket.on('deleteMessage', function (messageId) {
