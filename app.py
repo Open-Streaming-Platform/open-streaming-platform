@@ -515,6 +515,7 @@ app.logger.info(
 try:
     database.init(app, user_datastore)
 except Exception as e:
+    db.session.rollback()
     app.logger.error(
         {
             "level": "error",
@@ -543,8 +544,12 @@ if r.get("OSP_XMPP_INIT_HANDLER") is None:
     from functions import xmpp
 
     try:
+        # The XMPP sanity check can sometimes fail because an invalid transaction has not been rolled back.
+        # Since db.session.rollback() just silently passes if there's nothing to roll back, we can put this here.
+        db.session.rollback()
         results = xmpp.sanityCheck()
     except Exception as e:
+        db.session.rollback()   # Use db.session.rollback() here as well, in case of a hanging invalid transaction.
         app.logger.error(
             {"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)}
         )
@@ -624,6 +629,34 @@ from classes.shared import email
 
 email.init_app(app)
 email.app = app
+
+sysSettings = cachedDbCalls.getSystemSettings()
+
+app.config["SERVER_NAME"] = None
+try:
+    app.config[
+        "SECURITY_FORGOT_PASSWORD_TEMPLATE"
+    ] = "security/forgot_password.html"
+    app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
+    app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
+    app.config[
+        "SECURITY_SEND_CONFIRMATION_TEMPLATE"
+    ] = "security/send_confirmation.html"
+    app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
+        sysSettings.siteName + " - Password Reset Request"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
+        sysSettings.siteName + " - Welcome!"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
+        sysSettings.siteName + " - Password Reset Notification"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
+        sysSettings.siteName + " - Email Confirmation Request"
+    )
+except:
+    pass
 
 app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache

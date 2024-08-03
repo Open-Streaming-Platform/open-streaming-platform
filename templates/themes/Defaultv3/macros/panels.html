@@ -966,6 +966,18 @@
 
 {% macro core_chat_members_view() %}
 <div id="chatMembers" class="chatMembersOverlay">
+  <div class="row w-100">
+    <button id="btnRefreshMembers" onclick="clickRefreshMembers();" class="col-6 btn btn-warning">Refresh Members</button>
+    <button id="btnRefreshSelf" onclick="clickRefreshStatus();" class="col-6 btn btn-warning">Refresh Own Status</button>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Global Chat Mod</b></div>
+      <div id="GlobalChatModList" class="card-body"></div>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Owner</b></div>
+      <div id="OwnerList" class="card-body"></div>
+  </div>
   <div class="membersList card my-3">
       <div class="card-header bg-primary"><b>Moderator</b></div>
       <div id="ModeratorList" class="card-body"></div>
@@ -1127,16 +1139,9 @@
       <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <li><h6 class="dropdown-header">Mod Controls</h6></li>
-          <li><button class="dropdown-item" type="button" onclick="modKick();">Kick</button></li>
           <li><button class="dropdown-item" type="button" onclick="modBan();">Ban</button></li>
           <li><hr class="dropdown-divider"></li>
-          <li><h6 class="dropdown-header">Change Role</h6></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Moderator</button></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Participant</button></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as Guest</button></li>
-          <li><hr class="dropdown-divider"></li>
           <li><h6 class="dropdown-header">Channel Voice Controls</h6></li>
-          <!--<li><button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button></li>-->
           <li><button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button></li>
           <li><button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button></li>
       </ul>
@@ -1751,6 +1756,22 @@
                         <div class="col-12">
                           <div class="card">
                             <div class="card-body">
+                              {% if gcm_users|length > 0 %}
+                              <div class="row">
+                                <div class="col-12" class="global-chat-mods">
+                                  <div class="row">
+                                    <div class="col-12 mb-2"><b>Global Chat Mods</b></div>
+                                  </div>
+                                  {% for gcm_user in gcm_users %}
+                                  <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                      <p>{{gcm_user.username}}</p>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                </div>
+                              </div>
+                              {% endif %}
                               <div class="form-row">
                                 <div class="form-group col-12 col-lg-6">
                                   <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add

@@ -40,6 +40,9 @@ def checkDefaults(user_datastore):
     user_datastore.find_or_create_role(
         name="Uploader", description="Uploader", default=False
     )
+    user_datastore.find_or_create_role(
+        name="GlobalChatMod", description="Global Chat Moderator", default=False
+    )
 
     log.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]
@@ -210,38 +213,42 @@ def dbFixes():
         sysSettings.limitMaxChannels = 0
         db.session.commit()
     # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
-    channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
-    for chan in channelQuery:
-        chan.chatBG = "Standard"
-        chan.chatTextColor = "#FFFFFF"
-        chan.chatAnimation = "slide-in-left"
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(maxVideoRetention=None).all()
-    for chan in channelQuery:
-        chan.maxVideoRetention = 0
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(maxClipRetention=None).all()
-    for chan in channelQuery:
-        chan.maxClipRetention = 0
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
-    for chan in channelQuery:
-        chan.channelMuted = False
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(
-        showChatJoinLeaveNotification=None
-    ).all()
-    for chan in channelQuery:
-        chan.showChatJoinLeaveNotification = True
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(currentViewers=None).all()
-    for chan in channelQuery:
-        chan.currentViewers = 0
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(defaultStreamName=None).all()
-    for chan in channelQuery:
-        chan.defaultStreamName = ""
-        db.session.commit()
+    Channel.Channel.query.filter_by(chatBG=None).update(dict(
+        chatBG = "Standard",
+        chatTextColor = "#FFFFFF",
+        chatAnimation = "slide-in-left"
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(maxVideoRetention=None).update(dict(
+        maxVideoRetention = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(maxClipRetention=None).update(dict(
+        maxClipRetention = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(channelMuted=None).update(dict(
+        channelMuted = False
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(showChatJoinLeaveNotification=None).update(dict(
+        showChatJoinLeaveNotification = True
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(currentViewers=None).update(dict(
+        currentViewers = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(defaultStreamName=None).update(dict(
+        defaultStreamName = ""
+    ))
+    db.session.commit()
 
     log.info({"level": "info", "message": "Checking for Null Default Roles"})
     # Query Null Default Roles and Set
@@ -298,7 +305,7 @@ def dbFixes():
     clipQuery = RecordedVideo.Clips.query.filter_by(published=None).update(dict(published=True))
     db.session.commit()
 
-    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).update(dict(autoPublish=True)).all()
+    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).update(dict(autoPublish=True))
     db.session.commit()
 
     # Fixes for Channels that do not have the restream settings initialized
@@ -434,29 +441,6 @@ def init(app, user_datastore):
 
         log.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
-
-        app.config["SERVER_NAME"] = None
-        app.config[
-            "SECURITY_FORGOT_PASSWORD_TEMPLATE"
-        ] = "security/forgot_password.html"
-        app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
-        app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
-        app.config[
-            "SECURITY_SEND_CONFIRMATION_TEMPLATE"
-        ] = "security/send_confirmation.html"
-        app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
-            sysSettings.siteName + " - Password Reset Request"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
-            sysSettings.siteName + " - Welcome!"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
-            sysSettings.siteName + " - Password Reset Notification"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
-            sysSettings.siteName + " - Email Confirmation Request"
-        )
 
         log.info({"level": "info", "message": "Database Initialization Completed"})
 

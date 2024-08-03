@@ -45,7 +45,7 @@ from functions import system
 from functions import themes
 from functions import cachedDbCalls
 from functions import securityFunc
-from functions.scheduled_tasks import video_tasks
+from functions.scheduled_tasks import video_tasks, channel_tasks
 
 from globals import globalvars
 
@@ -942,6 +942,9 @@ def admin_action(action):
                     + " from User"
                     + userQuery.username,
                 )
+                if roleQuery.name == 'GlobalChatMod':
+                    cachedDbCalls.invalidateGCMCache(userQuery.uuid)
+                    channel_tasks.remove_global_chat_mod_from_channels.delay(userQuery.id, userQuery.uuid)
                 flash("Removed Role from User")
 
             else:
@@ -968,6 +971,9 @@ def admin_action(action):
                     + " to User "
                     + userQuery.username,
                 )
+                if roleName == 'GlobalChatMod':
+                    cachedDbCalls.invalidateGCMCache(userQuery.uuid)
+                    channel_tasks.add_new_global_chat_mod_to_channels.delay(userQuery.id, userQuery.uuid)
                 flash("Added Role to User")
             else:
                 flash("Invalid Role or User!")

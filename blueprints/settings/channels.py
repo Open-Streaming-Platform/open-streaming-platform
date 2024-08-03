@@ -3,6 +3,7 @@ import json
 import uuid
 import re
 import bleach
+import xmlrpc.client
 
 from flask import (
     request,
@@ -27,11 +28,13 @@ from classes import settings
 from classes import views
 from classes import stickers
 from classes import panel
+from classes import Sec
 from classes.shared import cache
 
 from functions import system
 from functions import themes
 from functions import cachedDbCalls
+from functions.scheduled_tasks import channel_tasks
 
 from globals import globalvars
 
@@ -98,6 +101,12 @@ def settings_channels_page():
         # Get xmpp room options
         from app import ejabberd
 
+        gcm_users = Sec.Role.query.filter_by(
+            name="GlobalChatMod"
+        ).one().users.with_entities(
+            Sec.User.uuid,
+            Sec.User.username,
+        )
         channelRooms = {}
         channelMods = {}
         for chan in user_channels:
@@ -105,64 +114,27 @@ def settings_channels_page():
                 xmppQuery = ejabberd.get_room_options(
                     chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
-            except AttributeError:
-                # If Channel Doesn't Exist in ejabberd, Create
-                ejabberd.create_room(
-                    chan.channelLoc,
-                    "conference." + globalvars.defaultChatDomain,
-                    globalvars.defaultChatDomain,
-                )
-                ejabberd.set_room_affiliation(
-                    chan.channelLoc,
-                    "conference." + globalvars.defaultChatDomain,
-                    (current_user.uuid) + "@" + globalvars.defaultChatDomain,
-                    "owner",
-                )
-
-                # Default values
-                for key, value in globalvars.room_config.items():
-                    ejabberd.change_room_option(
-                        chan.channelLoc,
-                        "conference." + globalvars.defaultChatDomain,
-                        key,
-                        value,
-                    )
-
-                # Name and title
-                ejabberd.change_room_option(
-                    chan.channelLoc,
-                    "conference." + globalvars.defaultChatDomain,
-                    "title",
-                    chan.channelName,
-                )
-                ejabberd.change_room_option(
-                    chan.channelLoc,
-                    "conference." + globalvars.defaultChatDomain,
-                    "description",
-                    current_user.username
-                    + 's chat room for the channel "'
-                    + chan.channelName
-                    + '"',
-                )
-                xmppQuery = ejabberd.get_room_options(
+                xmppQuery = ejabberd.get_room_affiliations(
                     chan.channelLoc, "conference." + globalvars.defaultChatDomain
                 )
+            except (AttributeError, xmlrpc.client.Fault):
+                # If Channel Doesn't Exist in ejabberd, Create
+                try:
+                    xmpp.buildRoom(
+                        chan.channelLoc,
+                        current_user.uuid,
+                        channel_title=chan.channelName,
+                        channel_desc=current_user.username + 's chat room for the channel "' + chan.channelName + '"'
+                    )
+                except:
+                    # Attempting to create a chat-room that already exists...
+                    # raises a "Room Already Exists" xmlrpc.client.Fault.
+                    pass
             except:
                 # Try again if request causes strange "http.client.CannotSendRequest: Request-sent" Error
                 return redirect(url_for(".settings_channels_page"))
-            channelOptionsDict = {}
-            if "options" in xmppQuery:
-                for option in xmppQuery["options"]:
-                    key = None
-                    value = None
-                    for entry in option["option"]:
-                        if "name" in entry:
-                            key = entry["name"]
-                        elif "value" in entry:
-                            value = entry["value"]
-                    if key is not None and value is not None:
-                        channelOptionsDict[key] = value
-            channelRooms[chan.channelLoc] = channelOptionsDict
+
+            channelRooms[chan.channelLoc] = xmpp.getChannelOptions(chan.channelLoc)
 
             # Get room affiliations
             xmppQuery = ejabberd.get_room_affiliations(
@@ -179,7 +151,10 @@ def settings_channels_page():
 
             channelModList = []
             for user in affiliationList:
-                if user["affiliation"] == "admin":
+                if (
+                    user["affiliation"] == "admin" and
+                    gcm_users.filter_by(uuid=user['username']).first() is None
+                ):
                     channelModList.append(user["username"] + "@" + user["domain"])
             channelMods[chan.channelLoc] = channelModList
 
@@ -243,6 +218,7 @@ def settings_channels_page():
             channels=user_channels,
             topics=topicList,
             channelRooms=channelRooms,
+            gcm_users=gcm_users.all(),
             channelMods=channelMods,
             viewStats=user_channels_stats,
             rtmpList=activeRTMPList,
@@ -445,48 +421,17 @@ def settings_channels_page():
                     newChannel.imageLocation = filename
 
             # Establish XMPP Channel
-            from app import ejabberd
-
-            ejabberd.create_room(
+            xmpp.buildRoom(
                 newChannel.channelLoc,
-                "conference." + globalvars.defaultChatDomain,
-                globalvars.defaultChatDomain,
-            )
-            ejabberd.set_room_affiliation(
-                newChannel.channelLoc,
-                "conference." + globalvars.defaultChatDomain,
-                (current_user.uuid) + "@" + globalvars.defaultChatDomain,
-                "owner",
-            )
-
-            # Default values
-            for key, value in globalvars.room_config.items():
-                ejabberd.change_room_option(
-                    newChannel.channelLoc,
-                    "conference." + globalvars.defaultChatDomain,
-                    key,
-                    value,
-                )
-
-            # Name and title
-            ejabberd.change_room_option(
-                newChannel.channelLoc,
-                "conference." + globalvars.defaultChatDomain,
-                "title",
-                newChannel.channelName,
-            )
-            ejabberd.change_room_option(
-                newChannel.channelLoc,
-                "conference." + globalvars.defaultChatDomain,
-                "description",
-                current_user.username
-                + 's chat room for the channel "'
-                + newChannel.channelName
-                + '"',
+                current_user.uuid,
+                channel_title=newChannel.channelName,
+                channel_desc=current_user.username + 's chat room for the channel "' + newChannel.channelName + '"'
             )
 
             db.session.add(newChannel)
             db.session.commit()
+
+            channel_tasks.new_channel_assign_global_chat_mods.delay(current_user.id, newChannel.channelLoc)
 
         elif requestType == "change":
             channelId = request.form["channelId"]

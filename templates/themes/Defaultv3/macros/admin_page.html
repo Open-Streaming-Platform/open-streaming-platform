@@ -780,11 +780,9 @@
             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#defaultRolesModal"><i class="bi bi-shield-fill-check"></i> Default Roles</button>
             <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Bulk Add Role</button>
             <div class="dropdown-menu">
-                <a class="dropdown-item" onclick="bulkAddRole('Admin');" href="javascript:void(0);">Admin</a>
-                <a class="dropdown-item" onclick="bulkAddRole('Streamer');" href="javascript:void(0);">Streamer</a>
-                <a class="dropdown-item" onclick="bulkAddRole('Recorder');" href="javascript:void(0);">Recorder</a>
-                <a class="dropdown-item" onclick="bulkAddRole('Uploader');" href="javascript:void(0);">Uploader</a>
-                <a class="dropdown-item" onclick="bulkAddRole('User');" href="javascript:void(0);">User</a>
+                {% for role in roleList %}
+                    <a class="dropdown-item" onclick="bulkAddRole('{{role.name}}');" href="javascript:void(0);">{{role.description}}</a>
+                {% endfor %}
             </div>
         </span>
     </div>
@@ -831,6 +829,7 @@
                         <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-shield-fill-plus"></i> Add Role</button>
                         <div class="dropdown-menu">
                             <a class="dropdown-item " href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Admin">Admin</a>
+                            <a class="dropdown-item " href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=GlobalChatMod">Global Chat Mod</a>
                             <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Streamer">Streamer</a>
                               {% if user.has_role('Streamer') %}
                                 <a class="dropdown-item" href="/settings/admin/action/add?setting=userRole&userID={{user.id}}&roleName=Recorder">Recorder</a>
