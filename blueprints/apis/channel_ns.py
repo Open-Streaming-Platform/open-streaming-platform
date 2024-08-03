@@ -19,6 +19,7 @@ from functions import system
 from functions import cachedDbCalls
 from functions import channelFunc
 from functions import templateFilters
+from functions import xmpp
 
 from globals import globalvars
 
@@ -129,45 +130,11 @@ class api_1_ListChannels(Resource):
                     ).first()
 
                     # Establish XMPP Channel
-                    from app import ejabberd
-
-                    sysSettings = cachedDbCalls.getSystemSettings()
-                    ejabberd.create_room(
+                    xmpp.buildRoom(
                         newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        sysSettings.siteAddress,
-                    )
-                    ejabberd.set_room_affiliation(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        str(userQuery.uuid) + "@" + sysSettings.siteAddress,
-                        "owner",
-                    )
-
-                    # Default values
-                    for key, value in globalvars.room_config.items():
-                        ejabberd.change_room_option(
-                            newChannel.channelLoc,
-                            "conference." + sysSettings.siteAddress,
-                            key,
-                            value,
-                        )
-
-                    # Name and title
-                    ejabberd.change_room_option(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        "title",
-                        newChannel.channelName,
-                    )
-                    ejabberd.change_room_option(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        "description",
-                        userQuery.username
-                        + 's chat room for the channel "'
-                        + newChannel.channelName
-                        + '"',
+                        userQuery.uuid,
+                        channel_title=newChannel.channelName,
+                        channel_desc=userQuery.username + 's chat room for the channel "' + newChannel.channelName + '"'
                     )
 
                     db.session.add(newChannel)

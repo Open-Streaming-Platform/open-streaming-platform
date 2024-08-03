@@ -544,8 +544,12 @@ if r.get("OSP_XMPP_INIT_HANDLER") is None:
     from functions import xmpp
 
     try:
+        # The XMPP sanity check can sometimes fail because an invalid transaction has not been rolled back.
+        # Since db.session.rollback() just silently passes if there's nothing to roll back, we can put this here.
+        db.session.rollback()
         results = xmpp.sanityCheck()
     except Exception as e:
+        db.session.rollback()   # Use db.session.rollback() here as well, in case of a hanging invalid transaction.
         app.logger.error(
             {"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)}
         )
