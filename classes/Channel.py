@@ -166,7 +166,7 @@ class Channel(db.Model):
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
             "maxClipRetention": self.maxClipRetention,
-            "subscriptions": self.subscriptions.count(),
+            "subscriptions": len(self.subscriptions),
             "tags": [obj.id for obj in self.get_tags()],
         }
 
@@ -195,7 +195,7 @@ class Channel(db.Model):
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
             "maxClipRetention": self.maxClipRetention,
-            "subscriptions": self.subscriptions.count(),
+            "subscriptions": len(self.subscriptions),
             "tags": [obj.id for obj in self.get_tags()],
         }
 
