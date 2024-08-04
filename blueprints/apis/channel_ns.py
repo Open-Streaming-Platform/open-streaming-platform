@@ -169,11 +169,11 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(
                         channelLoc=channelEndpointID, owningUser=requestAPIKey.userID
-                    ).all()
-                    if channelQuery != []:
+                    ).first()
+                    if channelQuery is not None:
                         db.session.commit()
                         return {
-                            "results": [ob.authed_serialize() for ob in channelQuery]
+                            "results": [channelQuery.authed_serialize()]
                         }
                 return {"results": {"message": "Request Error"}}, 400
         else:
