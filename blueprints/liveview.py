@@ -71,26 +71,6 @@ def view_page(loc):
             active=True, streamKey=requestedChannel.streamKey
         )
 
-        # Stream URL Generation
-        streamURL = ""
-        edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-        if sysSettings.proxyFQDN != None:
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/proxy-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/proxy/" + requestedChannel.channelLoc + "/index.m3u8"
-        elif edgeQuery != []:
-            # Handle Selecting the Node using Round Robin Logic
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/edge-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/edge/" + requestedChannel.channelLoc + "/index.m3u8"
-        else:
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/live-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/live/" + requestedChannel.channelLoc + "/index.m3u8"
-
         topicList = cachedDbCalls.getAllTopics()
         chatOnly = request.args.get("chatOnly")
 
@@ -182,7 +162,6 @@ def view_page(loc):
                 return render_template(
                     themes.checkOverride("chatpopout.html"),
                     streamName=streamName,
-                    streamURL=streamURL,
                     sysSettings=sysSettings,
                     channel=requestedChannel,
                     hideBar=hideBar,
@@ -195,6 +174,17 @@ def view_page(loc):
                 )
             else:
                 flash("Chat is Not Enabled For This Stream", "error")
+
+        # Stream URL Generation
+        streamType = 'live'
+        if sysSettings.proxyFQDN is not None:
+            streamType = 'proxy'
+        elif settings.edgeStreamer.query.filter_by(active=True).with_entities(settings.edgeStreamer.id).first() is not None:
+            streamType = 'edge'
+
+        streamURL = f"/{streamType}/{requestedChannel.channelLoc}/index.m3u8"
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = f"/{streamType}-adapt/{requestedChannel.channelLoc}.m3u8"
 
         isEmbedded = request.args.get("embedded")
 
