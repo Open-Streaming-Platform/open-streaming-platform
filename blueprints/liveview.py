@@ -67,18 +67,12 @@ def view_page(loc):
         # for option in chatOptions:
         #    print(option)
 
-        # Generate CSV String for Banned Chat List
-        bannedWordQuery = banList.chatBannedWords.query.all()
-        bannedWordArray = []
-        for bannedWord in bannedWordQuery:
-            bannedWordArray.append(bannedWord.word)
+        # Create queries for banned words and banned messages, to be used later where needed.
+        bwQuery = banList.chatBannedWords.query.with_entities(banList.chatBannedWords.word)
 
-        channelBannedMessagesQuery = banList.chatBannedMessages.query.filter_by(
+        channelBmQuery = banList.chatBannedMessages.query.filter_by(
             channelLoc=requestedChannel.channelLoc
-        ).all()
-        bannedMessagesList = []
-        for bannedMessage in channelBannedMessagesQuery:
-            bannedMessagesList.append(bannedMessage.msgID)
+        ).with_entities(banList.chatBannedMessages.msgID)
 
         streamData = Stream.Stream.query.filter_by(
             active=True, streamKey=requestedChannel.streamKey
@@ -199,8 +193,8 @@ def view_page(loc):
                     xmppserver=xmppserver,
                     stickerList=stickerList,
                     stickerSelectorList=stickerSelectorList,
-                    bannedWords=bannedWordArray,
-                    bannedMessages=bannedMessagesList,
+                    bannedWords=[bw.word for bw in bwQuery.all()],
+                    bannedMessages=[bm.msgID for bm in channelBmQuery.all()],
                     chatDomain = defaultChatDomain
                 )
             else:
@@ -308,8 +302,8 @@ def view_page(loc):
                 xmppserver=xmppserver,
                 stickerList=stickerList,
                 stickerSelectorList=stickerSelectorList,
-                bannedWords=bannedWordArray,
-                bannedMessages=bannedMessagesList,
+                bannedWords=[bw.word for bw in bwQuery.all()],
+                bannedMessages=[bm.msgID for bm in channelBmQuery.all()],
                 channelPanelList=channelPanelListSorted,
                 chatDomain=defaultChatDomain
             )
