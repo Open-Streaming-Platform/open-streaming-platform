@@ -76,7 +76,7 @@ def view_page(loc):
 
         streamData = Stream.Stream.query.filter_by(
             active=True, streamKey=requestedChannel.streamKey
-        ).first()
+        )
 
         # Stream URL Generation
         streamURL = ""
@@ -182,9 +182,13 @@ def view_page(loc):
                         flash("Invalid User", "error")
                         return redirect(url_for("root.main_page"))
 
+                streamName = streamData.with_entities(
+                    Stream.Stream.streamName
+                ).scalar()
+
                 return render_template(
                     themes.checkOverride("chatpopout.html"),
-                    stream=streamData,
+                    streamName=streamName,
                     streamURL=streamURL,
                     sysSettings=sysSettings,
                     channel=requestedChannel,
@@ -290,7 +294,7 @@ def view_page(loc):
 
             return render_template(
                 themes.checkOverride("channelplayer.html"),
-                stream=streamData,
+                stream=streamData.first(),
                 streamURL=streamURL,
                 topics=topicList,
                 channel=requestedChannel,
@@ -326,7 +330,6 @@ def view_page(loc):
             return render_template(
                 themes.checkOverride("channelplayer_embed.html"),
                 channel=requestedChannel,
-                stream=streamData,
                 streamURL=streamURL,
                 topics=topicList,
                 isAutoPlay=isAutoPlay,
