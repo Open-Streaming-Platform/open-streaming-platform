@@ -16,7 +16,7 @@ from classes import banList
 from classes import stickers
 from classes import panel
 
-from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN, defaultChatDomain
+from globals.globalvars import defaultChatDomain
 
 from functions import themes
 from functions import securityFunc
@@ -28,13 +28,6 @@ liveview_bp = Blueprint("liveview", __name__, url_prefix="/view")
 @liveview_bp.route("/<loc>/")
 def view_page(loc):
     sysSettings = cachedDbCalls.getSystemSettings()
-
-    xmppserver = sysSettings.siteAddress
-
-    if ejabberdServerHttpBindFQDN != None:
-        xmppserver = ejabberdServerHttpBindFQDN
-    elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
-        xmppserver = ejabberdServer
 
     # requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     requestedChannel = cachedDbCalls.getChannelByLoc(loc)
@@ -194,7 +187,6 @@ def view_page(loc):
                     channel=requestedChannel,
                     hideBar=hideBar,
                     guestUser=guestUser,
-                    xmppserver=xmppserver,
                     stickerList=stickerList,
                     stickerSelectorList=stickerSelectorList,
                     bannedWords=[bw.word for bw in bwQuery.all()],
@@ -303,7 +295,6 @@ def view_page(loc):
                 subState=subState,
                 secureHash=secureHash,
                 rtmpURI=rtmpURI,
-                xmppserver=xmppserver,
                 stickerList=stickerList,
                 stickerSelectorList=stickerSelectorList,
                 bannedWords=[bw.word for bw in bwQuery.all()],
@@ -334,7 +325,6 @@ def view_page(loc):
                 topics=topicList,
                 isAutoPlay=isAutoPlay,
                 countViewers=countViewers,
-                xmppserver=xmppserver,
                 chatDomain=defaultChatDomain
             )
 
