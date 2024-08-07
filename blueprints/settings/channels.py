@@ -34,6 +34,7 @@ from classes.shared import cache
 from functions import system
 from functions import themes
 from functions import cachedDbCalls
+from functions import xmpp
 from functions.scheduled_tasks import channel_tasks
 
 from globals import globalvars
