@@ -191,7 +191,8 @@ def delete_user(userID: int) -> bool:
         # Clear All Role Entries for a User Prior to Deletion
         from app import user_datastore
 
-        roleQuery = Sec.Role.query.all()
+        # Explcitly query user's roles, for removal.
+        roleQuery = userQuery.roles
         for role in roleQuery:
             user_datastore.remove_role_from_user(userQuery, role)
 
