@@ -642,17 +642,20 @@ socket.on('channelOccups', function (occupantsString) {
     const userDiv = document.createElement('div');
     userDiv.className = "member my-1";
 
-    const { username, affiliation } = user;
+    const { username, affiliation, role:userRole } = user;
 
+    let listSection = chatListMap[affiliation];
     let htmlString = `<span class="user"><a href="javascript:void(0);" onclick="displayProfileBox(this)">${username}</a></span>`;
     if (affiliation === 'owner') {
         htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-owner-${username}">${username}</a></span>`;
     } else if (affiliation === 'gcm') {
         htmlString = `<span class="user"><a href="/profile/${username}" target="_blank" id="a-gcm-${username}">${username}</a></span>`;
+    } else if (affiliation === 'none' && userRole === 'participant') {
+        listSection = "ParticipantList";
     }
     userDiv.innerHTML = htmlString;
 
-    document.getElementById(chatListMap[affiliation]).appendChild(userDiv);
+    document.getElementById(listSection).appendChild(userDiv);
   }
 
   return true;
