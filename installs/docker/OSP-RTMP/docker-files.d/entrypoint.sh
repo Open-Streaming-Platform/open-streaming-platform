@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 echo 'Placing Configuration Files'
 cp -u -p /opt/osp-rtmp/setup/nginx/servers/* /usr/local/nginx/conf/servers
-cp -u -p /opt/osp-rtmp/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
-cp -u -p /opt/osp-rtmp/osp-rtmp/setup/nginx/custom/osp-rtmp-custom-ome.conf /usr/local/nginx/conf/custom
+cp -u -p /opt/osp-rtmp/setup/nginx/services/* /usr/local/nginx/conf/services
+cp -u -p /opt/osp-rtmp/setup/nginx/custom/osp-rtmp-custom-ome.conf /usr/local/nginx/conf/custom
 
 echo 'Setting up Directories'
   mkdir -p /var/www && \
