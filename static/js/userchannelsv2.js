@@ -1018,11 +1018,17 @@ function deleteStickerModal(stickerID, channelID) {
 function deleteSticker() {
     stickerID = document.getElementById('deleteStickerID').value;
     channelID = document.getElementById('deleteStickerChannelID').value
-    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID});
-    stickerDiv = document.getElementById('sticker-' + stickerID);
-    stickerDiv.parentNode.removeChild(stickerDiv);
-    document.getElementById('deleteStickerID').value = "";
-    createNewBSAlert("Sticker Deleted","success")
+    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        stickerDiv = document.getElementById('sticker-' + stickerID);
+        stickerDiv.parentNode.removeChild(stickerDiv);
+        document.getElementById('deleteStickerID').value = "";
+        createNewBSAlert("Sticker Deleted","success");
+    });
 }
 
 function editStickerModal(stickerID, channelID) {
