@@ -249,7 +249,7 @@ def settings_channels_page():
                         existingStickerNameQuery = stickers.stickers.query.filter_by(
                                                     name=stickerName,
                                                     channelID=channelQuery.id
-                                                    ).first()
+                                                    ).with_entities(stickers.stickers.id).first()
                                                                                     
                                                   
 
