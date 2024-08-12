@@ -476,8 +476,14 @@ function deleteSticker() {
 
 function editStickerModal(stickerID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function disable2FAModal(userID) {

@@ -1033,8 +1033,14 @@ function deleteSticker() {
 
 function editStickerModal(stickerID, channelID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName, channelID: channelID});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function moveVideoModal(videoId) {
