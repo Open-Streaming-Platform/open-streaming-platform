@@ -48,6 +48,7 @@ def init(context):
     context.jinja_env.filters["get_Clip_Upvotes"] = get_Clip_Upvotes_Filter
     context.jinja_env.filters["get_Video_Comments"] = get_Video_Comments_Filter
     context.jinja_env.filters["get_pictureLocation"] = get_pictureLocation
+    context.jinja_env.filters["get_bannerLocation"] = get_bannerLocation
     context.jinja_env.filters["get_diskUsage"] = get_diskUsage
     context.jinja_env.filters["testList"] = testList
     context.jinja_env.filters["get_webhookTrigger"] = get_webhookTrigger
@@ -250,6 +251,10 @@ def get_Video_Comments_Filter(videoID: int) -> int:
 
 def get_pictureLocation(userID: int) -> str:
     return cachedDbCalls.getUserPhotoLocation(userID)
+
+
+def get_bannerLocation(userID: int) -> str:
+    return cachedDbCalls.getUserBannerLocation(userID)
 
 
 def channeltoOwnerID(channelID: int) -> Union[int, None]:
@@ -676,6 +681,7 @@ def getPanelVideoList(order: int, limitTo: int) -> list:
                 RecordedVideo.RecordedVideo.topic,
                 RecordedVideo.RecordedVideo.videoDate,
                 Sec.User.pictureLocation,
+                Sec.User.bannerLocation,
                 Channel.Channel.protected,
                 Channel.Channel.channelName.label("ChanName"),
             )
@@ -702,6 +708,7 @@ def getPanelVideoList(order: int, limitTo: int) -> list:
                 RecordedVideo.RecordedVideo.topic,
                 RecordedVideo.RecordedVideo.videoDate,
                 Sec.User.pictureLocation,
+                Sec.User.bannerLocation,
                 Channel.Channel.protected,
                 Channel.Channel.channelName.label("ChanName"),
             )
@@ -728,6 +735,7 @@ def getPanelVideoList(order: int, limitTo: int) -> list:
                 RecordedVideo.RecordedVideo.topic,
                 RecordedVideo.RecordedVideo.videoDate,
                 Sec.User.pictureLocation,
+                Sec.User.bannerLocation,
                 Channel.Channel.protected,
                 Channel.Channel.channelName.label("ChanName"),
             )
@@ -754,6 +762,7 @@ def getPanelVideoList(order: int, limitTo: int) -> list:
                 RecordedVideo.RecordedVideo.topic,
                 RecordedVideo.RecordedVideo.videoDate,
                 Sec.User.pictureLocation,
+                Sec.User.bannerLocation,
                 Channel.Channel.protected,
                 Channel.Channel.channelName.label("ChanName"),
             )
@@ -785,6 +794,7 @@ def getPanelClipList(order: int, limitTo: int) -> list:
         RecordedVideo.Clips.topic,
         RecordedVideo.Clips.clipDate,
         Sec.User.pictureLocation,
+        Sec.User.bannerLocation,
         RecordedVideo.Clips.parentVideo,
     )
 
@@ -850,6 +860,7 @@ def getPanelChannelList(order: int, limitTo: int) -> list:
                 Channel.Channel.chatAnimation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.description,
                 Channel.Channel.allowComments,
                 Channel.Channel.protected,
@@ -883,6 +894,7 @@ def getPanelChannelList(order: int, limitTo: int) -> list:
                 Channel.Channel.chatAnimation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.description,
                 Channel.Channel.allowComments,
                 Channel.Channel.protected,
@@ -916,6 +928,7 @@ def getPanelChannelList(order: int, limitTo: int) -> list:
                 Channel.Channel.chatAnimation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.description,
                 Channel.Channel.allowComments,
                 Channel.Channel.protected,

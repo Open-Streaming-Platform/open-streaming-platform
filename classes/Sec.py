@@ -134,6 +134,7 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer)
     pictureLocation = db.Column(db.String(255))
+    bannerLocation = db.Column(db.String(255))
     authType = db.Column(db.Integer)
     oAuthID = db.Column(db.String(2048))
     oAuthProvider = db.Column(db.String(40))
@@ -166,6 +167,7 @@ class User(db.Model, UserMixin):
             "username": self.username,
             "biography": self.biography,
             "pictureLocation": "/images/" + str(self.pictureLocation),
+            "bannerLocation": "/images/" + str(self.bannerLocation),
             "channels": [obj.channelLoc for obj in self.channels],
             "page": "/profile/" + str(self.username) + "/",
         }

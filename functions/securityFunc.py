@@ -129,7 +129,7 @@ def flag_delete_user(userID: int) -> bool:
             + " has queued their account for deletion.  The account will be deleted in 48 from "
             + str(datetime.datetime.now()),
             "/settings/admin",
-            "/images/" + str(userQuery.pictureLocation),
+            "/images/" + str(userQuery.pictureLocation,userQuery.bannerLocation),
         )
         if existingFlag is None:
             newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
