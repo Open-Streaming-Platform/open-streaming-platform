@@ -1186,7 +1186,7 @@ def getUserBannerLocation(userID: int) -> str:
 @cache.memoize(timeout=30)
 def getUser(userID: int):
     returnData = {}
-    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation, Sec.User.bannerLocation).first()
     if UserQuery is not None:
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
         returnData = {
@@ -1206,7 +1206,7 @@ def getUser(userID: int):
 @cache.memoize(timeout=30)
 def getUserByUsernameDict(username: str) -> dict:
     returnData = {}
-    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation,Sec.User.bannerLocation).first()
+    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation, Sec.User.bannerLocation).first()
     if UserQuery is not None:
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
         channelsReturn = []
