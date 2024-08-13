@@ -891,10 +891,13 @@ table tbody tr {
 }
 
 .channel-info-container {
+    background-size: cover;
+    background-position: center;
+    /* object-fit: cover; */
+    background-color: var(--page-background);
     color: var(--font-color);
     width: 100%;
     padding: 30px 30px;
-    background-color: var(--box2-background);
 }
 
 .channel-info-picture-img {
