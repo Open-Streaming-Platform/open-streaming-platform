@@ -413,6 +413,7 @@
 {% endmacro %}
 
 {% macro channel_metadata_panel(channelData, subState=False) %}
+<!-- CHANNEL BANNER -->
 <div class="channel-info-container insetBoxShadow" {% if channelData.channelBannerLocation != None %} style="background-image: url('/images/{{channelData.channelBannerLocation}}')" {% else %} style="background-image: url('/static/img/channel-banner-placeholder.jpg')"  {% endif %} onerror="this.onerror=null;this.src='/static/img/channel-banner-placeholder.jpg';" >
   <div class="row channelBannerImg">
     <div class="col-auto">
@@ -608,7 +609,7 @@
                         </div>
                         <div class="col-6">
                           <div class="usersettingBanner">
-                              <img class="userBanner boxShadow" src="/images/{{userData.bannerLocation}}" onerror="this.src='/static/img/channel-banner-placeholder.jpg';">
+                              <img class="boxShadow" src="/images/{{userData.bannerLocation}}" onerror="this.src='/static/img/channel-banner-placeholder.jpg';">
                           </div>
                           <div class="file-upload mt-1">
                             <input type="file" name="banner" class="form-control boxShadow" id="userbannerupload">
