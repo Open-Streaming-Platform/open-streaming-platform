@@ -637,7 +637,7 @@ class api_1_SearchChannels(Resource):
         if "term" in args:
             returnArray = cachedDbCalls.searchChannels(args["term"])
             for chan in returnArray:
-                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation,chan.channelBannerLocation]
+                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation, chan.channelBannerLocation]
                 finalArray.append(newChanObj)
             return {"results": finalArray}
         else:
