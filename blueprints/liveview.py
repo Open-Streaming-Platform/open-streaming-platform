@@ -7,7 +7,6 @@ from classes.shared import db
 from classes import settings
 from classes import RecordedVideo
 from classes import subscriptions
-from classes import topics
 from classes import views
 from classes import Channel
 from classes import Stream
@@ -71,7 +70,6 @@ def view_page(loc):
             active=True, streamKey=requestedChannel.streamKey
         )
 
-        topicList = cachedDbCalls.getAllTopics()
         chatOnly = request.args.get("chatOnly")
 
         # Grab List of Stickers for Chat
@@ -278,7 +276,7 @@ def view_page(loc):
                 themes.checkOverride("channelplayer.html"),
                 stream=streamData.first(),
                 streamURL=streamURL,
-                topics=topicList,
+                topics=cachedDbCalls.getAllTopics(),
                 channel=requestedChannel,
                 clipsList=clipsList,
                 videoList=videoList,
@@ -312,7 +310,6 @@ def view_page(loc):
                 themes.checkOverride("channelplayer_embed.html"),
                 channel=requestedChannel,
                 streamURL=streamURL,
-                topics=topicList,
                 isAutoPlay=isAutoPlay,
                 countViewers=countViewers,
                 chatDomain=defaultChatDomain
