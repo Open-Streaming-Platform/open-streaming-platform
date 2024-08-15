@@ -204,7 +204,7 @@ def handle_leaving_viewer(streamData):
     requestedChannel = (
         Channel.Channel.query.filter_by(channelLoc=channelLoc)
         .with_entities(
-            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.views
+            Channel.Channel.channelLoc, Channel.Channel.id, Channel.Channel.streamKey
         )
         .first()
     )
