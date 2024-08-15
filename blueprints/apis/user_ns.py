@@ -255,7 +255,7 @@ class api_1_SearchUsers(Resource):
     @api.doc(responses={200: "Success", 400: "Request Error"})
     def post(self):
         """
-        Searches Channel Names and Metadata and returns Name, Link and Banner
+        Searches User Names and Metadata and returns Name, Link and Banner
         """
         args = userSearchPost.parse_args()
         returnArray = []
