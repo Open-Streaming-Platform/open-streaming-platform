@@ -461,17 +461,29 @@ function deleteStickerModal(stickerID) {
 
 function deleteSticker() {
     stickerID = document.getElementById('deleteStickerID').value;
-    socket.emit('deleteSticker', {stickerID: stickerID});
-    stickerDiv = document.getElementById('sticker-' + stickerID);
-    stickerDiv.parentNode.removeChild(stickerDiv);
-    document.getElementById('deleteStickerID').value = "";
-    createNewBSAlert("Sticker Deleted","success")
+    socket.emit('deleteSticker', {stickerID: stickerID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        stickerDiv = document.getElementById('sticker-' + stickerID);
+        stickerDiv.parentNode.removeChild(stickerDiv);
+        document.getElementById('deleteStickerID').value = "";
+        createNewBSAlert("Sticker Deleted","success");
+    });
 }
 
 function editStickerModal(stickerID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function disable2FAModal(userID) {

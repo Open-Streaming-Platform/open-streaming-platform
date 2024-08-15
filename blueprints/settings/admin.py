@@ -430,7 +430,7 @@ def admin_page():
                 stickerName = request.form["stickerName"]
                 existingStickerNameQuery = stickers.stickers.query.filter_by(
                     name=stickerName
-                ).first()
+                ).with_entities(stickers.stickers.id).first()
                 if existingStickerNameQuery is None:
                     if "stickerUpload" in request.files:
                         file = request.files["stickerUpload"]
