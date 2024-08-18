@@ -8,7 +8,11 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
         <link rel="shortcut icon" href="/images/favicon.ico">
-        <title>{{streamName}} - Chat</title>
+        {% if streamName is not none %}
+        <title>{{streamName}} ({{channel.channelName}}) - Chat</title>
+        {% else %}
+        <title>{{channel.channelName}} - Chat</title>
+        {% endif %}
         <script src="/static/vendor/jquery/js/jquery-3.5.1.min.js"></script>
         <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="/static/vendor/socketio/js/socket.io.js"></script>
