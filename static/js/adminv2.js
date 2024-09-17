@@ -332,53 +332,59 @@ function submitWebhook() {
     var webhookInputAction = document.getElementById('webhookInputAction').value;
     var webhookInputID = document.getElementById('webhookID').value;
 
+    if (webhookInputID === null) {
+        createNewBSAlert("ID of that global webhook is null", "Failed");
+        return;
+    }
     if (webhookName === '') {
         (document.getElementById('webhookName')).setCustomValidity('Name is Required');
     }
     if (webhookEndpoint === '') {
         (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
     }
-    socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID});
-
-    if (webhookInputID !== null) {
+    socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID}, (responseMsg) => {
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
 
         switch(webhookTrigger) {
-          case '0':
-            webhookTrigger = 'Stream Start';
-            break;
-          case '1':
-            webhookTrigger = 'Stream End';
-            break;
-          case '2':
-            webhookTrigger = 'Stream Viewer Join';
-            break;
-          case '3':
-            webhookTrigger = 'Stream Viewer Upvote';
-            break;
-          case '4':
-            webhookTrigger = 'Stream Name Change';
-            break;
-          case '5':
-            webhookTrigger = 'Chat Message';
-            break;
-          case '6':
-            webhookTrigger = 'New Video';
-            break;
-          case '7':
-            webhookTrigger = 'Video Comment';
-            break;
-          case '8':
-            webhookTrigger = 'Video Upvote';
-            break;
-          case '9':
-            webhookTrigger = 'Video Name Change';
-            break;
-          case '10':
-            webhookTrigger = 'Channel Subscription';
-            break;
-          case '20':
-            webhookTrigger = 'New User';
-            break;
+            case '0':
+                webhookTrigger = 'Stream Start';
+                break;
+            case '1':
+                webhookTrigger = 'Stream End';
+                break;
+            case '2':
+                webhookTrigger = 'Stream Viewer Join';
+                break;
+            case '3':
+                webhookTrigger = 'Stream Viewer Upvote';
+                break;
+            case '4':
+                webhookTrigger = 'Stream Name Change';
+                break;
+            case '5':
+                webhookTrigger = 'Chat Message';
+                break;
+            case '6':
+                webhookTrigger = 'New Video';
+                break;
+            case '7':
+                webhookTrigger = 'Video Comment';
+                break;
+            case '8':
+                webhookTrigger = 'Video Upvote';
+                break;
+            case '9':
+                webhookTrigger = 'Video Name Change';
+                break;
+            case '10':
+                webhookTrigger = 'Channel Subscription';
+                break;
+            case '20':
+                webhookTrigger = 'New User';
+                break;
         }
         document.getElementById('webhookRowName-' + webhookInputID).innerText = webhookName;
         document.getElementById('webhookRowEndpoint-' + webhookInputID).innerText = webhookEndpoint;
@@ -386,7 +392,9 @@ function submitWebhook() {
         document.getElementById('webhookRowPayload-' + webhookInputID).innerText = webhookPayload;
         document.getElementById('webhookRowType-' + webhookInputID).innerText = webhookReqType;
         document.getElementById('webhookRowTrigger-' + webhookInputID).innerText = webhookTrigger;
-    }
+
+        createNewBSAlert("Global webhook edited", "Success");
+    });
 }
 
 function editWebhook(webhookID) {
