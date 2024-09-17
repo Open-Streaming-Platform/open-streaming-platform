@@ -320,6 +320,26 @@ function deleteWebhook() {
     });
 }
 
+function spawnWebhookTableRow(whPayload) {
+    const whId = whPayload['webhookInputID'];
+
+    const newTr = document.createElement('tr');
+    newTr.id = `webhookTableRow-${whId}`;
+    newTr.innerHTML = `<td id="webhookRowName-${whId}">${whPayload['webhookName']}</td>
+        <td id="webhookRowEndpoint-${whId}" style="display:none;">${whPayload['webhookEndpoint']}</td>
+        <td id="webhookRowTrigger-${whId}">${whPayload['webhookTrigger']}</td>
+        <td id="webhookRowType-${whId}" style="display:none;">${whPayload['webhookReqType']}</td>
+        <td id="webhookRowHeader-${whId}" style="display:none;">${whPayload['webhookHeader']}</td>
+        <td id="webhookRowPayload-${whId}" style="display:none;">${whPayload['webhookPayload']}</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('${whId}')"><i class="fas fa-edit"></i></button>
+            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('${whId}')"><i class="fas fa-vial"></i></button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('${whId}')"><i class="far fa-trash-alt"></i></button>
+        </td>`;
+    
+    document.querySelector("#webhooksTable > tbody").appendChild(newTr);
+}
+
 function submitWebhook() {
     var webhookName = document.getElementById('webhookName').value;
     var webhookEndpoint = document.getElementById('webhookEndpoint').value;
@@ -342,7 +362,9 @@ function submitWebhook() {
     if (webhookEndpoint === '') {
         (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
     }
-    socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID}, (responseMsg) => {
+
+    const socketPayload = {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID};
+    socket.emit('submitGlobalWebhook', socketPayload, (responseMsg) => {
         if (responseMsg !== 'OK') {
             createNewBSAlert(responseMsg, "Failed");
             return;
@@ -386,14 +408,20 @@ function submitWebhook() {
                 webhookTrigger = 'New User';
                 break;
         }
-        document.getElementById('webhookRowName-' + webhookInputID).innerText = webhookName;
-        document.getElementById('webhookRowEndpoint-' + webhookInputID).innerText = webhookEndpoint;
-        document.getElementById('webhookRowHeader-' + webhookInputID).innerText = webhookHeader;
-        document.getElementById('webhookRowPayload-' + webhookInputID).innerText = webhookPayload;
-        document.getElementById('webhookRowType-' + webhookInputID).innerText = webhookReqType;
-        document.getElementById('webhookRowTrigger-' + webhookInputID).innerText = webhookTrigger;
 
-        createNewBSAlert("Global webhook edited", "Success");
+        if (webhookInputAction === 'edit') {
+            document.getElementById('webhookRowName-' + webhookInputID).innerText = webhookName;
+            document.getElementById('webhookRowEndpoint-' + webhookInputID).innerText = webhookEndpoint;
+            document.getElementById('webhookRowHeader-' + webhookInputID).innerText = webhookHeader;
+            document.getElementById('webhookRowPayload-' + webhookInputID).innerText = webhookPayload;
+            document.getElementById('webhookRowType-' + webhookInputID).innerText = webhookReqType;
+            document.getElementById('webhookRowTrigger-' + webhookInputID).innerText = webhookTrigger;
+
+            createNewBSAlert("Global webhook edited", "Success");
+        } else if (webhookInputAction === 'new') {
+            spawnWebhookTableRow(socketPayload);
+            createNewBSAlert("Global webhook created", "Success");
+        }
     });
 }
 
