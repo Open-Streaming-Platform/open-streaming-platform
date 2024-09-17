@@ -320,14 +320,12 @@ function deleteWebhook() {
     });
 }
 
-function spawnWebhookTableRow(whPayload) {
-    const whId = whPayload['webhookInputID'];
-
+function spawnWebhookTableRow(whId, whPayload, triggerText) {
     const newTr = document.createElement('tr');
     newTr.id = `webhookTableRow-${whId}`;
     newTr.innerHTML = `<td id="webhookRowName-${whId}">${whPayload['webhookName']}</td>
         <td id="webhookRowEndpoint-${whId}" style="display:none;">${whPayload['webhookEndpoint']}</td>
-        <td id="webhookRowTrigger-${whId}">${whPayload['webhookTrigger']}</td>
+        <td id="webhookRowTrigger-${whId}">${triggerText}</td>
         <td id="webhookRowType-${whId}" style="display:none;">${whPayload['webhookReqType']}</td>
         <td id="webhookRowHeader-${whId}" style="display:none;">${whPayload['webhookHeader']}</td>
         <td id="webhookRowPayload-${whId}" style="display:none;">${whPayload['webhookPayload']}</td>
@@ -364,9 +362,9 @@ function submitWebhook() {
     }
 
     const socketPayload = {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID};
-    socket.emit('submitGlobalWebhook', socketPayload, (responseMsg) => {
-        if (responseMsg !== 'OK') {
-            createNewBSAlert(responseMsg, "Failed");
+    socket.emit('submitGlobalWebhook', socketPayload, (status, item) => {
+        if (status !== 'OK') {
+            createNewBSAlert(item, "Failed");
             return;
         }
 
@@ -419,7 +417,7 @@ function submitWebhook() {
 
             createNewBSAlert("Global webhook edited", "Success");
         } else if (webhookInputAction === 'new') {
-            spawnWebhookTableRow(socketPayload);
+            spawnWebhookTableRow(item, socketPayload, webhookTrigger);
             createNewBSAlert("Global webhook created", "Success");
         }
     });

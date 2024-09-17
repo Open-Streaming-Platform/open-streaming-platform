@@ -111,7 +111,7 @@ def deleteWebhook(message):
 @socketio.on("submitGlobalWebhook")
 def addChangeGlobalWebhook(message):
     if not current_user.has_role("Admin"):
-        return "Not Authorized"
+        return "ERROR", "Not Authorized"
 
     webhookName = message["webhookName"]
     webhookEndpoint = message["webhookEndpoint"]
@@ -121,6 +121,7 @@ def addChangeGlobalWebhook(message):
     webhookReqType = int(message["webhookReqType"])
     webhookInputAction = message["inputAction"]
 
+    returnItem = None
     if webhookInputAction == "new":
         newWebHook = webhook.globalWebhook(
             webhookName,
@@ -131,6 +132,8 @@ def addChangeGlobalWebhook(message):
             webhookTrigger,
         )
         db.session.add(newWebHook)
+        db.session.commit()
+        returnItem = newWebHook.id
     elif webhookInputAction == "edit":
         webhookInputID = message["webhookInputID"]
         upd_count = (
@@ -147,10 +150,11 @@ def addChangeGlobalWebhook(message):
             )
         )
         if upd_count == 0:
-            return "Failed to update!"
-    db.session.commit()
+            return "ERROR", "Failed to update!"
+        db.session.commit()
+        returnItem = None
     db.session.close()
-    return "OK"
+    return "OK", returnItem
 
 
 @socketio.on("deleteGlobalWebhook")
