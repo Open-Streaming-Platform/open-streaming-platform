@@ -308,9 +308,16 @@ function deleteWebhookModal(webhookID) {
 
 function deleteWebhook() {
     var webhookID = document.getElementById('deleteWebhookID').value;
-    socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
-    var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
-    webhookTableRow.parentNode.removeChild(webhookTableRow);
+    socket.emit('deleteGlobalWebhook', {webhookID: webhookID}, (responseMsg) => {
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        const webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
+        webhookTableRow.parentNode.removeChild(webhookTableRow);
+        createNewBSAlert("Global webhook deleted", "Success");
+    });
 }
 
 function submitWebhook() {

@@ -180,12 +180,16 @@ def addChangeGlobalWebhook(message):
 
 @socketio.on("deleteGlobalWebhook")
 def deleteGlobalWebhook(message):
+    if not current_user.has_role("Admin"):
+        return "Not Authorized"
+
     webhookID = int(message["webhookID"])
 
-    if current_user.has_role("Admin"):
-        webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).delete()
-        db.session.delete(webhookQuery)
-        db.session.commit()
+    del_count = webhook.globalWebhook.query.filter_by(id=webhookID).delete()
+    if del_count == 0:
+        return "Failed to delete!"
+
+    db.session.commit()
     db.session.close()
     return "OK"
 
