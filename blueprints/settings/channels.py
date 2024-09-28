@@ -73,6 +73,7 @@ def settings_channels_page():
                 Channel.Channel.record,
                 Channel.Channel.description,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.imageLocation,
                 Channel.Channel.vanityURL,
                 Channel.Channel.maxVideoRetention,
@@ -564,6 +565,26 @@ def settings_channels_page():
                             request.files["offlinephoto"], name=str(uuid.uuid4()) + "."
                         )
                         updateDict["offlineImageLocation"] = filename
+
+                        if oldImage is not None:
+                            try:
+                                os.remove(oldImage)
+                            except OSError:
+                                pass
+
+                # CHANNEL BANNER
+                if "channelbannerphoto" in request.files:
+                    file = request.files["channelbannerphoto"]
+                    if file.filename != "":
+                        oldImage = None
+
+                        if requestedChannel.channelBannerLocation is not None:
+                            oldImage = requestedChannel.channelBannerLocation
+
+                        filename = photos.save(
+                            request.files["channelbannerphoto"], name=str(uuid.uuid4()) + "."
+                        )
+                        updateDict["channelBannerLocation"] = filename
 
                         if oldImage is not None:
                             try:

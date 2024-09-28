@@ -21,6 +21,7 @@ class Channel(db.Model):
     chatAnimation = db.Column(db.String(255))
     imageLocation = db.Column(db.String(255))
     offlineImageLocation = db.Column(db.String(255))
+    channelBannerLocation = db.Column(db.String(255))
     description = db.Column(db.String(4096))
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
@@ -152,6 +153,7 @@ class Channel(db.Model):
             "description": self.description,
             "channelImage": "/images/" + str(self.imageLocation),
             "offlineImageLocation": "/images/" + str(self.offlineImageLocation),
+            "channelBannerLocation": "/images/" + str(self.channelBannerLocation),
             "topic": self.topic,
             "views": self.views,
             "currentViews": self.currentViewers,
@@ -179,6 +181,7 @@ class Channel(db.Model):
             "description": self.description,
             "channelImage": "/images/" + str(self.imageLocation),
             "offlineImageLocation": "/images/" + str(self.offlineImageLocation),
+            "channelBannerLocation": "/images/" + str(self.channelBannerLocation),
             "topic": self.topic,
             "views": self.views,
             "currentViews": self.currentViewers,

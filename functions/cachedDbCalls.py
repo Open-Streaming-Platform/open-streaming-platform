@@ -152,6 +152,7 @@ def getAllChannels() -> list:
         Channel.Channel.chatAnimation,
         Channel.Channel.imageLocation,
         Channel.Channel.offlineImageLocation,
+        Channel.Channel.channelBannerLocation,
         Channel.Channel.description,
         Channel.Channel.allowComments,
         Channel.Channel.protected,
@@ -199,6 +200,7 @@ def getChannel(channelID: int) -> Union[list, None]:
         Channel.Channel.chatAnimation,
         Channel.Channel.imageLocation,
         Channel.Channel.offlineImageLocation,
+        Channel.Channel.channelBannerLocation,
         Channel.Channel.description,
         Channel.Channel.allowComments,
         Channel.Channel.protected,
@@ -246,6 +248,7 @@ def getChannelByLoc(channelLoc: str) -> Union[list, None]:
         Channel.Channel.chatAnimation,
         Channel.Channel.imageLocation,
         Channel.Channel.offlineImageLocation,
+        Channel.Channel.channelBannerLocation,
         Channel.Channel.description,
         Channel.Channel.allowComments,
         Channel.Channel.protected,
@@ -285,6 +288,7 @@ def getChannelByStreamKey(StreamKey: str) -> Union[list, None]:
         Channel.Channel.chatAnimation,
         Channel.Channel.imageLocation,
         Channel.Channel.offlineImageLocation,
+        Channel.Channel.channelBannerLocation,
         Channel.Channel.description,
         Channel.Channel.allowComments,
         Channel.Channel.protected,
@@ -324,6 +328,7 @@ def getChannelsByOwnerId(OwnerId: int) -> list:
         Channel.Channel.chatAnimation,
         Channel.Channel.imageLocation,
         Channel.Channel.offlineImageLocation,
+        Channel.Channel.channelBannerLocation,
         Channel.Channel.description,
         Channel.Channel.allowComments,
         Channel.Channel.protected,
@@ -369,6 +374,7 @@ def serializeChannel(channelID: int) -> dict:
             "description": channelData.description,
             "channelImage": "/images/" + str(channelData.imageLocation),
             "offlineImageLocation": "/images/" + str(channelData.offlineImageLocation),
+            "channelBannerLocation": "/images/" + str(channelData.channelBannerLocation),
             "topic": channelData.topic,
             "views": channelData.views,
             "currentViews": channelData.currentViewers,
@@ -557,6 +563,7 @@ def searchChannels(term: str) -> list:
                 Channel.Channel.chatTextColor,
                 Channel.Channel.chatAnimation,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.description,
                 Channel.Channel.allowComments,
                 Channel.Channel.protected,
@@ -588,6 +595,7 @@ def searchChannels(term: str) -> list:
                 Channel.Channel.chatTextColor,
                 Channel.Channel.chatAnimation,
                 Channel.Channel.offlineImageLocation,
+                Channel.Channel.channelBannerLocation,
                 Channel.Channel.description,
                 Channel.Channel.allowComments,
                 Channel.Channel.protected,
@@ -631,6 +639,7 @@ def searchChannels(term: str) -> list:
                     Channel.Channel.chatTextColor,
                     Channel.Channel.chatAnimation,
                     Channel.Channel.offlineImageLocation,
+                    Channel.Channel.channelBannerLocation,
                     Channel.Channel.description,
                     Channel.Channel.allowComments,
                     Channel.Channel.protected,
@@ -1083,6 +1092,7 @@ def getAllClipsForUser(userId: int) -> list:
         Channel.Channel.channelName,
         RecordedVideo.Clips.topic,
         Sec.User.pictureLocation,
+        Sec.User.bannerLocation,
         RecordedVideo.Clips.parentVideo,
         RecordedVideo.Clips.description,
         RecordedVideo.Clips.published,
@@ -1117,6 +1127,7 @@ def searchClips(term: str) -> list:
         Channel.Channel.channelName,
         RecordedVideo.Clips.topic,
         Sec.User.pictureLocation,
+        Sec.User.bannerLocation,
         RecordedVideo.Clips.parentVideo,
     ).all()
 
@@ -1158,11 +1169,24 @@ def getUserPhotoLocation(userID: int) -> str:
     else:
         return "/static/img/user2.png"
 
+@cache.memoize(timeout=300)
+def getUserBannerLocation(userID: int) -> str:
+    UserQuery = (
+        Sec.User.query.filter_by(id=userID)
+        .with_entities(Sec.User.id, Sec.User.bannerLocation)
+        .first()
+    )
+    if UserQuery is not None:
+        if UserQuery.bannerLocation is None or UserQuery.bannerLocation == "":
+            return "/static/img/user-banner-placeholder.jpg"
+        return UserQuery.bannerLocation
+    else:
+        return "/static/img/user-banner-placeholder.jpg"
 
 @cache.memoize(timeout=30)
 def getUser(userID: int):
     returnData = {}
-    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    UserQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation, Sec.User.bannerLocation).first()
     if UserQuery is not None:
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
         returnData = {
@@ -1171,6 +1195,7 @@ def getUser(userID: int):
             "username": UserQuery.username,
             "biography": UserQuery.biography,
             "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "bannerLocation": "/images/" + str(UserQuery.bannerLocation),
             "channels": OwnedChannels,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
@@ -1181,7 +1206,7 @@ def getUser(userID: int):
 @cache.memoize(timeout=30)
 def getUserByUsernameDict(username: str) -> dict:
     returnData = {}
-    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation).first()
+    UserQuery = Sec.User.query.filter_by(username=username).with_entities(Sec.User.id, Sec.User.uuid, Sec.User.username, Sec.User.biography, Sec.User.pictureLocation, Sec.User.bannerLocation).first()
     if UserQuery is not None:
         OwnedChannels = getChannelsByOwnerId(UserQuery.id)
         channelsReturn = []
@@ -1193,6 +1218,7 @@ def getUserByUsernameDict(username: str) -> dict:
             "username": UserQuery.username,
             "biography": UserQuery.biography,
             "pictureLocation": "/images/" + str(UserQuery.pictureLocation),
+            "bannerLocation": "/images/" + str(UserQuery.bannerLocation),
             "channels": channelsReturn,
             "page": "/profile/" + str(UserQuery.username) + "/"
         }
@@ -1218,7 +1244,7 @@ def searchUsers(term: str) -> list:
                 Sec.User.username.like("%" + term + "%"), Sec.User.active == True
             )
             .with_entities(
-                Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation
+                Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation, Sec.User.bannerLocation
             )
             .all()
         )
@@ -1227,7 +1253,7 @@ def searchUsers(term: str) -> list:
                 Sec.User.biography.like("%" + term + "%"), Sec.User.active == True
             )
             .with_entities(
-                Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation
+                Sec.User.id, Sec.User.username, Sec.User.uuid, Sec.User.pictureLocation, Sec.User.bannerLocation
             )
             .all()
         )
