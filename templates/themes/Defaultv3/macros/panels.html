@@ -46,7 +46,7 @@
 </script>
 {% endmacro %}
 
-{% macro topics_panel(topicList, title="Topics" ) %}
+{% macro topics_panel(topicList, title="Topics") %}
 <div class="topics-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="topicList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-evenly" style="width:100%">
@@ -389,8 +389,9 @@
 {% endmacro %}
 
 {% macro user_bio_panel(userData) %}
-<div class="streamer-info-container insetBoxShadow">
-  <div class="row">
+<!-- USER BANNER -->
+<div class="streamer-info-container insetBoxShadow" {% if userData.bannerLocation != None %} style="background-image: url('/images/{{userData.bannerLocation}}')" {% else %} style="background-image: url('/static/img/user-banner-placeholder.jpg')"  {% endif %} onerror="this.onerror=null;this.src='/static/img/user-banner-placeholder.jpg';" >
+  <div class="row userBannerImg">
     <div class="col-auto">
       <img class="steamer-info-picture-img rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="User Photo">
     </div>
@@ -412,8 +413,9 @@
 {% endmacro %}
 
 {% macro channel_metadata_panel(channelData, subState=False) %}
-<div class="channel-info-container insetBoxShadow">
-  <div class="row">
+<!-- CHANNEL BANNER -->
+<div class="channel-info-container insetBoxShadow" {% if channelData.channelBannerLocation != None %} style="background-image: url('/images/{{channelData.channelBannerLocation}}')" {% else %} style="background-image: url('/static/img/channel-banner-placeholder.jpg')"  {% endif %} onerror="this.onerror=null;this.src='/static/img/channel-banner-placeholder.jpg';" >
+  <div class="row channelBannerImg">
     <div class="col-auto">
       <img class="channel-info-picture-img boxShadow" src="/images/{{channelData.imageLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
@@ -597,7 +599,7 @@
             <div class="row">
                 <div class="col-12 col-md-6">
                      <div class="row">
-                        <div class="col-auto">
+                        <div class="col-6">
                             <div class="streamer-avatar">
                                 <img class="userPhoto rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                             </div>
@@ -605,7 +607,17 @@
                               <input type="file" name="photo" class="form-control boxShadow" id="userphotoupload">
                             </div>
                         </div>
-                        <div class="col-10 mt-2">
+                        <div class="col-6">
+                          <div class="usersettingBanner">
+                              <img class="boxShadow" src="/images/{{userData.bannerLocation}}" onerror="this.src='/static/img/channel-banner-placeholder.jpg';">
+                          </div>
+                          <div class="file-upload mt-1">
+                            <input type="file" name="banner" class="form-control boxShadow" id="userbannerupload">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12 mt-2">
                             <div class="form-group">
                                 <label for="userName"><b>User Name</b> (32 characters max)</label>
                                 <input type="text" name="userName" id="userName" class="form-control boxShadow" value="{{userData.username}}" minlength="1" maxlength="32" required>
@@ -987,7 +999,7 @@
       <div id="ParticipantList" class="card-body"></div>
   </div>
   <div class="membersList card my-3">
-      <div class="card-header bg-primary"><b>Guest</b></div>
+      <div class="card-header bg-primary"><b>Muted</b></div>
       <div id="VisitorList" class="card-body"></div>
   </div>
 </div>
@@ -1221,27 +1233,41 @@
                             </small>
                         </div>
                         <div class="row">
-                            <div class="col-12 col-md-3">
-                                <h4>Channel Image</h4>
-                                <div class="channelImg">
-                                    {% if channel.imageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg">
-                                    {% else %}
-                                    <img class="boxShadow" src="/images/{{channel.imageLocation}}">
-                                    {% endif %}
-                                </div>
-                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
-                            </div>
+                          <!-- User Channel Profile Image -->
                             <div class="col-12 col-md-4">
-                                <h4>Offline Stream Image</h4>
-                                <div>
-                                    {% if channel.offlineImageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" height="175px">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Profile Image</h4>
+                                    {% if channel.imageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-profile-placeholder.jpg">
                                     {% else %}
-                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" height="175px">
+                                    <img class="img-fluid boxShadow" src="/images/{{channel.imageLocation}}">
                                     {% endif %}
-                                </div>
+                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
+                            </div>
+                            <!-- User Channel Offline Image -->
+                            <div class="col-12 col-md-4">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Offline Image</h4>
+                                    {% if channel.offlineImageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-offline-placeholder.jpg">
+                                    {% else %}
+                                    <img src="/images/{{channel.offlineImageLocation}}" class=" img-fluidboxShadow">
+                                    {% endif %}
                                 <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
+                            </div>
+                            <!-- User Channel Banner Image -->
+                            <div class="col-12 col-md-4">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Banner Image</h4>
+                                    {% if channel.channelBannerImageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-banner-placeholder.jpg">
+                                    {% else %}
+                                    <img src="/images/{{channel.channelBannerLocation}}" class="img-fluid boxShadow">
+                                    {% endif %}
+                                <input type="file" name="channelbannerphoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
                             </div>
                         </div>
                         <div class="form-group">

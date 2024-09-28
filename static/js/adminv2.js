@@ -308,9 +308,34 @@ function deleteWebhookModal(webhookID) {
 
 function deleteWebhook() {
     var webhookID = document.getElementById('deleteWebhookID').value;
-    socket.emit('deleteGlobalWebhook', {webhookID: webhookID});
-    var webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
-    webhookTableRow.parentNode.removeChild(webhookTableRow);
+    socket.emit('deleteGlobalWebhook', {webhookID: webhookID}, (responseMsg) => {
+        if (responseMsg !== 'OK') {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        const webhookTableRow = document.getElementById('webhookTableRow-' + webhookID);
+        webhookTableRow.parentNode.removeChild(webhookTableRow);
+        createNewBSAlert("Global webhook deleted", "Success");
+    });
+}
+
+function spawnWebhookTableRow(whId, whPayload, triggerText) {
+    const newTr = document.createElement('tr');
+    newTr.id = `webhookTableRow-${whId}`;
+    newTr.innerHTML = `<td id="webhookRowName-${whId}">${whPayload['webhookName']}</td>
+        <td id="webhookRowEndpoint-${whId}" style="display:none;">${whPayload['webhookEndpoint']}</td>
+        <td id="webhookRowTrigger-${whId}">${triggerText}</td>
+        <td id="webhookRowType-${whId}" style="display:none;">${whPayload['webhookReqType']}</td>
+        <td id="webhookRowHeader-${whId}" style="display:none;">${whPayload['webhookHeader']}</td>
+        <td id="webhookRowPayload-${whId}" style="display:none;">${whPayload['webhookPayload']}</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-warning" onclick="editWebhook('${whId}')"><i class="fas fa-edit"></i></button>
+            <button type="button" class="btn btn-sm btn-success" onclick="testWebhook('${whId}')"><i class="fas fa-vial"></i></button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="deleteWebhookModal('${whId}')"><i class="far fa-trash-alt"></i></button>
+        </td>`;
+    
+    document.querySelector("#webhooksTable > tbody").appendChild(newTr);
 }
 
 function submitWebhook() {
@@ -325,61 +350,77 @@ function submitWebhook() {
     var webhookInputAction = document.getElementById('webhookInputAction').value;
     var webhookInputID = document.getElementById('webhookID').value;
 
+    if (webhookInputID === null) {
+        createNewBSAlert("ID of that global webhook is null", "Failed");
+        return;
+    }
     if (webhookName === '') {
         (document.getElementById('webhookName')).setCustomValidity('Name is Required');
     }
     if (webhookEndpoint === '') {
         (document.getElementById('webhookEndpoint')).setCustomValidity('Endpoint URL is Required');
     }
-    socket.emit('submitGlobalWebhook', {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID});
 
-    if (webhookInputID !== null) {
+    const socketPayload = {webhookName: webhookName, webhookEndpoint: webhookEndpoint, webhookHeader:webhookHeader, webhookPayload:webhookPayload, webhookReqType: webhookReqType, webhookTrigger: webhookTrigger, inputAction:webhookInputAction, webhookInputID:webhookInputID};
+    socket.emit('submitGlobalWebhook', socketPayload, (status, item) => {
+        if (status !== 'OK') {
+            createNewBSAlert(item, "Failed");
+            return;
+        }
 
         switch(webhookTrigger) {
-          case '0':
-            webhookTrigger = 'Stream Start';
-            break;
-          case '1':
-            webhookTrigger = 'Stream End';
-            break;
-          case '2':
-            webhookTrigger = 'Stream Viewer Join';
-            break;
-          case '3':
-            webhookTrigger = 'Stream Viewer Upvote';
-            break;
-          case '4':
-            webhookTrigger = 'Stream Name Change';
-            break;
-          case '5':
-            webhookTrigger = 'Chat Message';
-            break;
-          case '6':
-            webhookTrigger = 'New Video';
-            break;
-          case '7':
-            webhookTrigger = 'Video Comment';
-            break;
-          case '8':
-            webhookTrigger = 'Video Upvote';
-            break;
-          case '9':
-            webhookTrigger = 'Video Name Change';
-            break;
-          case '10':
-            webhookTrigger = 'Channel Subscription';
-            break;
-          case '20':
-            webhookTrigger = 'New User';
-            break;
+            case '0':
+                webhookTrigger = 'Stream Start';
+                break;
+            case '1':
+                webhookTrigger = 'Stream End';
+                break;
+            case '2':
+                webhookTrigger = 'Stream Viewer Join';
+                break;
+            case '3':
+                webhookTrigger = 'Stream Viewer Upvote';
+                break;
+            case '4':
+                webhookTrigger = 'Stream Name Change';
+                break;
+            case '5':
+                webhookTrigger = 'Chat Message';
+                break;
+            case '6':
+                webhookTrigger = 'New Video';
+                break;
+            case '7':
+                webhookTrigger = 'Video Comment';
+                break;
+            case '8':
+                webhookTrigger = 'Video Upvote';
+                break;
+            case '9':
+                webhookTrigger = 'Video Name Change';
+                break;
+            case '10':
+                webhookTrigger = 'Channel Subscription';
+                break;
+            case '20':
+                webhookTrigger = 'New User';
+                break;
         }
-        document.getElementById('webhookRowName-' + webhookInputID).innerText = webhookName;
-        document.getElementById('webhookRowEndpoint-' + webhookInputID).innerText = webhookEndpoint;
-        document.getElementById('webhookRowHeader-' + webhookInputID).innerText = webhookHeader;
-        document.getElementById('webhookRowPayload-' + webhookInputID).innerText = webhookPayload;
-        document.getElementById('webhookRowType-' + webhookInputID).innerText = webhookReqType;
-        document.getElementById('webhookRowTrigger-' + webhookInputID).innerText = webhookTrigger;
-    }
+
+        if (webhookInputAction === 'edit') {
+            document.getElementById('webhookRowName-' + webhookInputID).innerText = webhookName;
+            document.getElementById('webhookRowEndpoint-' + webhookInputID).innerText = webhookEndpoint;
+            document.getElementById('webhookRowHeader-' + webhookInputID).innerText = webhookHeader;
+            document.getElementById('webhookRowPayload-' + webhookInputID).innerText = webhookPayload;
+            document.getElementById('webhookRowType-' + webhookInputID).innerText = webhookReqType;
+            document.getElementById('webhookRowTrigger-' + webhookInputID).innerText = webhookTrigger;
+
+            createNewBSAlert("Global webhook edited", "Success");
+        } else if (webhookInputAction === 'new') {
+            spawnWebhookTableRow(item, socketPayload, webhookTrigger);
+            createNewBSAlert("Global webhook created", "Success");
+        }
+    });
 }
 
 function editWebhook(webhookID) {
@@ -461,17 +502,29 @@ function deleteStickerModal(stickerID) {
 
 function deleteSticker() {
     stickerID = document.getElementById('deleteStickerID').value;
-    socket.emit('deleteSticker', {stickerID: stickerID});
-    stickerDiv = document.getElementById('sticker-' + stickerID);
-    stickerDiv.parentNode.removeChild(stickerDiv);
-    document.getElementById('deleteStickerID').value = "";
-    createNewBSAlert("Sticker Deleted","success")
+    socket.emit('deleteSticker', {stickerID: stickerID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        stickerDiv = document.getElementById('sticker-' + stickerID);
+        stickerDiv.parentNode.removeChild(stickerDiv);
+        document.getElementById('deleteStickerID').value = "";
+        createNewBSAlert("Sticker Deleted","success");
+    });
 }
 
 function editStickerModal(stickerID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function disable2FAModal(userID) {

@@ -630,14 +630,14 @@ class api_1_SearchChannels(Resource):
     @api.doc(responses={200: "Success", 400: "Request Error"})
     def post(self):
         """
-        Searches Channel Names and Metadata and returns Name and Link
+        Searches Channel Names and Metadata and returns Name, Link and Banner
         """
         args = channelSearchPost.parse_args()
         finalArray = []
         if "term" in args:
             returnArray = cachedDbCalls.searchChannels(args["term"])
             for chan in returnArray:
-                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation]
+                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation, chan.channelBannerLocation]
                 finalArray.append(newChanObj)
             return {"results": finalArray}
         else:

@@ -172,6 +172,26 @@ def user_page():
                     except OSError:
                         pass
 
+        #USER BANNER
+        if "banner" in request.files:
+            file = request.files["banner"]
+            if file.filename != "":
+                oldImage = None
+
+                if current_user.bannerLocation is not None:
+                    oldImage = current_user.bannerLocation
+
+                filename = photos.save(
+                    request.files["banner"], name=str(uuid.uuid4()) + "."
+                )
+                current_user.bannerLocation = filename
+
+                if oldImage is not None:
+                    try:
+                        os.remove(oldImage)
+                    except OSError:
+                        pass
+
         system.newLog(1, "User Info Updated - Username:" + current_user.username)
         db.session.commit()
     flash("User Settings Updated", "success")

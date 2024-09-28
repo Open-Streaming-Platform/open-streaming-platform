@@ -1018,17 +1018,29 @@ function deleteStickerModal(stickerID, channelID) {
 function deleteSticker() {
     stickerID = document.getElementById('deleteStickerID').value;
     channelID = document.getElementById('deleteStickerChannelID').value
-    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID});
-    stickerDiv = document.getElementById('sticker-' + stickerID);
-    stickerDiv.parentNode.removeChild(stickerDiv);
-    document.getElementById('deleteStickerID').value = "";
-    createNewBSAlert("Sticker Deleted","success")
+    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        stickerDiv = document.getElementById('sticker-' + stickerID);
+        stickerDiv.parentNode.removeChild(stickerDiv);
+        document.getElementById('deleteStickerID').value = "";
+        createNewBSAlert("Sticker Deleted","success");
+    });
 }
 
 function editStickerModal(stickerID, channelID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName, channelID: channelID});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function moveVideoModal(videoId) {

@@ -525,15 +525,25 @@ except Exception as e:
 # Clear Process from OSP DB Init
 r.delete("OSP_DB_INIT_HANDLER")
 
-# Perform System Fixes
-app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
-try:
-    system.systemFixes(app)
-except:
-    app.logger.warning(
+if r.get("OSP_SYSTEM_FIXES_HANDLER") is None:
+    # Perform System Fixes
+    r.set("OSP_SYSTEM_FIXES_HANDLER", globalvars.processUUID, ex=60)
+    app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
+    try:
+        system.systemFixes(app)
+    except:
+        app.logger.warning(
+            {
+                "level": "warning",
+                "message": "Unable to perform System Fixes.  May be first run or DB Issue.",
+            }
+        )
+        r.delete("OSP_SYSTEM_FIXES_HANDLER")
+else:
+    app.logger.info(
         {
-            "level": "warning",
-            "message": "Unable to perform System Fixes.  May be first run or DB Issue.",
+            "level": "info",
+            "message": "Skipping System Fixes; they are already in Progress, or already done.",
         }
     )
 
