@@ -309,21 +309,23 @@ def reprocess_stuck_videos(self):
 @celery.task(bind=True)
 def process_ingest_folder(self):
     vidRoot = current_app.config["WEB_ROOT"]
-    if not os.path.isdir(vidRoot + "/ingest"):
+    if vidRoot["-1"] == '/':
+        vidRoot = vidRoot[:-1]
+    if not os.path.isdir(vidRoot + "ingest"):
         try:
-            os.mkdir(vidRoot + "/ingest")
+            os.mkdir(vidRoot + "ingest")
         except:
             return "Fail: Ingest Folder Does Not Exist and Can Not Create"
-    channelFolders = glob.glob(vidRoot + "/ingest/*/")
+    channelFolders = glob.glob(vidRoot + "ingest/*/")
     videosProcessed = []
     for channelFolder in channelFolders:
-        channelLoc = channelFolder.replace(vidRoot + "/ingest/", "")[:-1]
+        channelLoc = channelFolder.replace(vidRoot + "ingest/", "")[:-1]
         channelQuery = cachedDbCalls.getChannelByLoc(channelLoc)
         if channelQuery != None:
             # Process MP4 Files
-            pendingFiles = glob.glob(vidRoot + "/ingest/" + channelLoc + "/*.mp4")
+            pendingFiles = glob.glob(vidRoot + "ingest/" + channelLoc + "/*.mp4")
             for file in pendingFiles:
-                filename = file.replace(vidRoot + "/ingest/" + channelLoc + "/", "")
+                filename = file.replace(vidRoot + "ingest/" + channelLoc + "/", "")
 
                 videosProcessed.append(file)
                 results = subtask(
@@ -336,16 +338,16 @@ def process_ingest_folder(self):
                         f"{ filename } Imported at { str(datetime.datetime.now()) }",
                         channelQuery.id,
                     ),
-                    kwargs=({"sourcePath": vidRoot + "/ingest/" + channelLoc}),
+                    kwargs=({"sourcePath": vidRoot + "ingest/" + channelLoc}),
                 ).apply_async()
 
             # Process FLV Files
-            pendingFiles = glob.glob(vidRoot + "/ingest/" + channelLoc + "/*.flv")
+            pendingFiles = glob.glob(vidRoot + "ingest/" + channelLoc + "/*.flv")
             for file in pendingFiles:
                 videoFunc.processFLVUpload(file)
 
                 filename = file.replace(
-                    vidRoot + "/ingest/" + channelLoc + "/", ""
+                    vidRoot + "ingest/" + channelLoc + "/", ""
                 ).replace(".flv", ".mp4")
 
                 videosProcessed.append(file)
@@ -359,7 +361,7 @@ def process_ingest_folder(self):
                         f"{ filename } Imported at { str(datetime.datetime.now()) }",
                         channelQuery.id,
                     ),
-                    kwargs=({"sourcePath": vidRoot + "/ingest/" + channelLoc}),
+                    kwargs=({"sourcePath": vidRoot + "ingest/" + channelLoc}),
                 ).apply_async()
 
     log.info(
