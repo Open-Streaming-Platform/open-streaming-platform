@@ -608,7 +608,7 @@ def processVideoUpload(
                 return ("Error", "Error uploading video - Unable to create directory")
         if sourcePath is None:
             sourcePath = current_app.config["VIDEO_UPLOAD_TEMPFOLDER"]
-        shutil.move(f"{sourcePath}{videoFilename}", videoPath)
+        shutil.move(f"{sourcePath}/{videoFilename}", videoPath)
     else:
         db.session.close()
         return ("Error", "Error uploading video - Couldn't move video file")
