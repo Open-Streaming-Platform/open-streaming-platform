@@ -309,8 +309,8 @@ def reprocess_stuck_videos(self):
 @celery.task(bind=True)
 def process_ingest_folder(self):
     vidRoot = current_app.config["WEB_ROOT"]
-    if vidRoot[-1] == '/':
-        vidRoot = vidRoot[:-1]
+    if vidRoot[-1] != '/':
+        vidRoot = vidRoot + "/"
     if not os.path.isdir(vidRoot + "ingest"):
         try:
             os.mkdir(vidRoot + "ingest")
