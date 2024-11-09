@@ -128,7 +128,6 @@ if hasattr(config, "ospXMPPDomain"):
 # Generate a Random UUID for Interprocess Handling
 processUUID = str(uuid.uuid4())
 globalvars.processUUID = processUUID
-
 ####### Sentry.IO Metrics and Error Logging (Disabled by Default) #######
 if hasattr(config, "sentryIO_Enabled") and hasattr(config, "sentryIO_DSN"):
     if config.sentryIO_Enabled:
@@ -639,8 +638,10 @@ from classes.shared import email
 
 email.init_app(app)
 email.app = app
-
-sysSettings = cachedDbCalls.getSystemSettings()
+try:
+    sysSettings = cachedDbCalls.getSystemSettings()
+except:
+    app.logger.error({"level": "error", "message": "cachedDbCalls.getSystemSettings() encountered an error, likely due to first time db generation."})
 
 app.config["SERVER_NAME"] = None
 try:
