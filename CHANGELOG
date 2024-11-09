@@ -1,3 +1,15 @@
+0.9.12
+==============================================
+OSP-Installer: Fixes to the EjabberD installer location
+OSP-Core: Added User and Channel Banners - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/427
+OSP-Core: Fixes for Global Webhooks - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/430
+OSP-Core: LiveView.py Improvements - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/429
+OSP-Core: Global Chat Moderators - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/417
+OSP-Core: Sticker Improvements - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/425
+OSP-Core: Standalone Clips - https://gitlab.com/osp-group/flask-nginx-rtmp-manager/-/merge_requests/409
+OSP-Core: Various Other System and DB Improvements and BugFixes
+
+
 0.9.11
 ==============================================
 ** BREAKING CHANGE **: Ejabberd's Internal Domain has been moved to osp.internal to elminate install complexity.  
