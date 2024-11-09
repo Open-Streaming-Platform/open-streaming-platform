@@ -27,7 +27,7 @@ from functions import topicsFunc
 from functions import videoFunc
 from functions import channelFunc
 from functions import securityFunc
-from functions.scheduled_tasks import video_tasks
+from functions.scheduled_tasks import video_tasks, channel_tasks
 
 from app import user_datastore
 from app import ejabberd
@@ -64,6 +64,9 @@ def bulkAddRoles(message):
             userQuery = Sec.User.query.filter_by(id=int(userID)).first()
             if userQuery is not None:
                 user_datastore.add_role_to_user(userQuery, role)
+                if role == 'GlobalChatMod':
+                    cachedDbCalls.invalidateGCMCache(userQuery.uuid)
+                    channel_tasks.add_new_global_chat_mod_to_channels.delay(userQuery.id, userQuery.uuid)
         db.session.commit()
         db.session.close()
     return "OK"
@@ -762,6 +765,10 @@ def call_celery_task(message):
                     video_tasks.check_video_published_exists.delay()
                 elif message["task"] == "check_video_retention":
                     video_tasks.check_video_retention.delay()
+                elif message["task"] == "check_clip_retention":
+                    video_tasks.check_video_retention.delay(checkVideos=False, checkClips=True)
+                elif message["task"] == "check_video_and_clip_retention":
+                    video_tasks.check_video_retention.delay(checkVideos=True, checkClips=True)
                 elif message["task"] == "reprocess_stuck_videos":
                     video_tasks.reprocess_stuck_videos.delay()
                 elif message["task"] == "check_video_thumbnails":

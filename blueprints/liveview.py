@@ -7,7 +7,6 @@ from classes.shared import db
 from classes import settings
 from classes import RecordedVideo
 from classes import subscriptions
-from classes import topics
 from classes import views
 from classes import Channel
 from classes import Stream
@@ -16,7 +15,7 @@ from classes import banList
 from classes import stickers
 from classes import panel
 
-from globals.globalvars import ejabberdServer, ejabberdServerHttpBindFQDN, defaultChatDomain
+from globals.globalvars import defaultChatDomain
 
 from functions import themes
 from functions import securityFunc
@@ -28,13 +27,6 @@ liveview_bp = Blueprint("liveview", __name__, url_prefix="/view")
 @liveview_bp.route("/<loc>/")
 def view_page(loc):
     sysSettings = cachedDbCalls.getSystemSettings()
-
-    xmppserver = sysSettings.siteAddress
-
-    if ejabberdServerHttpBindFQDN != None:
-        xmppserver = ejabberdServerHttpBindFQDN
-    elif ejabberdServer != "127.0.0.1" and ejabberdServer != "localhost":
-        xmppserver = ejabberdServer
 
     # requestedChannel = Channel.Channel.query.filter_by(channelLoc=loc).first()
     requestedChannel = cachedDbCalls.getChannelByLoc(loc)
@@ -67,44 +59,17 @@ def view_page(loc):
         # for option in chatOptions:
         #    print(option)
 
-        # Generate CSV String for Banned Chat List
-        bannedWordQuery = banList.chatBannedWords.query.all()
-        bannedWordArray = []
-        for bannedWord in bannedWordQuery:
-            bannedWordArray.append(bannedWord.word)
+        # Create queries for banned words and banned messages, to be used later where needed.
+        bwQuery = banList.chatBannedWords.query.with_entities(banList.chatBannedWords.word)
 
-        channelBannedMessagesQuery = banList.chatBannedMessages.query.filter_by(
+        channelBmQuery = banList.chatBannedMessages.query.filter_by(
             channelLoc=requestedChannel.channelLoc
-        ).all()
-        bannedMessagesList = []
-        for bannedMessage in channelBannedMessagesQuery:
-            bannedMessagesList.append(bannedMessage.msgID)
+        ).with_entities(banList.chatBannedMessages.msgID)
 
         streamData = Stream.Stream.query.filter_by(
             active=True, streamKey=requestedChannel.streamKey
-        ).first()
+        )
 
-        # Stream URL Generation
-        streamURL = ""
-        edgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
-        if sysSettings.proxyFQDN != None:
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/proxy-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/proxy/" + requestedChannel.channelLoc + "/index.m3u8"
-        elif edgeQuery != []:
-            # Handle Selecting the Node using Round Robin Logic
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/edge-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/edge/" + requestedChannel.channelLoc + "/index.m3u8"
-        else:
-            if sysSettings.adaptiveStreaming is True:
-                streamURL = "/live-adapt/" + requestedChannel.channelLoc + ".m3u8"
-            else:
-                streamURL = "/live/" + requestedChannel.channelLoc + "/index.m3u8"
-
-        topicList = cachedDbCalls.getAllTopics()
         chatOnly = request.args.get("chatOnly")
 
         # Grab List of Stickers for Chat
@@ -188,23 +153,35 @@ def view_page(loc):
                         flash("Invalid User", "error")
                         return redirect(url_for("root.main_page"))
 
+                streamName = streamData.with_entities(
+                    Stream.Stream.streamName
+                ).scalar()
+
                 return render_template(
                     themes.checkOverride("chatpopout.html"),
-                    stream=streamData,
-                    streamURL=streamURL,
+                    streamName=streamName,
                     sysSettings=sysSettings,
                     channel=requestedChannel,
                     hideBar=hideBar,
-                    guestUser=guestUser,
-                    xmppserver=xmppserver,
                     stickerList=stickerList,
                     stickerSelectorList=stickerSelectorList,
-                    bannedWords=bannedWordArray,
-                    bannedMessages=bannedMessagesList,
+                    bannedWords=[bw.word for bw in bwQuery.all()],
+                    bannedMessages=[bm.msgID for bm in channelBmQuery.all()],
                     chatDomain = defaultChatDomain
                 )
             else:
                 flash("Chat is Not Enabled For This Stream", "error")
+
+        # Stream URL Generation
+        streamType = 'live'
+        if sysSettings.proxyFQDN is not None:
+            streamType = 'proxy'
+        elif settings.edgeStreamer.query.filter_by(active=True).with_entities(settings.edgeStreamer.id).first() is not None:
+            streamType = 'edge'
+
+        streamURL = f"/{streamType}/{requestedChannel.channelLoc}/index.m3u8"
+        if sysSettings.adaptiveStreaming is True:
+            streamURL = f"/{streamType}-adapt/{requestedChannel.channelLoc}.m3u8"
 
         isEmbedded = request.args.get("embedded")
 
@@ -296,20 +273,18 @@ def view_page(loc):
 
             return render_template(
                 themes.checkOverride("channelplayer.html"),
-                stream=streamData,
+                stream=streamData.first(),
                 streamURL=streamURL,
-                topics=topicList,
+                topics=cachedDbCalls.getAllTopics(),
                 channel=requestedChannel,
                 clipsList=clipsList,
                 videoList=videoList,
                 subState=subState,
-                secureHash=secureHash,
                 rtmpURI=rtmpURI,
-                xmppserver=xmppserver,
                 stickerList=stickerList,
                 stickerSelectorList=stickerSelectorList,
-                bannedWords=bannedWordArray,
-                bannedMessages=bannedMessagesList,
+                bannedWords=[bw.word for bw in bwQuery.all()],
+                bannedMessages=[bm.msgID for bm in channelBmQuery.all()],
                 channelPanelList=channelPanelListSorted,
                 chatDomain=defaultChatDomain
             )
@@ -332,12 +307,9 @@ def view_page(loc):
             return render_template(
                 themes.checkOverride("channelplayer_embed.html"),
                 channel=requestedChannel,
-                stream=streamData,
                 streamURL=streamURL,
-                topics=topicList,
                 isAutoPlay=isAutoPlay,
                 countViewers=countViewers,
-                xmppserver=xmppserver,
                 chatDomain=defaultChatDomain
             )
 

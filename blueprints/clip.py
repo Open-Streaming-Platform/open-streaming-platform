@@ -28,15 +28,21 @@ def view_clip_page(clipID):
     clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
 
     if clipQuery is not None:
+        if clipQuery.parentVideo is not None:
+            recordedVid = cachedDbCalls.getVideo(clipQuery.parentVideo)
+            if recordedVid is not None:
+                if recordedVid.length is None:
+                    fullVidPath = videos_root + recordedVid.videoLocation
+                    duration = videoFunc.getVidLength(fullVidPath)
+                    recordedVid.length = duration
+                db.session.commit()
 
-        recordedVid = cachedDbCalls.getVideo(clipQuery.parentVideo)
-
-        associatedChannel = cachedDbCalls.getChannel(recordedVid.channelID)
+        associatedChannel = cachedDbCalls.getChannel(clipQuery.channelID)
 
         if clipQuery.published is False:
             if current_user.is_authenticated:
                 if (
-                    current_user != recordedVid.owningUser
+                    current_user.id != clipQuery.owningUser
                     and current_user.has_role("Admin") is False
                 ):
                     flash("No Such Video at URL", "error")
@@ -44,11 +50,11 @@ def view_clip_page(clipID):
             else:
                 flash("No Such Video at URL", "error")
                 return redirect(url_for("root.main_page"))
-
+        
         if associatedChannel.private:
             if current_user.is_authenticated:
                 if (
-                    current_user.id != associatedChannel.owningUser
+                    current_user.id != clipQuery.owningUser
                     and current_user.has_role("Admin") is False
                 ):
                     flash("No Such Video at URL", "error")
@@ -63,78 +69,70 @@ def view_clip_page(clipID):
                     themes.checkOverride("channelProtectionAuth.html")
                 )
 
-        if recordedVid is not None:
-            clipQuery.views = clipQuery.views + 1
-            Channel.Channel.query.filter_by(id=associatedChannel.id).update(
-                dict(views=associatedChannel.views + 1)
+        clipQuery.views = clipQuery.views + 1
+        Channel.Channel.query.filter_by(id=associatedChannel.id).update(
+            dict(views=associatedChannel.views + 1)
+        )
+
+        topicList = cachedDbCalls.getAllTopics()
+
+        streamURL = "/videos/" + clipQuery.videoLocation
+
+        # Function to allow custom start time on Video
+        startTime = None
+        if "startTime" in request.args:
+            startTime = request.args.get("startTime")
+        try:
+            startTime = float(startTime)
+        except:
+            startTime = None
+
+        isEmbedded = request.args.get("embedded")
+
+        if isEmbedded is None or isEmbedded == "False":
+
+            randomClips = (
+                RecordedVideo.Clips.query.filter(
+                    RecordedVideo.Clips.id != clipQuery.id
+                )
+                .filter(RecordedVideo.Clips.published == True)
+                .order_by(func.random())
+                .limit(10)
             )
 
-            if recordedVid.length is None:
-                fullVidPath = videos_root + recordedVid.videoLocation
-                duration = videoFunc.getVidLength(fullVidPath)
-                recordedVid.length = duration
-            db.session.commit()
+            subState = False
+            if current_user.is_authenticated:
+                chanSubQuery = subscriptions.channelSubs.query.filter_by(
+                    channelID=clipQuery.channelID, userID=current_user.id
+                ).first()
+                if chanSubQuery is not None:
+                    subState = True
 
-            topicList = cachedDbCalls.getAllTopics()
-
-            streamURL = "/videos/" + clipQuery.videoLocation
-
-            # Function to allow custom start time on Video
-            startTime = None
-            if "startTime" in request.args:
-                startTime = request.args.get("startTime")
-            try:
-                startTime = float(startTime)
-            except:
-                startTime = None
-
-            isEmbedded = request.args.get("embedded")
-
-            if isEmbedded is None or isEmbedded == "False":
-
-                randomClips = (
-                    RecordedVideo.Clips.query.filter(
-                        RecordedVideo.Clips.id != clipQuery.id
-                    )
-                    .filter(RecordedVideo.Clips.published == True)
-                    .order_by(func.random())
-                    .limit(10)
-                )
-
-                subState = False
-                if current_user.is_authenticated:
-                    chanSubQuery = subscriptions.channelSubs.query.filter_by(
-                        channelID=recordedVid.channelID, userID=current_user.id
-                    ).first()
-                    if chanSubQuery is not None:
-                        subState = True
-
-                return render_template(
-                    themes.checkOverride("clipplayer.html"),
-                    video=recordedVid,
-                    streamURL=streamURL,
-                    topics=topicList,
-                    randomClips=randomClips,
-                    subState=subState,
-                    clip=clipQuery,
-                    startTime=startTime,
-                )
+            return render_template(
+                themes.checkOverride("clipplayer.html"),
+                streamURL=streamURL,
+                topics=topicList,
+                randomClips=randomClips,
+                subState=subState,
+                clip=clipQuery,
+                startTime=startTime,
+            )
+        else:
+            isAutoPlay = request.args.get("autoplay")
+            if isAutoPlay == None:
+                isAutoPlay = False
+            elif isAutoPlay.lower() == "true":
+                isAutoPlay = True
             else:
-                isAutoPlay = request.args.get("autoplay")
-                if isAutoPlay == None:
-                    isAutoPlay = False
-                elif isAutoPlay.lower() == "true":
-                    isAutoPlay = True
-                else:
-                    isAutoPlay = False
-                return render_template(
-                    themes.checkOverride("vidplayer_embed.html"),
-                    video=clipQuery,
-                    streamURL=streamURL,
-                    topics=topicList,
-                    isAutoPlay=isAutoPlay,
-                    startTime=startTime,
-                )
+                isAutoPlay = False
+            return render_template(
+                themes.checkOverride("vidplayer_embed.html"),
+                video=clipQuery,
+                streamURL=streamURL,
+                topics=topicList,
+                isAutoPlay=isAutoPlay,
+                startTime=startTime,
+            )
     else:
         flash("No Such Clip at URL", "error")
         return redirect(url_for("root.main_page"))
@@ -145,7 +143,7 @@ def view_clip_page(clipID):
 def delete_clip_page(clipID):
 
     clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
-    if clipQuery.recordedVideo.owningUser == current_user.id or current_user.has_role(
+    if clipQuery.owningUser == current_user.id or current_user.has_role(
         "Admin"
     ):
         result = video_tasks.delete_video_clip.delay(int(clipID))
@@ -165,7 +163,7 @@ def clip_change_page(clipID):
         clipTags = request.form["clipTags"]
 
     result = videoFunc.changeClipMetadata(
-        int(clipID), request.form["newVidName"], request.form["description"], clipTags
+        int(clipID), request.form["newVidName"], int(request.form["newClipTopic"]), request.form["description"], clipTags
     )
 
     if result is True:

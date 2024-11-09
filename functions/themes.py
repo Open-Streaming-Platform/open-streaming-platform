@@ -1,5 +1,6 @@
 import os
 import logging
+from typing import Union
 from PIL import Image
 from pilkit.processors import ProcessorPipeline, ResizeToFit, SmartResize
 from flask_security import current_user
@@ -15,7 +16,7 @@ from classes import panel
 log = logging.getLogger("app.functions.database")
 
 # Checks Theme Override Data and if does not exist in override, use Defaultv3's HTML with theme's layout.html
-def checkOverride(themeHTMLFile):
+def checkOverride(themeHTMLFile: str) -> str:
     sysSettings = (
         db.session.query(settings.settings)
         .with_entities(settings.settings.systemTheme, settings.settings.maintenanceMode)
@@ -48,7 +49,7 @@ def checkOverride(themeHTMLFile):
 
 
 # Code Modified from https://github.com/Hecsall/favicon-generator
-def faviconGenerator(imageLocation):
+def faviconGenerator(imageLocation: str) -> str:
     originalImage = imageLocation
     directory = globalvars.videoRoot + "images"
 
@@ -86,7 +87,7 @@ def faviconGenerator(imageLocation):
     return "OK"
 
 
-def getPagePanels(blueprintPageName, type=0, userID=0):
+def getPagePanels(blueprintPageName: str, type: int = 0, userID: int = 0) -> Union[list, None]:
     panelQuerySorted = None
     if type == 0:
         panelQuery = panel.panelMapping.query.filter_by(

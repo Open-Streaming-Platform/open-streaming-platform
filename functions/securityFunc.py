@@ -8,11 +8,14 @@ import secrets
 
 from classes.shared import db, limiter, cache
 from classes import Channel
+from classes import banList
+from classes import subscriptions
 from classes import Sec
 from classes import invites
 from classes import views
 from classes import comments
 from classes import apikey
+from classes import notifications as dbclass_notif
 
 from globals import globalvars
 
@@ -28,7 +31,7 @@ log = logging.getLogger("app.functions.securityFunctions")
 
 
 @limiter.limit("100/second")
-def check_isValidChannelViewer(channelID):
+def check_isValidChannelViewer(channelID: int) -> bool:
     if current_user.is_authenticated:
 
         # Allow Admin
@@ -86,7 +89,7 @@ def check_isValidChannelViewer(channelID):
 
 
 @limiter.limit("100/second")
-def check_isUserValidRTMPViewer(userID, channelID):
+def check_isUserValidRTMPViewer(userID: int, channelID: int) -> bool:
     userQuery = Sec.User.query.filter_by(id=userID).with_entities(Sec.User.id).first()
     if userQuery is not None:
         channelQuery = (
@@ -113,7 +116,7 @@ def check_isUserValidRTMPViewer(userID, channelID):
     return False
 
 
-def flag_delete_user(userID):
+def flag_delete_user(userID: int) -> bool:
     userQuery = Sec.User.query.filter_by(id=userID).first()
     if userQuery is not None:
         userQuery.active = False
@@ -126,7 +129,7 @@ def flag_delete_user(userID):
             + " has queued their account for deletion.  The account will be deleted in 48 from "
             + str(datetime.datetime.now()),
             "/settings/admin",
-            "/images/" + str(userQuery.pictureLocation),
+            "/images/" + str(userQuery.pictureLocation, userQuery.bannerLocation),
         )
         if existingFlag is None:
             newUserFlag = Sec.UsersFlaggedForDeletion(userQuery.id)
@@ -138,7 +141,7 @@ def flag_delete_user(userID):
     return False
 
 
-def delete_user(userID):
+def delete_user(userID: int) -> bool:
     """
     Deletes Channel Data, Comments, Videos, Clips, and Userdata for a given userID
     """
@@ -151,42 +154,52 @@ def delete_user(userID):
         if userFlaggedForDeletionQuery is not None:
             db.session.delete(userFlaggedForDeletionQuery)
 
-        channelQuery = Channel.Channel.query.filter_by(owningUser=userQuery.id).all()
         username = userQuery.username
 
         # Delete any existing Invites
-        inviteQuery = invites.invitedViewer.query.filter_by(userID=int(userID)).all()
-        for invite in inviteQuery:
-            db.session.delete(invite)
+        invites.invitedViewer.query.filter_by(userID=userID).delete()
         db.session.commit()
 
         # Delete any existing User Comments
-        commentQuery = comments.videoComments.query.filter_by(userID=int(userID)).all()
-        for comment in commentQuery:
-            db.session.delete(comment)
+        comments.videoComments.query.filter_by(userID=userID).delete()
         db.session.commit()
 
         # Delete any existing API Keys
-        apikeyQuery = apikey.apikey.query.filter_by(userID=userID).all()
-        for key in apikeyQuery:
-            db.session.delete(key)
+        apikey.apikey.query.filter_by(userID=userID).delete()
         db.session.commit()
 
-        # Delete Channels and all Channel Data
+        # Delete user's ban list entry and banned messages.
+        banList.banList.query.filter_by(userID=userID).delete()
+        banList.messageBanList.query.filter_by(userID=userID).delete()
+        banList.messageBanList.query.filter_by(messageFrom=userID).delete()
+        db.session.commit()
+
+        # Delete messages sent TO the user, and user's notifications.
+        dbclass_notif.userNotification.query.filter_by(userID=userID).delete()
+        dbclass_notif.userMessage.query.filter_by(toUserID=userID).delete()
+        db.session.commit()
+
+        # Delete user's subscriptions to channels.
+        subscriptions.channelSubs.query.filter_by(userID=userID).delete()
+        db.session.commit()
+
+        # Delete Channels and all Channel Data. This handles Clips + Videos too.
+        channelQuery = Channel.Channel.query.filter_by(owningUser=userID).with_entities(Channel.Channel.id).all()
         for channel in channelQuery:
             channelFunc.delete_channel(channel.id)
 
         # Clear All Role Entries for a User Prior to Deletion
         from app import user_datastore
 
-        roleQuery = Sec.Role.query.all()
+        # Explcitly query user's roles, for removal.
+        roleQuery = userQuery.roles
         for role in roleQuery:
             user_datastore.remove_role_from_user(userQuery, role)
 
         db.session.delete(userQuery)
         db.session.commit()
 
-        cache.delete_memoized(cachedDbCalls.getUser, int(userID))
+        cache.delete_memoized(cachedDbCalls.getUser, userID)
 
         if current_user != None:
             runningUser = current_user.username
@@ -205,7 +218,7 @@ def uia_username_mapper(identity):
     # we allow pretty much anything - but we bleach it.
     return bleach.clean(identity, strip=True)
 
-def admin_force_reset(userId):
+def admin_force_reset(userId: int) -> bool:
     UserQuery = Sec.User.query.filter_by(id=userId).first()
     if UserQuery != None:
         if UserQuery.authType == 0:

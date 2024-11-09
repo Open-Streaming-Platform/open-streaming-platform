@@ -96,6 +96,8 @@ def user_auth_check():
                             p = subprocess.Popen(
                                 [
                                     "/usr/bin/ffmpeg",
+                                    '-hwaccel',
+                                    'auto',
                                     "-i",
                                     inputLocation,
                                     "-c",
@@ -145,6 +147,8 @@ def user_auth_check():
                         ):
                             subprocessConstructor = [
                                 "/usr/bin/ffmpeg",
+                                '-hwaccel',
+                                'auto',
                                 "-i",
                                 inputLocation,
                                 "-c",
@@ -271,5 +275,14 @@ def rec_Complete_handler():
             return "OK"
         else:
             abort(400)
+    else:
+        abort(400)
+
+@rtmp_bp.route("/closeStream", methods=["POST"])
+def stream_force_close():
+    key = request.form["name"]
+    if key != None and key.strip() != "":
+        dropRequest = requests.get(f"http://127.0.0.1:9000/control/client?app=stream&name={key}")
+        return "OK"
     else:
         abort(400)

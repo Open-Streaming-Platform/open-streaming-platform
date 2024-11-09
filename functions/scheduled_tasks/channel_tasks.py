@@ -4,7 +4,7 @@ from celery.result import AsyncResult
 import datetime
 import logging
 from classes.shared import celery, db
-from classes import Stream, Channel
+from classes import Stream, Channel, Sec
 from functions import xmpp, cachedDbCalls
 
 log = logging.getLogger("app.functions.scheduler.channel_tasks")
@@ -66,3 +66,36 @@ def check_channel_stream_time(self, streamId):
         if channelQuery != None:
             streamTime = (datetime.datetime.utcnow() - activeStreamQuery.startTimeStamp)
             streamTimeMins = streamTime.total_seconds() / 60.0
+
+@celery.task(bind=True)
+def new_channel_assign_global_chat_mods(self, owner_id, channel_loc):
+    for gcm_user in Sec.Role.query.filter_by(
+        name="GlobalChatMod"
+    ).one().users.filter(
+        Sec.User.id != owner_id
+    ).with_entities(
+        Sec.User.id, Sec.User.uuid,
+    ).all():
+        xmpp.set_user_affiliation(gcm_user.uuid, channel_loc, "admin")
+
+@celery.task(bind=True)
+def add_new_global_chat_mod_to_channels(self, user_id, user_uuid):
+    for channel in Channel.Channel.query.with_entities(
+        Channel.Channel.owningUser, Channel.Channel.channelLoc,
+    ).all():
+        new_affiliation = "admin"
+        if channel.owningUser == user_id:
+            new_affiliation = "owner"
+
+        xmpp.set_user_affiliation(user_uuid, channel.channelLoc, new_affiliation)
+
+@celery.task(bind=True)
+def remove_global_chat_mod_from_channels(self, user_id, user_uuid):
+    for channel in Channel.Channel.query.with_entities(
+        Channel.Channel.owningUser, Channel.Channel.channelLoc,
+    ).all():
+        new_affiliation = "member"
+        if channel.owningUser == user_id:
+            new_affiliation = "owner"
+
+        xmpp.set_user_affiliation(user_uuid, channel.channelLoc, new_affiliation)

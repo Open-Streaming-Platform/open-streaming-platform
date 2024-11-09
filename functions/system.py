@@ -23,6 +23,7 @@ from classes import RecordedVideo
 from classes import Sec
 
 from functions import cachedDbCalls, templateFilters
+from functions.videoFunc import generateClipFiles as vf_generateClipFiles, getClipCreationTimeFromFiles as vf_getClipCreationTimeFromFiles
 
 from classes.shared import celery
 
@@ -41,7 +42,7 @@ def asynch(func):
     return async_func
 
 
-def check_existing_settings():
+def check_existing_settings() -> bool:
     settingsQuery = settings.settings.query.all()
     if settingsQuery != []:
         db.session.close()
@@ -65,13 +66,13 @@ class MLStripper(HTMLParser):
         return "".join(self.fed)
 
 
-def strip_html(html):
+def strip_html(html: str) -> str:
     s = MLStripper()
     s.feed(html)
     return s.get_data()
 
 
-def videoupload_allowedExt(filename, allowedExtensions):
+def videoupload_allowedExt(filename: str, allowedExtensions: list) -> bool:
     if not "." in filename:
         return False
     ext = filename.rsplit(".", 1)[1]
@@ -81,7 +82,7 @@ def videoupload_allowedExt(filename, allowedExtensions):
         return False
 
 
-def formatSiteAddress(systemAddress):
+def formatSiteAddress(systemAddress: str) -> str:
     try:
         ipaddress.ip_address(systemAddress)
         return systemAddress
@@ -106,21 +107,21 @@ def table2Dict(table):
     return dataList
 
 
-def parseTags(tagString):
+def parseTags(tagString: list) -> list:
     tagString = tagString.split(",")
     return tagString
 
 
 def sendTestEmail(
-    smtpServer,
-    smtpPort,
-    smtpTLS,
-    smtpSSL,
-    smtpUsername,
-    smtpPassword,
-    smtpSender,
-    smtpReceiver,
-):
+    smtpServer: str,
+    smtpPort: int,
+    smtpTLS: bool,
+    smtpSSL: bool,
+    smtpUsername: str,
+    smtpPassword: str,
+    smtpSender: str,
+    smtpReceiver: str,
+) -> bool:
     try:
         server = smtplib.SMTP(smtpServer, int(smtpPort))
         if smtpSSL is True:
@@ -141,14 +142,14 @@ def sendTestEmail(
     return True
 
 
-def newLog(logType, message):
+def newLog(logType: int, message: str):
     newLogItem = logs.logs(datetime.datetime.utcnow(), str(message), logType)
     db.session.add(newLogItem)
     db.session.commit()
     return True
 
 
-def rebuildOSPEdgeConf():
+def rebuildOSPEdgeConf() -> bool:
     f = open("/opt/osp/conf/osp-edge.conf", "w")
     ospEdgeQuery = settings.edgeStreamer.query.filter_by(active=True).all()
     f.write('split_clients "${remote_addr}AAA" $ospedge_node {\n')
@@ -172,42 +173,13 @@ def rebuildOSPEdgeConf():
     return True
 
 
-def systemFixes(app):
+def systemFixes(app) -> bool:
 
-    log.info({"level": "info", "message": "Checking for 0.7.x Clips"})
-    # Fix for Beta 6 Switch from Fake Clips to real clips
-    clipQuery = RecordedVideo.Clips.query.filter_by(videoLocation=None).all()
-    videos_root = globalvars.videoRoot + "videos/"
-    for clip in clipQuery:
-        videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
-        channelQuery = cachedDbCalls.getChannel(videoQuery.channelID)
-        originalVideo = videos_root + videoQuery
-        clipVideoLocation = (
-            channelQuery.channelLoc
-            + "/clips/"
-            + "clip-"
-            + str(clip.id)
-            + ".mp4"
-        )
-        fullvideoLocation = videos_root + clipVideoLocation
-        clip.videoLocation = clipVideoLocation
-        clipVideo = subprocess.run(
-            [
-                "/usr/bin/ffmpeg",
-                "-ss",
-                str(clip.startTime),
-                "-i",
-                originalVideo,
-                "-c",
-                "copy",
-                "-t",
-                str(clip.length),
-                "-avoid_negative_ts",
-                "1",
-                fullvideoLocation,
-            ]
-        )
-        db.session.commmit()
+    try:
+        resolveBrokenClips()
+    except Exception as e:
+        log.error({"level": "error", "message": f"Error in resolving broken clips: {str(e)}"})
+        flash("Error in resolving broken clips", "error")
 
     log.info({"level": "info", "message": "Checking Stickers Directory"})
     # Create the Stickers directory if it does not exist
@@ -232,10 +204,8 @@ def systemFixes(app):
         }
     )
     # Check fs_uniquifier
-    userQuery = Sec.User.query.filter_by(fs_uniquifier=None).all()
-    for user in userQuery:
-        user.fs_uniquifier = str(secrets.token_hex(nbytes=16))
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(fs_uniquifier=None).update(dict(fs_uniquifier=str(secrets.token_hex(nbytes=16))))
+    db.session.commit()
 
     log.info({"level": "info", "message": "Checking Pre 0.9.x Favicon Location"})
     path = Path(globalvars.videoRoot + "/images/favicon.ico")
@@ -258,7 +228,59 @@ def systemFixes(app):
     return True
 
 
-def initializeThemes():
+def resolveBrokenClips() -> None:
+    log.info({"level": "info", "message": "Resolving broken Clips"})
+    # At this point, all clips have had proper file location strings generated by dbFixes.
+    videos_root = os.path.join(globalvars.videoRoot, "videos")
+    clipFixedCount = 0
+    clipQuery = RecordedVideo.Clips.query.with_entities(
+        RecordedVideo.Clips.id,
+        RecordedVideo.Clips.videoLocation,
+        RecordedVideo.Clips.thumbnailLocation,
+        RecordedVideo.Clips.gifLocation,
+        RecordedVideo.Clips.clipDate,
+        RecordedVideo.Clips.parentVideo,
+        RecordedVideo.Clips.startTime,
+        RecordedVideo.Clips.length).all()
+    for clip in clipQuery:
+        clipVideoAbsPath = os.path.join(videos_root, clip.videoLocation)
+        clipThumbAbsPath = os.path.join(videos_root, clip.thumbnailLocation)
+        clipGifAbsPath = os.path.join(videos_root, clip.gifLocation)
+
+        # If all three of clip's files are present in file-system, this clip does not need re-generating
+        if os.path.isfile(clipVideoAbsPath) and os.path.isfile(clipThumbAbsPath) and os.path.isfile(clipGifAbsPath):
+            if clip.clipDate is None:
+                vf_getClipCreationTimeFromFiles(clip)
+            continue
+
+        videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
+        sourceVideoAbsPath = os.path.join(videos_root, videoQuery.videoLocation)
+        if not os.path.isfile(sourceVideoAbsPath):
+            # If original video file is missing, do nothing with this clip.
+            continue
+
+        channelQuery = cachedDbCalls.getChannel(videoQuery.channelID)
+        if channelQuery != None:
+            clipFolderAbsPath = os.path.join(videos_root, channelQuery.channelLoc, "clips")
+            # Create Clip Directory if doesn't exist
+            if not os.path.isdir(clipFolderAbsPath):
+                os.mkdir(clipFolderAbsPath)
+
+            try:
+                vf_generateClipFiles(
+                    clip,
+                    videos_root,
+                    sourceVideoAbsPath
+                )
+                if clip.clipDate is None:
+                    vf_getClipCreationTimeFromFiles(clip)
+                clipFixedCount += 1
+            except Exception as e:
+                log.error({"level": "error", "message": f"Failed to fix clip #{clip.id}, because: {str(e)}"})
+    log.info({"level": "info", "message": f"Fixed {clipFixedCount} broken Clips"})
+
+
+def initializeThemes() -> bool:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     log.info({"level": "info", "message": "Importing Theme Data into Global Cache"})
@@ -268,7 +290,7 @@ def initializeThemes():
     return True
 
 
-def checkOSPEdgeConf():
+def checkOSPEdgeConf() -> bool:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     log.info({"level": "info", "message": "Rebuilding OSP Edge Conf File"})
@@ -290,7 +312,7 @@ def checkOSPEdgeConf():
 
 
 @celery.task()
-def testCelery():
+def testCelery() -> bool:
     print("testing celery")
     time.sleep(60)
     return True

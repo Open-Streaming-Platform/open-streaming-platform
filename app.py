@@ -128,7 +128,6 @@ if hasattr(config, "ospXMPPDomain"):
 # Generate a Random UUID for Interprocess Handling
 processUUID = str(uuid.uuid4())
 globalvars.processUUID = processUUID
-
 ####### Sentry.IO Metrics and Error Logging (Disabled by Default) #######
 if hasattr(config, "sentryIO_Enabled") and hasattr(config, "sentryIO_DSN"):
     if config.sentryIO_Enabled:
@@ -209,6 +208,20 @@ app.config["SECURITY_CONFIRMABLE"] = config.requireEmailRegistration
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = config.requireEmailRegistration
 app.config["SECURITY_CHANGABLE"] = True
 app.config["SECURITY_TRACKABLE"] = True
+app.config["SECURITY_EMAIL_SENDER"] = config.smtpSendAs
+app.config["MAIL_DEFAULT_SENDER"] = config.smtpSendAs
+app.config["MAIL_SERVER"] = config.smtpServerAddress
+app.config["MAIL_PORT"] = int(config.smtpServerPort)
+if config.smtpEncryption == "ssl":
+    app.config["MAIL_USE_SSL"] = True
+else:
+    app.config["MAIL_USE_SSL"] = False
+if config.smtpEncryption == "tls":
+    app.config["MAIL_USE_TLS"] = True
+else:
+    app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USERNAME"] = config.smtpUsername
+app.config["MAIL_PASSWORD"] = config.smtpPassword
 app.config["SECURITY_TWO_FACTOR_ENABLED_METHODS"] = ["authenticator"]
 app.config["SECURITY_TWO_FACTOR"] = True
 app.config["SECURITY_TWO_FACTOR_ALWAYS_VALIDATE"] = False
@@ -501,6 +514,7 @@ app.logger.info(
 try:
     database.init(app, user_datastore)
 except Exception as e:
+    db.session.rollback()
     app.logger.error(
         {
             "level": "error",
@@ -510,15 +524,25 @@ except Exception as e:
 # Clear Process from OSP DB Init
 r.delete("OSP_DB_INIT_HANDLER")
 
-# Perform System Fixes
-app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
-try:
-    system.systemFixes(app)
-except:
-    app.logger.warning(
+if r.get("OSP_SYSTEM_FIXES_HANDLER") is None:
+    # Perform System Fixes
+    r.set("OSP_SYSTEM_FIXES_HANDLER", globalvars.processUUID, ex=60)
+    app.logger.info({"level": "info", "message": "Performing OSP System Fixes"})
+    try:
+        system.systemFixes(app)
+    except:
+        app.logger.warning(
+            {
+                "level": "warning",
+                "message": "Unable to perform System Fixes.  May be first run or DB Issue.",
+            }
+        )
+        r.delete("OSP_SYSTEM_FIXES_HANDLER")
+else:
+    app.logger.info(
         {
-            "level": "warning",
-            "message": "Unable to perform System Fixes.  May be first run or DB Issue.",
+            "level": "info",
+            "message": "Skipping System Fixes; they are already in Progress, or already done.",
         }
     )
 
@@ -529,8 +553,12 @@ if r.get("OSP_XMPP_INIT_HANDLER") is None:
     from functions import xmpp
 
     try:
+        # The XMPP sanity check can sometimes fail because an invalid transaction has not been rolled back.
+        # Since db.session.rollback() just silently passes if there's nothing to roll back, we can put this here.
+        db.session.rollback()
         results = xmpp.sanityCheck()
     except Exception as e:
+        db.session.rollback()   # Use db.session.rollback() here as well, in case of a hanging invalid transaction.
         app.logger.error(
             {"level": "error", "message": "XMPP Sanity Check Failed - " + str(e)}
         )
@@ -610,6 +638,36 @@ from classes.shared import email
 
 email.init_app(app)
 email.app = app
+try:
+    sysSettings = cachedDbCalls.getSystemSettings()
+except:
+    app.logger.error({"level": "error", "message": "cachedDbCalls.getSystemSettings() encountered an error, likely due to first time db generation."})
+
+app.config["SERVER_NAME"] = None
+try:
+    app.config[
+        "SECURITY_FORGOT_PASSWORD_TEMPLATE"
+    ] = "security/forgot_password.html"
+    app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
+    app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
+    app.config[
+        "SECURITY_SEND_CONFIRMATION_TEMPLATE"
+    ] = "security/send_confirmation.html"
+    app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
+        sysSettings.siteName + " - Password Reset Request"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
+        sysSettings.siteName + " - Welcome!"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
+        sysSettings.siteName + " - Password Reset Notification"
+    )
+    app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
+        sysSettings.siteName + " - Email Confirmation Request"
+    )
+except:
+    pass
 
 app.logger.info({"level": "info", "message": "Importing Topic Data into Global Cache"})
 # Initialize the Topic Cache
@@ -689,7 +747,7 @@ from blueprints.play import play_bp
 from blueprints.liveview import liveview_bp
 from blueprints.clip import clip_bp
 from blueprints.upload import upload_bp
-from blueprints.settings import settings_bp
+from blueprints.settings.settings import settings_bp
 from blueprints.oauth import oauth_bp
 from blueprints.m3u8 import m3u8_bp
 

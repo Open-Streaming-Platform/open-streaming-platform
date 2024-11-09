@@ -35,16 +35,16 @@ def newScreenShot(message):
         video = message["clipID"]
         clipQuery = RecordedVideo.Clips.query.filter_by(id=int(video)).first()
         if clipQuery is not None and (
-            clipQuery.recordedVideo.owningUser == current_user.id
+            clipQuery.owningUser == current_user.id
             or current_user.has_role("Admin")
         ):
             videoLocation = videos_root + clipQuery.videoLocation
+            channelLocation = clipQuery.channel.channelLoc
             thumbnailLocation = (
                 videos_root
-                + clipQuery.recordedVideo.channel.channelLoc
+                + channelLocation
                 + "/tempThumbnail.png"
             )
-            channelLocation = clipQuery.recordedVideo.channel.channelLoc
     else:
         if video is not None:
             videoQuery = cachedDbCalls.getVideo(int(video))
@@ -70,6 +70,8 @@ def newScreenShot(message):
         result = subprocess.call(
             [
                 "/usr/bin/ffmpeg",
+                '-hwaccel',
+                'auto',
                 "-ss",
                 str(timeStamp),
                 "-i",
@@ -124,14 +126,14 @@ def setScreenShot(message):
         clipID = message["clipID"]
         clipQuery = RecordedVideo.Clips.query.filter_by(id=int(clipID)).first()
         if clipQuery is not None and (
-            current_user.id == clipQuery.recordedVideo.owningUser
+            current_user.id == clipQuery.owningUser
             or current_user.has_role("Admin")
         ):
             thumbnailLocation = clipQuery.thumbnailLocation
             fullthumbnailLocation = videos_root + thumbnailLocation
             videoLocation = videos_root + clipQuery.videoLocation
             newClipThumbnail = (
-                clipQuery.recordedVideo.channel.channelLoc
+                clipQuery.channel.channelLoc
                 + "/clips/clip-"
                 + str(clipQuery.id)
                 + ".png"
@@ -146,6 +148,8 @@ def setScreenShot(message):
             result = subprocess.call(
                 [
                     "/usr/bin/ffmpeg",
+                    '-hwaccel',
+                    'auto',
                     "-ss",
                     str(timeStamp),
                     "-i",
@@ -169,7 +173,7 @@ def setScreenShot(message):
                     pass
 
             newClipThumbnail = (
-                clipQuery.recordedVideo.channel.channelLoc
+                clipQuery.channel.channelLoc
                 + "/clips/clip-"
                 + str(clipQuery.id)
                 + ".gif"
@@ -183,6 +187,8 @@ def setScreenShot(message):
             gifresult = subprocess.call(
                 [
                     "/usr/bin/ffmpeg",
+                    '-hwaccel',
+                    'auto',
                     "-ss",
                     str(timeStamp),
                     "-t",
@@ -235,13 +241,13 @@ def saveUploadedThumbnailSocketIO(message):
             clipQuery = RecordedVideo.Clips.query.filter_by(id=clipID).first()
             if (
                 clipQuery is not None
-                and clipQuery.recordedVideo.owningUser == current_user.id
+                and clipQuery.owningUser == current_user.id
             ):
                 thumbnailFilename = message["thumbnailFilename"]
                 if thumbnailFilename != "" or thumbnailFilename is not None:
                     videos_root = globalvars.videoRoot + "videos/"
                     newClipThumbnail = (
-                        clipQuery.recordedVideo.channel.channelLoc
+                        clipQuery.channel.channelLoc
                         + "/clips/clip-"
                         + str(clipQuery.id)
                         + ".png"

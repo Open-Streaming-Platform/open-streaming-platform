@@ -982,7 +982,7 @@
           <button type="button" id="FBShareBtn" class="btn shadow" style="background-color:#4267B2;color:white;"
             onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{request.url|normalize_url}}','facebook-share-dialog','width=626,height=436');return false;">Share on Facebook</button>
           <button type="button" id="TwitterShareBtn" class="btn shadow" style="background-color:#1dcaff;color:white;"
-            onclick="window.open('https://twitter.com/share?url={{request.url|normalize_url}}&text=Check out this Video! - {{video.channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
+            onclick="window.open('https://twitter.com/share?url={{request.url|normalize_url}}&text=Check out this Video! - {{video.channelID | get_channelName}}','twitter-share-dialog','width=626,height=436');return false;">Share on Twitter</button>
         </div>
         <br>
         <div class="form-check form-check-inline">
@@ -1220,7 +1220,6 @@
           </div><br>
           <button class="btn btn-block btn-success" onclick="newClipScreenShot();">Capture Screenshot</button>
           <input type="hidden" id="clipssID">
-          <input type="hidden" id="clipvideossID">
           <input type="hidden" id="clipSSTimestamp">
       </div>
       <div class="modal-footer">
@@ -1574,7 +1573,7 @@ var tagify_videoTags = new Tagify(videoTags, {
 </script>
 {% endmacro %}
 
-{% macro edit_clip_metadata(clip, maxTags=4, maxTagLength=12) %}
+{% macro edit_clip_metadata(clip, topics, maxTags=4, maxTagLength=12) %}
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1588,6 +1587,13 @@ var tagify_videoTags = new Tagify(videoTags, {
         <div class="modal-body">
           <h5>Clip Name:</h5>
           <input type="text" class="form-control" value="{{clip.clipName}}" name="newVidName" required>
+          <br>
+          <h5>Clip Topic:</h5>
+          <select class="form-select" name="newClipTopic" id="editClipTopic" required>
+            {% for topic in topics %}
+            <option value={{topic.id}}>{{topic.name}}</option>
+            {% endfor %}
+          </select>
           <br>
           <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>
@@ -1622,7 +1628,7 @@ var tagify_clipTags = new Tagify(clipTags, {
 </script>
 {% endmacro %}
 
-{% macro edit_clip_metadata_userchannels(maxTags=4, maxTagLength=12) %}
+{% macro edit_clip_metadata_userchannels(topics, maxTags=4, maxTagLength=12) %}
 <div class="modal fade" id="clipEditModal" tabindex="-1" role="dialog" aria-labelledby="clipEditModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -1635,6 +1641,13 @@ var tagify_clipTags = new Tagify(clipTags, {
         <div class="modal-body">
           <h5>Name of the Clip:</h5>
           <input type="text" class="form-control" id="editClipName" value="" name="newVidName" required>
+          <br>
+          <h5>Clip Topic:</h5>
+          <select class="form-select" name="newClipTopic" id="editClipTopic" required>
+            {% for topic in topics %}
+            <option value={{topic.id}}>{{topic.name}}</option>
+            {% endfor %}
+          </select>
           <br>
           <div class="form-group">
             <label for="description" class="col-form-label"><b>Description</b></label>

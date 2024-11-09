@@ -5,6 +5,8 @@ import datetime
 import logging
 import pathlib
 
+from typing import Union
+
 from celery import states
 from celery.exceptions import Ignore
 from flask import Blueprint, request, redirect, current_app, abort
@@ -34,7 +36,7 @@ from functions.scheduled_tasks import message_tasks
 log = logging.getLogger("app.functions.rtmpFunctions")
 
 
-def rtmp_stage1_streamkey_check(key, ipaddress):
+def rtmp_stage1_streamkey_check(key: str, ipaddress: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     channelRequest = cachedDbCalls.getChannelByStreamKey(key)
@@ -144,7 +146,7 @@ def rtmp_stage1_streamkey_check(key, ipaddress):
         return returnMessage
 
 
-def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
+def rtmp_stage2_user_auth_check(channelLoc: str, ipaddress: str, authorizedRTMP: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
@@ -296,7 +298,7 @@ def rtmp_stage2_user_auth_check(channelLoc, ipaddress, authorizedRTMP):
         return returnMessage
 
 
-def rtmp_record_auth_check(channelLoc):
+def rtmp_record_auth_check(channelLoc: str) -> dict:
 
     sysSettings = cachedDbCalls.getSystemSettings()
     channelRequest = cachedDbCalls.getChannelByLoc(channelLoc)
@@ -396,7 +398,7 @@ def rtmp_record_auth_check(channelLoc):
     return returnMessage
 
 
-def rtmp_user_deauth_check(key, ipaddress):
+def rtmp_user_deauth_check(key: str, ipaddress: str) -> dict:
     sysSettings = cachedDbCalls.getSystemSettings()
 
     currentTime = datetime.datetime.utcnow()
@@ -566,10 +568,11 @@ def rtmp_user_deauth_check(key, ipaddress):
             db.session.commit()
             db.session.close()
             return returnMessage
+    return {}
 
 
 @celery.task(bind=True, max_retries=100)
-def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
+def rtmp_rec_Complete_handler(self, channelLoc: str, path: str, pendingVideoID: Union[int, None] = None) -> dict:
     try:
         sysSettings = cachedDbCalls.getSystemSettings()
 
@@ -581,10 +584,24 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             if pendingVideoID != None:
                 pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
                     channelID=requestedChannel.id, id=pendingVideoID, pending=True
+                ).with_entities(
+                    RecordedVideo.RecordedVideo.id,
+                    RecordedVideo.RecordedVideo.channelName,
+                    RecordedVideo.RecordedVideo.videoDate,
+                    RecordedVideo.RecordedVideo.description,
+                    RecordedVideo.RecordedVideo.topic,
+                    RecordedVideo.RecordedVideo.thumbnailLocation
                 ).first()
             else:
                 pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
                     channelID=requestedChannel.id, videoLocation="", pending=True
+                ).with_entities(
+                    RecordedVideo.RecordedVideo.id,
+                    RecordedVideo.RecordedVideo.channelName,
+                    RecordedVideo.RecordedVideo.videoDate,
+                    RecordedVideo.RecordedVideo.description,
+                    RecordedVideo.RecordedVideo.topic,
+                    RecordedVideo.RecordedVideo.thumbnailLocation
                 ).first()
             
             if pendingVideo is None:
@@ -608,13 +625,15 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
 
             fileName = pathlibPath.name
 
-            pendingVideo.videoLocation = pendingPath
+            workingVideoID = pendingVideo.id
+            videoChannelName = pendingVideo.channelName
+
+            updatePending = RecordedVideo.RecordedVideo.query.filter_by(id=pendingVideo.id).update(dict(videoLocation=pendingPath))
 
             channelTuple = (requestedChannel.id, requestedChannel.channelLoc)
             db.session.commit()
 
-            # TODO Not Working?
-            notificationFunctions.sendNotification(f"{pendingVideo.channelName} has started processing.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+            notificationFunctions.sendNotification(f"{videoChannelName} has started processing.", f"/play/{workingVideoID}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             results = videoFunc.processStreamVideo(fileName, channelTuple[1])
 
@@ -632,32 +651,34 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             cache.delete_memoized(cachedDbCalls.getChannelVideos, requestedChannel.id)
             cache.delete_memoized(cachedDbCalls.getAllVideo_View, requestedChannel.id)
 
-            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
-                channelID=requestedChannel.id, videoLocation=pendingPath, pending=True
-            ).first()
-
             videoPath = path.replace("/var/www/pending/", channelTuple[1] + "/")
             imagePath = videoPath.replace(".flv", ".png")
             gifPath = videoPath.replace(".flv", ".gif")
             videoPath = videoPath.replace(".flv", ".mp4")
 
-            pendingVideo.thumbnailLocation = imagePath
-            pendingVideo.videoLocation = videoPath
-            pendingVideo.gifLocation = gifPath
-
             videos_root = current_app.config["WEB_ROOT"] + "videos/"
             fullVidPath = videos_root + videoPath
 
-            pendingVideo.pending = False
 
             if requestedChannel.autoPublish is True:
-                pendingVideo.published = True
-                notificationFunctions.sendNotification(f"{pendingVideo.channelName} has finished processing and has been published.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+                updateVideo = RecordedVideo.RecordedVideo.query.filter_by(id=workingVideoID).update(dict(thumbnailLocation=imagePath, videoLocation=videoPath, gifLocation=gifPath, pending=False, published=True))
+                notificationFunctions.sendNotification(f"{videoChannelName} has finished processing and has been published.", f"/play/{workingVideoID}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
             else:
-                pendingVideo.published = False
-                notificationFunctions.sendNotification(f"{pendingVideo.channelName} has finished processing and is available in the Channel Settings Page.", f"/play/{pendingVideo.id}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
+                updateVideo = RecordedVideo.RecordedVideo.query.filter_by(id=workingVideoID).update(dict(thumbnailLocation=imagePath, videoLocation=videoPath, gifLocation=gifPath, pending=False, published=False))
+                notificationFunctions.sendNotification(f"{videoChannelName} has finished processing and is available in the Channel Settings Page.", f"/play/{workingVideoID}", f"/images/{templateFilters.get_pictureLocation(requestedChannel.owningUser)}", requestedChannel.owningUser)
 
             db.session.commit()
+
+            pendingVideo = RecordedVideo.RecordedVideo.query.filter_by(
+                channelID=requestedChannel.id, id=pendingVideoID, pending=True
+                ).with_entities(
+                    RecordedVideo.RecordedVideo.id,
+                    RecordedVideo.RecordedVideo.channelName,
+                    RecordedVideo.RecordedVideo.videoDate,
+                    RecordedVideo.RecordedVideo.description,
+                    RecordedVideo.RecordedVideo.topic,
+                    RecordedVideo.RecordedVideo.thumbnailLocation
+                ).first()
 
             if requestedChannel.imageLocation is None:
                 channelImage = (
@@ -783,3 +804,4 @@ def rtmp_rec_Complete_handler(self, channelLoc, path, pendingVideoID=None):
             + str(ex)
         )
         self.retry(countdown=3**self.request.retries)
+    return {}

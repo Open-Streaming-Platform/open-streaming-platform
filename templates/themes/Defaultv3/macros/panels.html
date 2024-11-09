@@ -46,7 +46,7 @@
 </script>
 {% endmacro %}
 
-{% macro topics_panel(topicList, title="Topics" ) %}
+{% macro topics_panel(topicList, title="Topics") %}
 <div class="topics-container insetBoxShadow">
   <h3 class="textShadow"><b>{{ title }}</b></h3>
   <ul id="topicList" class="itemList d-flex flex-wrap justify-content-md-start justify-content-evenly" style="width:100%">
@@ -172,13 +172,14 @@
         <ul class="dropdown-menu">
           <li><a class="dropdown-item sort" href="#" data-sort="list-clipName"">Name</a></li>
           <li><a class="dropdown-item sort {% if order == 0 %} desc {% endif %}" href="#" data-sort="list-clipViews" {% if order == 0 %} data-default-order="desc" {% endif %}>Views</a></li>
+          <li><a class="dropdown-item sort {% if order == 1 %} desc {% endif %}" href="#" data-sort="list-clipDate" {% if order == 1 %} data-default-order="desc" {% endif %}>Date</a></li>
         </ul>
       </div>
     </div>
   </div>
   <ul id="clipList" class="mb-2 itemList d-flex flex-wrap justify-content-md-{{ justification }} justify-content-evenly list" style="width:100%">
       {% for clip in clipsList %}
-          {% if clip.parentVideo | videotoChannelID | is_channelObjVisible %}
+          {% if clip.channelID | is_channelObjVisible %}
             {{ cards.clip_card(clip) }}
           {% endif %}
       {% endfor %}
@@ -187,7 +188,7 @@
 </div>
 <script>
     list_{{ clipListClass }}_options = {
-        valueNames: ['list-clipName', 'list-clipViews'],
+        valueNames: ['list-clipName', 'list-clipViews', 'list-clipDate'],
         page: 10,
         pagination: true
     };
@@ -199,6 +200,37 @@
         lazyLoadInstance.update();
         resetGifHover();
         document.getElementById('{{ clipListClass }}').scrollIntoView();
+    })
+</script>
+{% endmacro %}
+
+{% macro featured_live_streams(streamList, title="Featured Streams") %}
+{%- set listClass = '' | generateRandomString %}
+<div id="{{ listClass }}" class="live-container boxShadow">
+  <h3 class="textShadow"><b>{{ title }}</b></h3>
+  <ul id="topStreamList" class="mb-2 itemList d-flex flex-wrap justify-content-md-start justify-content-evenly list" style="width:100%">
+      {% for stream in streamList %}
+          {% if stream.linkedChannel | is_channelObjVisible %}
+            {{ cards.live_stream_card_xl(stream) }}
+          {% endif %}
+      {% endfor %}
+  </ul>
+  <ul id="paging_{{ listClass }}" class="pagination justify-content-center panel-pagination"></ul>
+</div>
+<script>
+    list_{{ listClass }}_options = {
+        valueNames: ['list_streamName', 'list_streamOwner', 'list_streamViewers', 'list_streamTopic'],
+        page: 10,
+        pagination: true
+    };
+    var list_{{ listClass }} = new List('{{listClass}}', list_{{ listClass }}_options);
+    if (list_{{ listClass }}.items.length < 10) {
+        document.getElementById('paging_{{ listClass }}').style.display = "none";
+    }
+    list_{{ listClass }}.on('updated', function(list) {
+        lazyLoadInstance.update();
+        resetGifHover();
+        document.getElementById('{{ listClass }}').scrollIntoView();
     })
 </script>
 {% endmacro %}
@@ -357,8 +389,9 @@
 {% endmacro %}
 
 {% macro user_bio_panel(userData) %}
-<div class="streamer-info-container insetBoxShadow">
-  <div class="row">
+<!-- USER BANNER -->
+<div class="streamer-info-container insetBoxShadow" {% if userData.bannerLocation != None %} style="background-image: url('/images/{{userData.bannerLocation}}')" {% else %} style="background-image: url('/static/img/user-banner-placeholder.jpg')"  {% endif %} onerror="this.onerror=null;this.src='/static/img/user-banner-placeholder.jpg';" >
+  <div class="row userBannerImg">
     <div class="col-auto">
       <img class="steamer-info-picture-img rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';" alt="User Photo">
     </div>
@@ -380,8 +413,9 @@
 {% endmacro %}
 
 {% macro channel_metadata_panel(channelData, subState=False) %}
-<div class="channel-info-container insetBoxShadow">
-  <div class="row">
+<!-- CHANNEL BANNER -->
+<div class="channel-info-container insetBoxShadow" {% if channelData.channelBannerLocation != None %} style="background-image: url('/images/{{channelData.channelBannerLocation}}')" {% else %} style="background-image: url('/static/img/channel-banner-placeholder.jpg')"  {% endif %} onerror="this.onerror=null;this.src='/static/img/channel-banner-placeholder.jpg';" >
+  <div class="row channelBannerImg">
     <div class="col-auto">
       <img class="channel-info-picture-img boxShadow" src="/images/{{channelData.imageLocation}}" width="100%" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
@@ -520,13 +554,13 @@
         <i id="upVoteIcon" class="far fa-thumbs-up"></i> <span id="totalUpvotes"></span>
       </button>
       {% if current_user.is_authenticated %}
-      <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.parentVideo | videotoChannelID}}")'>{% if subState == True %}<i
+      <button id="chanSubStateButton" class="btn boxShadow {% if subState == True %} btn-success {% else %} btn-outline-success {% endif %}" onclick='toggleChannelSub("{{clip.channelID}}")'>{% if subState == True %}<i
           class="fas fa-star"></i><span class="d-none d-sm-none d-md-inline"> Unsubscribe</span>{% else %}<i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span>{% endif %}</button>
       {% else %}
       <button class="btn btn-outline-secondary disabled boxShadow" disabled><i class="far fa-star"></i><span class="d-none d-sm-none d-md-inline"> Subscribe</span></button>
       {% endif %}
     </div>
-    {%  if (current_user.is_authenticated and clip.parentVideo | videotoChannelID | channeltoOwnerID == current_user.id) or current_user.has_role('Admin') %}
+    {%  if (current_user.is_authenticated and clip.owningUser == current_user.id) or current_user.has_role('Admin') %}
       <!--Start Video Owner Controls-->
       <div class="video-control-owner-buttons pt-2 me-1 float-end">
         <button class="btn btn-primary boxShadow dropdown-toggle" type="button" id="ownerbuttons" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-cogs"></i></button>
@@ -565,7 +599,7 @@
             <div class="row">
                 <div class="col-12 col-md-6">
                      <div class="row">
-                        <div class="col-auto">
+                        <div class="col-6">
                             <div class="streamer-avatar">
                                 <img class="userPhoto rounded-circle boxShadow" src="/images/{{userData.pictureLocation}}" onerror="this.src='/static/img/user2.png';">
                             </div>
@@ -573,7 +607,17 @@
                               <input type="file" name="photo" class="form-control boxShadow" id="userphotoupload">
                             </div>
                         </div>
-                        <div class="col-10 mt-2">
+                        <div class="col-6">
+                          <div class="usersettingBanner">
+                              <img class="boxShadow" src="/images/{{userData.bannerLocation}}" onerror="this.src='/static/img/channel-banner-placeholder.jpg';">
+                          </div>
+                          <div class="file-upload mt-1">
+                            <input type="file" name="banner" class="form-control boxShadow" id="userbannerupload">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12 mt-2">
                             <div class="form-group">
                                 <label for="userName"><b>User Name</b> (32 characters max)</label>
                                 <input type="text" name="userName" id="userName" class="form-control boxShadow" value="{{userData.username}}" minlength="1" maxlength="32" required>
@@ -834,12 +878,12 @@
 <div class="video-metadata">
   <div class="row py-3">
     <div class="channelImg-sm mx-2 col-auto">
-      <img src="/images/{{ clip.parentVideo | videotoChannelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
+      <img src="/images/{{ clip.channelID | get_channelPicture}}" onerror="this.src='/static/img/video-placeholder.jpg';">
     </div>
     <div class="col">
-      <div class="video-name"><b>{{ clip.clipName }}</b></div>
-      <div class="video-channelName"><a href="/channel/{{ clip.parentVideo | videotoChannelID }}">{{ clip.parentVideo | videotoChannelID | get_channelName }}</a></div>
-      <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.parentVideo | get_videoTopic}}/"><i class="fas fa-hashtag"></i> {{ clip.parentVideo | get_videoTopic | get_topicName }}</a>
+      <div class="video-name"><b>{{ clip.clipName }}</b>{% if clip.parentVideo != None %} <a href="/play/{{ clip.parentVideo }}">(Source)</a>{% endif %}</div>
+      <div class="video-channelName"><a href="/channel/{{ clip.channelID }}">{{ clip.channelID | get_channelName }}</a> ⋅ {{ clip.clipDate }}</div>
+      <div class="video-topic mt-2 me-2"><a href="/topic/{{clip.topic}}/"><i class="fas fa-hashtag"></i> {{ clip.topic | get_topicName }}</a>
           {% for tag in clip.id | get_clipTags %}
           <span class="badge rounded-pill bg-primary boxShadow textShadow">{{ tag.name }}</span>
           {% endfor %}
@@ -934,6 +978,18 @@
 
 {% macro core_chat_members_view() %}
 <div id="chatMembers" class="chatMembersOverlay">
+  <div class="row w-100">
+    <button id="btnRefreshMembers" onclick="clickRefreshMembers();" class="col-6 btn btn-warning">Refresh Members</button>
+    <button id="btnRefreshSelf" onclick="clickRefreshStatus();" class="col-6 btn btn-warning">Refresh Own Status</button>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Global Chat Mod</b></div>
+      <div id="GlobalChatModList" class="card-body"></div>
+  </div>
+  <div class="membersList card my-3">
+      <div class="card-header bg-primary"><b>Owner</b></div>
+      <div id="OwnerList" class="card-body"></div>
+  </div>
   <div class="membersList card my-3">
       <div class="card-header bg-primary"><b>Moderator</b></div>
       <div id="ModeratorList" class="card-body"></div>
@@ -943,7 +999,7 @@
       <div id="ParticipantList" class="card-body"></div>
   </div>
   <div class="membersList card my-3">
-      <div class="card-header bg-primary"><b>Guest</b></div>
+      <div class="card-header bg-primary"><b>Muted</b></div>
       <div id="VisitorList" class="card-body"></div>
   </div>
 </div>
@@ -1095,16 +1151,9 @@
       <button class="btn btn-secondary dropdown-toggle shadow" type="button" id="dropdownMenuButtonProfileBox" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <li><h6 class="dropdown-header">Mod Controls</h6></li>
-          <li><button class="dropdown-item" type="button" onclick="modKick();">Kick</button></li>
           <li><button class="dropdown-item" type="button" onclick="modBan();">Ban</button></li>
           <li><hr class="dropdown-divider"></li>
-          <li><h6 class="dropdown-header">Change Role</h6></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('admin');">Set as Moderator</button></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('member');">Set as Participant</button></li>
-          <li><button class="dropdown-item" type="button" onclick="modSetAffiliation('none');">Set as Guest</button></li>
-          <li><hr class="dropdown-divider"></li>
           <li><h6 class="dropdown-header">Channel Voice Controls</h6></li>
-          <!--<li><button class="dropdown-item" type="button" onclick="modSetRole('moderator');">Set as Moderator</button></li>-->
           <li><button class="dropdown-item" type="button" onclick="modSetRole('participant');">Voice</button></li>
           <li><button class="dropdown-item" type="button" onclick="modSetRole('visitor');">Devoice</button></li>
       </ul>
@@ -1161,50 +1210,64 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12">
                         <div class="form-group">
-                            <label for="channelName" class="col-form-label"><b>Channel Name</b></label>
-                            <input type="text" class="form-control boxShadow" name="channelName" id="channelName" value="{{channel.channelName}}" required>
+                            <label for="channelName-{{channel.id}}" class="col-form-label"><b>Channel Name</b></label>
+                            <input type="text" class="form-control boxShadow" name="channelName" id="channelName-{{channel.id}}" value="{{channel.channelName}}" required>
                         </div>
                         <div class="form-group">
-                            <label for="channeltopic" class="col-form-label"><b>Default Topic</b></label>
-                            <select class="form-select boxShadow" name="channeltopic" id="channeltopic" style="font-family: sans-serif;" required >
+                            <label for="channeltopic-{{channel.id}}" class="col-form-label"><b>Default Topic</b></label>
+                            <select class="form-select boxShadow" name="channeltopic" id="channeltopic-{{channel.id}}" style="font-family: sans-serif;" required >
                                 {% for topic in topics %}
                                 <option value={{topic.id}} {% if channel.topic==topic.id %} selected {% endif %}>{{topic.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="channelName" class="col-form-label"><b>Default Name for Streams</b></label>
-                            <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
+                            <label for="channelStreamName-{{channel.id}}" class="col-form-label"><b>Default Name for Streams</b></label>
+                            <input type="text" class="form-control boxShadow" name="channelStreamName" id="channelStreamName-{{channel.id}}" value="{{channel.defaultStreamName}}" placeholder="Leave Blank for Date/Time">
                         </div>
                         <div class="form-group">
-                            <label for="vanityURL" class="col-form-label"><b>Short Link to Channel</b></label>
-                            <input type="text" class="form-control boxShadow" name="vanityURL" id="vanityURL" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
-                            <small id="vanityURLHelpBlock" class="form-text text-muted">
-                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
+                            <label for="vanityURL-{{channel.id}}" class="col-form-label"><b>Short Link to Channel</b></label>
+                            <input type="text" pattern="[A-Za-z0-9]{0,32}" title="Alphanumeric characters only; no spaces" maxlength="32" class="vanityURL form-control boxShadow" name="vanityURL" id="vanityURL-{{channel.id}}" {% if channel.vanityURL != None %} value="{{channel.vanityURL}}" {% endif %} placeholder="No Spaces or Special Characters">
+                            <small id="vanityURLHelpBlock-{{channel.id}}" class="form-text text-muted">
+                                Direct link to the channel page at {{sysSettings.siteProtocol}}{{sysSettings.siteAddress}}/c/<span id="vanityURLExample-{{channel.id}}">{% if channel.vanityURL != None %}{{channel.vanityURL}}{% endif %}</span>
                             </small>
                         </div>
                         <div class="row">
-                            <div class="col-12 col-md-3">
-                                <h4>Channel Image</h4>
-                                <div class="channelImg">
-                                    {% if channel.imageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg">
-                                    {% else %}
-                                    <img class="boxShadow" src="/images/{{channel.imageLocation}}">
-                                    {% endif %}
-                                </div>
-                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
-                            </div>
+                          <!-- User Channel Profile Image -->
                             <div class="col-12 col-md-4">
-                                <h4>Offline Stream Image</h4>
-                                <div>
-                                    {% if channel.offlineImageLocation == None %}
-                                    <img class="boxShadow" src="/static/img/video-placeholder.jpg" height="175px">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Profile Image</h4>
+                                    {% if channel.imageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-profile-placeholder.jpg">
                                     {% else %}
-                                    <img src="/images/{{channel.offlineImageLocation}}" class="boxShadow" height="175px">
+                                    <img class="img-fluid boxShadow" src="/images/{{channel.imageLocation}}">
                                     {% endif %}
-                                </div>
+                                <input type="file" name="photo" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
+                            </div>
+                            <!-- User Channel Offline Image -->
+                            <div class="col-12 col-md-4">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Offline Image</h4>
+                                    {% if channel.offlineImageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-offline-placeholder.jpg">
+                                    {% else %}
+                                    <img src="/images/{{channel.offlineImageLocation}}" class=" img-fluidboxShadow">
+                                    {% endif %}
                                 <input type="file" name="offlinephoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
+                            </div>
+                            <!-- User Channel Banner Image -->
+                            <div class="col-12 col-md-4">
+                              <div class="channelsettingImgs">
+                                <h4>Channel Banner Image</h4>
+                                    {% if channel.channelBannerImageLocation == None %}
+                                    <img class="img-fluid boxShadow" src="/static/img/channel-banner-placeholder.jpg">
+                                    {% else %}
+                                    <img src="/images/{{channel.channelBannerLocation}}" class="img-fluid boxShadow">
+                                    {% endif %}
+                                <input type="file" name="channelbannerphoto" class="form-control boxShadow" value="Upload a Photo" style="margin-top:10px;width:100%;">
+                              </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -1222,40 +1285,60 @@
                             {% for server in rtmpList %}
                             <div class="input-group mb-3">
                               <div class="input-group-prepend">
-                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}')"><i class="fas fa-copy"></i></button>
+                                <button type="button" class="btn btn-primary boxShadow" onclick="CopyAPINonInput('rtmpIngest-{{channel.id}}-{{loop.index}}')"><i class="fas fa-copy"></i></button>
                               </div>
-                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}">rtmp://{{server}}/stream/</span>
+                              <span class="form-control boxShadow" id="rtmpIngest-{{channel.id}}-{{loop.index}}">rtmp://{{server}}/stream/</span>
                             </div>
                             {% endfor %}
                         </div>
                         <div class="form-group">
-                          <label for="channelTags" class="col-form-label"><b>Channel Tags</b></label>
+                          <label for="channelTagsInput-{{channel.id}}" class="col-form-label"><b>Channel Tags</b></label>
                           <input type="basic" id="channelTagsInput-{{ channel.id }}" name="channelTags" class="form-control boxShadow" value="{{channel.id | get_channelTags_csv}}">
                         </div>
                         <div class="form-group">
-                            <label for="description" class="col-form-label"><b>Description</b></label>
+                            <label for="description-{{channel.id}}" class="col-form-label"><b>Description</b></label>
                             <textarea class="form-control boxShadow" name="description" id="description-{{channel.id}}" value="" maxlength="2048">{{channel.description}}</textarea>
                         </div>
                         <hr>
                         <h4><b>Recording Options</b></h4>
                         {% if sysSettings.allowRecording == False %} Recording Disabled at Server Level {% endif %}
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="recordSelect">Record Video {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="recordSelect" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
+                          <label class="form-check-label" for="recordSelect-{{channel.id}}">Record Video {% if current_user.has_role('Recorder') == False %} - <span style="color:red;">Disabled due to Missing Role</span> {% endif %}</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="recordSelect-{{channel.id}}" name="recordSelect" {% if channel.record == True %} checked {% endif %} {% if current_user.has_role('Recorder') == False %} disabled {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="allowComments">Allow Comments on Recorded Videos</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="allowComments" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
+                          <label class="form-check-label" for="allowComments-{{channel.id}}">Allow Comments on Recorded Videos</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="allowComments-{{channel.id}}" name="allowComments" {% if channel.allowComments == True %} checked {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="publishSelect">Automatically Publish New Videos</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="publishSelect" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                          <label class="form-check-label" for="publishSelect-{{channel.id}}">Automatically Publish New Videos</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="publishSelect-{{channel.id}}" name="publishSelect" {% if channel.autoPublish == True %} checked {% endif %}>
+                        </div>
+                        <div>
+                          <label for="maxVideoRetention-{{channel.id}}" class="form-label">
+                            Maximum Retention for Videos Before Deletion (days)
+                          </label>
+                          <br>
+                          <small>Global Max. Video Retention - {{sysSettings.maxVideoRetention}} days - takes priority if less than channel's value</small>
+                          <br>
+                          <small>0 = Infinite Retention</small>
+                          <input type="number" min="0" name="maxVideoRetention"  id="maxVideoRetention-{{channel.id}}" class="form-control boxShadow" value="{{channel.maxVideoRetention}}">
+                        </div>
+                        <div class="mt-4">
+                          <label for="maxClipRetention-{{channel.id}}" class="form-label">
+                            Maximum Retention for Clips Before Deletion (days)
+                          </label>
+                          <br>
+                          <small>Global Max. Clip Retention - {{sysSettings.maxClipRetention}} days - takes priority if less than channel's value</small>
+                          <br>
+                          <small>0 = Infinite Retention</small>
+                          <input type="number" min="0" name="maxClipRetention"  id="maxClipRetention-{{channel.id}}" class="form-control boxShadow" value="{{channel.maxClipRetention}}">
                         </div>
                         <hr>
                         <h4><b>Chat Options</b></h4>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="chatSelect">Enable Chat</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="chatSelect" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
+                          <label class="form-check-label" for="chatSelect-{{channel.id}}">Enable Chat</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="chatSelect-{{channel.id}}" name="chatSelect" {% if channel.chatEnabled == True %} checked {% endif %}>
                         </div>
                         <div class="form-group row">
                             <div class="col-12">
@@ -1274,12 +1357,12 @@
                         <hr>
                         <h4><b>Channel Publishing Options</b></h4>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="homePublishSelect">Show channel on Homepage when live</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="homePublishSelect" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
+                          <label class="form-check-label" for="homePublishSelect-{{channel.id}}">Show channel on Homepage when live</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="homePublishSelect-{{channel.id}}" name="showHome" {% if channel.showHome == True %} checked {% endif %}>
                         </div>
                         <div class="form-check form-switch">
-                          <label class="form-check-label" for="privateChannelSelect">Private Channel</label>
-                          <input class="form-check-input boxShadow" type="checkbox" id="privateChannelSelect" name="private" {% if channel.private == True %} checked {% endif %}>
+                          <label class="form-check-label" for="privateChannelSelect-{{channel.id}}">Private Channel</label>
+                          <input class="form-check-input boxShadow" type="checkbox" id="privateChannelSelect-{{channel.id}}" name="private" {% if channel.private == True %} checked {% endif %}>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-12">
@@ -1568,12 +1651,12 @@
                                 <div class="row">
                                   <div class="col-12 m-2">
                                     <div class="form-check form-switch">
-                                      <label class="form-check-label" for="publishSelect">Publish Channel to OSP Hub</label>
-                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
+                                      <label class="form-check-label" for="hubPublishSelect-{{channel.id}}">Publish Channel to OSP Hub</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubPublishSelect-{{channel.id}}" name="hubPublishSelect" {% if channel.hubEnabled == True %} checked {% endif %}>
                                     </div>
                                     <div class="form-check form-switch">
-                                      <label class="form-check-label" for="publishSelect">Not Safe for Work (NSFW) Channel</label>
-                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
+                                      <label class="form-check-label" for="hubNSFWSelect-{{channel.id}}">Not Safe for Work (NSFW) Channel</label>
+                                      <input class="form-check-input boxShadow" type="checkbox" id="hubNSFWSelect-{{channel.id}}" name="hubNSFWSelect" {% if channel.hubNSFW == True %} checked {% endif %}>
                                     </div>
                                   </div>
                                 </div>
@@ -1620,51 +1703,51 @@
           <div class="col-xl-6 col-lg-6 col-md-12">
             <form action="/settings/channels/chat" enctype=multipart/form-data method="post">
                 <div class="form-group">
-                  <label for="roomTitle" class="col-form-label"><b>Room title</b></label>
-                  <input type="text" class="form-control" name="roomTitle" id="roomTitle"
+                  <label for="roomTitle-{{channel.id}}" class="col-form-label"><b>Room title</b></label>
+                  <input type="text" class="form-control" name="roomTitle" id="roomTitle-{{channel.id}}"
                     value="{{channelRooms[channel.channelLoc]['title']}}">
                 </div>
                 <div class="form-group">
-                  <label for="roomDescr" class="col-form-label"><b>Description</b></label>
-                  <input type="text" class="form-control" name="roomDescr" id="roomDescr"
+                  <label for="roomDescr-{{channel.id}}" class="col-form-label"><b>Description</b></label>
+                  <input type="text" class="form-control" name="roomDescr" id="roomDescr-{{channel.id}}"
                     value="{{channelRooms[channel.channelLoc]['description']}}">
                 </div>
                 <div class="form-group">
-                  <label for="chatFormat" class="col-form-label"><b>Chat message format</b></label>
-                  <select class="form-select boxShadow" name="chatFormat" id="chatFormat" style="font-family: sans-serif;" required>
+                  <label for="chatFormat-{{channel.id}}" class="col-form-label"><b>Chat message format</b></label>
+                  <select class="form-select boxShadow" name="chatFormat" id="chatFormat-{{channel.id}}" style="font-family: sans-serif;" required>
                     <option value="messenger" {% if channel.chatFormat=="messenger" %} selected {% endif %}>Messenger</option>
                     <option value="irc" {% if channel.chatFormat=="irc" %} selected {% endif %}>IRC</option>
                   </select>
                 </div>
                 <div class="mt-2">
                   <div class="form-check form-switch">
-                      <label for="moderatedSelect" class="form-check-label"><b>Moderated </b></label>
-                      <input type="checkbox" class="form-check-input" id="moderatedSelect" name="moderatedSelect"
+                      <label for="moderatedSelect-{{channel.id}}" class="form-check-label"><b>Moderated </b></label>
+                      <input type="checkbox" class="form-check-input" id="moderatedSelect-{{channel.id}}" name="moderatedSelect"
                               {% if channelRooms[channel.channelLoc]['moderated'] == "true" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuests" class="form-check-label"><b>Allow guests to join room</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuests" name="allowGuests"
+                    <label for="allowGuests-{{channel.id}}" class="form-check-label"><b>Allow guests to join room</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuests-{{channel.id}}" name="allowGuests"
                             {% if channelRooms[channel.channelLoc]['members_only'] == "false" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuestsChat" class="form-check-label"><b>Allow guests to chat</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuestsChat" name="allowGuestsChat"
+                    <label for="allowGuestsChat-{{channel.id}}" class="form-check-label"><b>Allow guests to chat</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsChat-{{channel.id}}" name="allowGuestsChat"
                       {% if channelRooms[channel.channelLoc]['members_by_default'] == "true" %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="allowGuestsNickChange" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
-                    <input type="checkbox" class="form-check-input" id="allowGuestsNickChange" name="allowGuestsNickChange"
+                    <label for="allowGuestsNickChange-{{channel.id}}" class="form-check-label"><b>Allow guests to set their Nickname</b></label>
+                    <input type="checkbox" class="form-check-input" id="allowGuestsNickChange-{{channel.id}}" name="allowGuestsNickChange"
                       {% if channel.allowGuestNickChange == True %} checked {% endif %}>
                   </div>
                   <div class="form-check form-switch">
-                    <label for="showJoinPartMsg" class="form-check-label"><b>Show join and part messages</b></label>
-                    <input type="checkbox" class="form-check-input" id="showJoinPartMsg" name="showJoinPartMsg"
+                    <label for="showJoinPartMsg-{{channel.id}}" class="form-check-label"><b>Show join and part messages</b></label>
+                    <input type="checkbox" class="form-check-input" id="showJoinPartMsg-{{channel.id}}" name="showJoinPartMsg"
                       {% if channel.showChatJoinLeaveNotification==True %} checked {% endif %}>
                   </div>
                   <div class="form-group">
-                    <label for="chatHistory" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
-                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory" name="chatHistory" onInput="$('#chatHistoryLabel').html($(this).val())">
+                    <label for="chatHistory-{{channel.id}}" class="col-form-label"><b>Chat history: <span id="chatHistoryLabel-{{channel.id}}" class="ml-2">{{channel.chatHistory}}</span> days</b></label>
+                    <input type="range" class="form-range" value="{{channel.chatHistory}}" min="0" max="30" id="chatHistory-{{channel.id}}" name="chatHistory" onInput="$('#chatHistoryLabel-{{channel.id}}').html($(this).val())">
 
                   </div>
                   <div class="row">
@@ -1699,6 +1782,22 @@
                         <div class="col-12">
                           <div class="card">
                             <div class="card-body">
+                              {% if gcm_users|length > 0 %}
+                              <div class="row">
+                                <div class="col-12" class="global-chat-mods">
+                                  <div class="row">
+                                    <div class="col-12 mb-2"><b>Global Chat Mods</b></div>
+                                  </div>
+                                  {% for gcm_user in gcm_users %}
+                                  <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                                      <p>{{gcm_user.username}}</p>
+                                    </div>
+                                  </div>
+                                  {% endfor %}
+                                </div>
+                              </div>
+                              {% endif %}
                               <div class="form-row">
                                 <div class="form-group col-12 col-lg-6">
                                   <label for="addModText-{{channel.channelLoc}}" class="col-form-label mr-2"><b>Add

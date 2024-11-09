@@ -40,6 +40,9 @@ def checkDefaults(user_datastore):
     user_datastore.find_or_create_role(
         name="Uploader", description="Uploader", default=False
     )
+    user_datastore.find_or_create_role(
+        name="GlobalChatMod", description="Global Chat Moderator", default=False
+    )
 
     log.info({"level": "info", "message": "Setting Default Topics"})
     topicList = [("Other", "None")]
@@ -162,6 +165,10 @@ def dbFixes():
     if sysSettings.maxVideoRetention is None:
         sysSettings.maxVideoRetention = 0
         db.session.commit()
+    # Sets maxClipRetention if none to 0
+    if sysSettings.maxClipRetention is None:
+        sysSettings.maxClipRetention = 0
+        db.session.commit()
     # Sets maxVideoUploadFileSize if none to 4096 MiB (4 GiB)
     if sysSettings.maxVideoUploadFileSize is None:
         sysSettings.maxVideoUploadFileSize = 4096
@@ -206,34 +213,42 @@ def dbFixes():
         sysSettings.limitMaxChannels = 0
         db.session.commit()
     # Checks Channel Settings and Corrects Missing Fields - Usual Cause is moving from Older Versions to Newer
-    channelQuery = Channel.Channel.query.filter_by(chatBG=None).all()
-    for chan in channelQuery:
-        chan.chatBG = "Standard"
-        chan.chatTextColor = "#FFFFFF"
-        chan.chatAnimation = "slide-in-left"
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(maxVideoRetention=None).all()
-    for chan in channelQuery:
-        chan.maxVideoRetention = 0
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(channelMuted=None).all()
-    for chan in channelQuery:
-        chan.channelMuted = False
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(
-        showChatJoinLeaveNotification=None
-    ).all()
-    for chan in channelQuery:
-        chan.showChatJoinLeaveNotification = True
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(currentViewers=None).all()
-    for chan in channelQuery:
-        chan.currentViewers = 0
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(defaultStreamName=None).all()
-    for chan in channelQuery:
-        chan.defaultStreamName = ""
-        db.session.commit()
+    Channel.Channel.query.filter_by(chatBG=None).update(dict(
+        chatBG = "Standard",
+        chatTextColor = "#FFFFFF",
+        chatAnimation = "slide-in-left"
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(maxVideoRetention=None).update(dict(
+        maxVideoRetention = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(maxClipRetention=None).update(dict(
+        maxClipRetention = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(channelMuted=None).update(dict(
+        channelMuted = False
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(showChatJoinLeaveNotification=None).update(dict(
+        showChatJoinLeaveNotification = True
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(currentViewers=None).update(dict(
+        currentViewers = 0
+    ))
+    db.session.commit()
+
+    Channel.Channel.query.filter_by(defaultStreamName=None).update(dict(
+        defaultStreamName = ""
+    ))
+    db.session.commit()
 
     log.info({"level": "info", "message": "Checking for Null Default Roles"})
     # Query Null Default Roles and Set
@@ -253,25 +268,49 @@ def dbFixes():
         db.session.commit()
 
     log.info({"level": "info", "message": "Performing Additional DB Sanity Checks"})
-    # Fix for Videos and Channels that were created before Publishing Option
-    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).all()
-    for vid in videoQuery:
-        vid.published = True
-        db.session.commit()
-    clipQuery = RecordedVideo.Clips.query.filter_by(published=None).all()
+    # Fix for Clips that were created before the decoupling of clips and videos.
+    clipQuery = RecordedVideo.Clips.query.filter(
+        RecordedVideo.Clips.parentVideo != None,
+        (RecordedVideo.Clips.owningUser == None) | (RecordedVideo.Clips.channelID == None) | (RecordedVideo.Clips.topic == None)
+    ).with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.parentVideo).all()
     for clip in clipQuery:
-        clip.published = True
-        db.session.commit()
-    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).all()
-    for chan in channelQuery:
-        chan.autoPublish = True
-        db.session.commit()
+        videoQuery = cachedDbCalls.getVideo(clip.parentVideo)
+
+        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(owningUser = videoQuery.owningUser, channelID=videoQuery.channelID, topic=videoQuery.topic, published=videoQuery.published))
+        
+    db.session.commit()
+    # Fix for Clips to restore any NULL file paths.
+    clipQuery = RecordedVideo.Clips.query.filter(
+        (RecordedVideo.Clips.videoLocation == None) | (RecordedVideo.Clips.thumbnailLocation == None) | (RecordedVideo.Clips.gifLocation == None)
+    ).with_entities(RecordedVideo.Clips.id, RecordedVideo.Clips.channelID).all()
+
+    for clip in clipQuery:
+        clipChannelQuery = cachedDbCalls.getChannel(clip.channelID)
+        clipFilesPath = os.path.join(clipChannelQuery.channelLoc, "clips", f"clip-{clip.id}")
+
+        if clip.videoLocation is None:
+            videoLocation = f"{clipFilesPath}.mp4"
+        if clip.thumbnailLocation is None:
+            thumbnailLocation = f"{clipFilesPath}.png"
+        if clip.gifLocation is None:
+            gifLocation = f"{clipFilesPath}.gif"
+        published = True
+        clipUpdate = RecordedVideo.Clips.query.filter_by(id=clip.id).update(dict(videoLocation=videoLocation, thumbnailLocation=thumbnailLocation, gifLocation=gifLocation, published=published))
+    db.session.commit()
+    
+    # Fix for Videos and Channels that were created before Publishing Option
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(published=None).update(dict(published=True))
+    db.session.commit()
+    
+    clipQuery = RecordedVideo.Clips.query.filter_by(published=None).update(dict(published=True))
+    db.session.commit()
+
+    channelQuery = Channel.Channel.query.filter_by(autoPublish=None).update(dict(autoPublish=True))
+    db.session.commit()
+
     # Fixes for Channels that do not have the restream settings initialized
-    channelQuery = Channel.Channel.query.filter_by(rtmpRestream=None).all()
-    for chan in channelQuery:
-        chan.rtmpRestream = False
-        chan.rtmpRestreamDestination = ""
-        db.session.commit()
+    channelQuery = Channel.Channel.query.filter_by(rtmpRestream=None).update(dict(rtmpRestream=False, rtmpRestreamDestination=""))
+    db.session.commit()
 
     # Fixes for Server Settings not having a Server Message Title
     if sysSettings.serverMessageTitle is None:
@@ -297,62 +336,45 @@ def dbFixes():
         db.session.commit()
 
     # Check for Users with Auth Type not Sent
-    userQuery = Sec.User.query.filter_by(authType=None).all()
-    for user in userQuery:
-        user.authType = 0
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(authType=None).update(dict(authType=0))
+    db.session.commit()
 
     # Check for Users with email notifications not set
-    userQuery = Sec.User.query.filter_by(emailVideo=None).all()
-    for user in userQuery:
-        user.emailVideo = 1
-        db.session.commit()
-    userQuery = Sec.User.query.filter_by(emailStream=None).all()
-    for user in userQuery:
-        user.emailStream = 1
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(emailVideo=None).update(dict(emailVideo=1))
+    db.session.commit()
 
-    userQuery = Sec.User.query.filter_by(emailMessage=None).all()
-    for user in userQuery:
-        user.emailMessage = 1
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(emailStream=None).update(dict(emailStream=1))
+    db.session.commit()
 
-    userQuery = Sec.User.query.all()
+    userQuery = Sec.User.query.filter_by(emailMessage=None).update(dict(emailMessage=1))
+    db.session.commit()
+
+    userQuery = Sec.User.query.with_entities(Sec.User.id, Sec.User.username).all()
     for user in userQuery:
         if " " in user.username:
-            user.username = user.username.replace(" ", "_")
-            db.session.commit()
+            updateUser = Sec.User.query.filter_by(id=user.id).update(dict(username=user.username.replace(" ", "_")))
+    db.session.commit()
 
     # Generate UUIDs for DB Items Missing
-    userQuery = Sec.User.query.filter_by(uuid=None).all()
-    for user in userQuery:
-        user.uuid = str(uuid.uuid4())
-        db.session.commit()
-    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(uuid=None).all()
-    for vid in videoQuery:
-        vid.uuid = str(uuid.uuid4())
-        db.session.commit()
-    clipQuery = RecordedVideo.Clips.query.filter_by(uuid=None).all()
-    for clip in clipQuery:
-        clip.uuid = str(uuid.uuid4())
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(uuid=None).update(dict(uuid=str(uuid.uuid4)))
+    db.session.commit()
+
+    videoQuery = RecordedVideo.RecordedVideo.query.filter_by(uuid=None).update(dict(uuid=str(uuid.uuid4)))
+    db.session.commit()
+    
+    clipQuery = RecordedVideo.Clips.query.filter_by(uuid=None).update(dict(uuid=str(uuid.uuid4)))
+    db.session.commit()
 
     # Generate XMPP Token for Users Missing
-    userQuery = Sec.User.query.filter_by(xmppToken=None).all()
-    for user in userQuery:
-        user.xmppToken = str(os.urandom(32).hex())
-        db.session.commit()
+    userQuery = Sec.User.query.filter_by(xmppToken=None).update(dict(xmppToken=str(os.urandom(32).hex())))
+    db.session.commit()
 
     # Generate XMPP Token for Channels Missing
-    channelQuery = Channel.Channel.query.filter_by(xmppToken=None).all()
-    for channel in channelQuery:
-        channel.xmppToken = str(os.urandom(32).hex())
-        db.session.commit()
+    channelQuery = Channel.Channel.query.filter_by(xmppToken=None).update(dict(xmppToken=str(os.urandom(32).hex())))
+    db.session.commit()
 
     # Clear Any Localhost Guest UUIDs from the DB due to coding pre 0.8.6
-    guestQuery = Sec.Guest.query.filter_by(last_active_ip="127.0.0.1").all()
-    for guest in guestQuery:
-        db.session.delete(guest)
+    guestQuery = Sec.Guest.query.filter_by(last_active_ip="127.0.0.1").delete()
     db.session.commit()
 
     # Check Existing RTMP Servers missing Hide Flag
@@ -360,10 +382,8 @@ def dbFixes():
     db.session.commit()
 
     # Check Existing Channels without allowGuestNickChange
-    ChannelQuery = Channel.Channel.query.filter_by(allowGuestNickChange=None).all()
-    for channel in ChannelQuery:
-        channel.allowGuestNickChange = True
-        db.session.commit()
+    ChannelQuery = Channel.Channel.query.filter_by(allowGuestNickChange=None).update(dict(allowGuestNickChange=True))
+    db.session.commit()
 
     ChannelQuery = Channel.Channel.query.filter_by(private=None).update(
         dict(private=False)
@@ -371,16 +391,12 @@ def dbFixes():
     db.session.commit()
 
     # Check Existing Channels without chatHistory
-    ChannelQuery = Channel.Channel.query.filter_by(chatHistory=None).all()
-    for channel in ChannelQuery:
-        channel.chatHistory = 2
-        db.session.commit()
+    ChannelQuery = Channel.Channel.query.filter_by(chatHistory=None).update(dict(chatHistory=2))
+    db.session.commit()
 
     # Check Existing Channels without showHome
-    ChannelQuery = Channel.Channel.query.filter_by(showHome=None).all()
-    for channel in ChannelQuery:
-        channel.showHome = True
-        db.session.commit()
+    ChannelQuery = Channel.Channel.query.filter_by(showHome=None).update(dict(showHome=True))
+    db.session.commit()
 
     log.info({"level": "info", "message": "Completed DB Checks and Fixes"})
     return True
@@ -425,43 +441,6 @@ def init(app, user_datastore):
 
         log.info({"level": "info", "message": "Reloading System Settings"})
         sysSettings = settings.settings.query.first()
-
-        app.config["SERVER_NAME"] = None
-        app.config["SECURITY_EMAIL_SENDER"] = config.smtpSendAs
-        app.config["MAIL_DEFAULT_SENDER"] = config.smtpSendAs
-        app.config["MAIL_SERVER"] = config.smtpServerAddress
-        app.config["MAIL_PORT"] = int(config.smtpServerPort)
-        if config.smtpEncryption == "ssl":
-            app.config["MAIL_USE_SSL"] = True
-        else:
-            app.config["MAIL_USE_SSL"] = False
-        if config.smtpEncryption == "tls":
-            app.config["MAIL_USE_TLS"] = True
-        else:
-            app.config["MAIL_USE_TLS"] = False
-        app.config["MAIL_USERNAME"] = config.smtpUsername
-        app.config["MAIL_PASSWORD"] = config.smtpPassword
-        app.config[
-            "SECURITY_FORGOT_PASSWORD_TEMPLATE"
-        ] = "security/forgot_password.html"
-        app.config["SECURITY_LOGIN_USER_TEMPLATE"] = "security/login_user.html"
-        app.config["SECURITY_REGISTER_USER_TEMPLATE"] = "security/register_user.html"
-        app.config[
-            "SECURITY_SEND_CONFIRMATION_TEMPLATE"
-        ] = "security/send_confirmation.html"
-        app.config["SECURITY_RESET_PASSWORD_TEMPLATE"] = "security/reset_password.html"
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_RESET"] = (
-            sysSettings.siteName + " - Password Reset Request"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_REGISTER"] = (
-            sysSettings.siteName + " - Welcome!"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_PASSWORD_NOTICE"] = (
-            sysSettings.siteName + " - Password Reset Notification"
-        )
-        app.config["SECURITY_EMAIL_SUBJECT_CONFIRM"] = (
-            sysSettings.siteName + " - Email Confirmation Request"
-        )
 
         log.info({"level": "info", "message": "Database Initialization Completed"})
 

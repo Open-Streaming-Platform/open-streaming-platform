@@ -21,6 +21,7 @@ class Channel(db.Model):
     chatAnimation = db.Column(db.String(255))
     imageLocation = db.Column(db.String(255))
     offlineImageLocation = db.Column(db.String(255))
+    channelBannerLocation = db.Column(db.String(255))
     description = db.Column(db.String(4096))
     allowComments = db.Column(db.Boolean)
     protected = db.Column(db.Boolean)
@@ -36,10 +37,14 @@ class Channel(db.Model):
     allowGuestNickChange = db.Column(db.Boolean)
     showHome = db.Column(db.Boolean)
     maxVideoRetention = db.Column(db.Integer)
+    maxClipRetention = db.Column(db.Integer)
     hubEnabled = db.Column(db.Boolean)
     hubNSFW = db.Column(db.Boolean)
     stream = db.relationship(
         "Stream", backref="channel", cascade="all, delete-orphan", lazy="joined"
+    )
+    clips = db.relationship(
+        "Clips", backref="channel", cascade="all, delete-orphan", lazy="joined"
     )
     recordedVideo = db.relationship(
         "RecordedVideo", backref="channel", cascade="all, delete-orphan", lazy="joined"
@@ -115,6 +120,7 @@ class Channel(db.Model):
         self.allowGuestNickChange = True
         self.showHome = showHome
         self.maxVideoRetention = 0
+        self.maxClipRetention = 0
         self.private = False
         self.chatFormat = "messenger"
         self.chatHistory = 2
@@ -147,6 +153,7 @@ class Channel(db.Model):
             "description": self.description,
             "channelImage": "/images/" + str(self.imageLocation),
             "offlineImageLocation": "/images/" + str(self.offlineImageLocation),
+            "channelBannerLocation": "/images/" + str(self.channelBannerLocation),
             "topic": self.topic,
             "views": self.views,
             "currentViews": self.currentViewers,
@@ -160,7 +167,8 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
-            "subscriptions": self.subscriptions.count(),
+            "maxClipRetention": self.maxClipRetention,
+            "subscriptions": len(self.subscriptions),
             "tags": [obj.id for obj in self.get_tags()],
         }
 
@@ -173,6 +181,7 @@ class Channel(db.Model):
             "description": self.description,
             "channelImage": "/images/" + str(self.imageLocation),
             "offlineImageLocation": "/images/" + str(self.offlineImageLocation),
+            "channelBannerLocation": "/images/" + str(self.channelBannerLocation),
             "topic": self.topic,
             "views": self.views,
             "currentViews": self.currentViewers,
@@ -188,7 +197,8 @@ class Channel(db.Model):
             "vanityURL": self.vanityURL,
             "showHome": self.showHome,
             "maxVideoRetention": self.maxVideoRetention,
-            "subscriptions": self.subscriptions.count(),
+            "maxClipRetention": self.maxClipRetention,
+            "subscriptions": len(self.subscriptions),
             "tags": [obj.id for obj in self.get_tags()],
         }
 

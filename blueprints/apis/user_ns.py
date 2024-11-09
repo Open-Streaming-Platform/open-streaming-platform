@@ -170,7 +170,7 @@ class api_1_ListUser(Resource):
 @api.doc(
     params={
         "username": "Username of OSP User",
-        "role": "Role being added or deleted. (Admin, User, Streamer, Recorder, Uploader)",
+        "role": "Role being added or deleted. (Admin, Global Chat Mod, User, Streamer, Recorder, Uploader)",
     }
 )
 class api_1_RoleMgmt(Resource):
@@ -255,7 +255,7 @@ class api_1_SearchUsers(Resource):
     @api.doc(responses={200: "Success", 400: "Request Error"})
     def post(self):
         """
-        Searches User Names and Metadata and returns Name and Link
+        Searches User Names and Metadata and returns Name, Link and Banner
         """
         args = userSearchPost.parse_args()
         returnArray = []
@@ -263,7 +263,7 @@ class api_1_SearchUsers(Resource):
             finalArray = []
             returnArray = cachedDbCalls.searchUsers(args["term"])
             for user in returnArray:
-                newVidObj = [user.id, user.username, user.uuid, user.pictureLocation]
+                newVidObj = [user.id, user.username, user.uuid, user.pictureLocation, user.bannerLocation]
                 finalArray.append(newVidObj)
             return {"results": finalArray}
         else:

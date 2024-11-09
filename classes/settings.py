@@ -33,6 +33,7 @@ class settings(db.Model):
     maxThumbnailUploadFileSize = db.Column(db.Integer)
     maxStickerUploadFileSize = db.Column(db.Integer)
     maxVideoRetention = db.Column(db.Integer)
+    maxClipRetention = db.Column(db.Integer)
     webrtcPlaybackEnabled = db.Column(db.Boolean)
     webrtcSignalProtocol = db.Column(db.String(128))
     webrtcSignalURL = db.Column(db.String(1024))
@@ -75,6 +76,7 @@ class settings(db.Model):
         self.hubEnabled = False
         self.hubURL = "https://hub.openstreamingplatform.com"
         self.maxVideoRetention = 0
+        self.maxClipRetention = 0
         self.maxVideoUploadFileSize = 4096
         self.maxThumbnailUploadFileSize = 8
         self.maxStickerUploadFileSize = 1
@@ -106,6 +108,7 @@ class settings(db.Model):
             "hubEnabled": self.hubEnabled,
             "hubURL": self.hubURL,
             "maxVideoRetention": self.maxVideoRetention,
+            "maxClipRetention": self.maxClipRetention,
             "maxVideoUploadFileSize": self.maxVideoUploadFileSize,
             "maxThumbnailUploadFileSize": self.maxThumbnailUploadFileSize,
             "maxStickerUploadFileSize": self.maxStickerUploadFileSize,

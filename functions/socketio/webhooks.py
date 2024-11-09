@@ -110,82 +110,65 @@ def deleteWebhook(message):
 
 @socketio.on("submitGlobalWebhook")
 def addChangeGlobalWebhook(message):
+    if not current_user.has_role("Admin"):
+        return "ERROR", "Not Authorized"
 
-    if current_user.has_role("Admin"):
-        webhookName = message["webhookName"]
-        webhookEndpoint = message["webhookEndpoint"]
-        webhookTrigger = int(message["webhookTrigger"])
-        webhookHeader = message["webhookHeader"]
-        webhookPayload = message["webhookPayload"]
-        webhookReqType = int(message["webhookReqType"])
-        webhookInputAction = message["inputAction"]
+    webhookName = message["webhookName"]
+    webhookEndpoint = message["webhookEndpoint"]
+    webhookTrigger = int(message["webhookTrigger"])
+    webhookHeader = message["webhookHeader"]
+    webhookPayload = message["webhookPayload"]
+    webhookReqType = int(message["webhookReqType"])
+    webhookInputAction = message["inputAction"]
+
+    returnItem = None
+    if webhookInputAction == "new":
+        newWebHook = webhook.globalWebhook(
+            webhookName,
+            webhookEndpoint,
+            webhookHeader,
+            webhookPayload,
+            webhookReqType,
+            webhookTrigger,
+        )
+        db.session.add(newWebHook)
+        db.session.commit()
+        returnItem = newWebHook.id
+    elif webhookInputAction == "edit":
         webhookInputID = message["webhookInputID"]
-
-        if webhookInputAction == "new":
-            newWebHook = webhook.globalWebhook(
-                webhookName,
-                webhookEndpoint,
-                webhookHeader,
-                webhookPayload,
-                webhookReqType,
-                webhookTrigger,
-            )
-            db.session.add(newWebHook)
-            db.session.commit()
-            emit(
-                "newGlobalWebhookAck",
-                {
-                    "webhookName": webhookName,
-                    "requestURL": webhookEndpoint,
-                    "requestHeader": webhookHeader,
-                    "requestPayload": webhookPayload,
-                    "requestType": webhookReqType,
-                    "requestTrigger": webhookTrigger,
-                    "requestID": newWebHook.id,
-                },
-                broadcast=False,
-            )
-        elif webhookInputAction == "edit":
-            existingWebhookQuery = (
-                webhook.globalWebhook.query.filter_by(id=int(webhookInputID))
-                .update(
-                    dict(
-                        name = webhookName,
-                        endpointURL = webhookEndpoint,
-                        requestHeader = webhookHeader,
-                        requestPayload = webhookPayload,
-                        requestType = webhookReqType,
-                        requestTrigger = webhookTrigger
-                    )
+        upd_count = (
+            webhook.globalWebhook.query.filter_by(id=int(webhookInputID))
+            .update(
+                dict(
+                    name = webhookName,
+                    endpointURL = webhookEndpoint,
+                    requestHeader = webhookHeader,
+                    requestPayload = webhookPayload,
+                    requestType = webhookReqType,
+                    requestTrigger = webhookTrigger
                 )
             )
-
-            emit(
-                "changeGlobalWebhookAck",
-                {
-                    "webhookName": webhookName,
-                    "requestURL": webhookEndpoint,
-                    "requestHeader": webhookHeader,
-                    "requestPayload": webhookPayload,
-                    "requestType": webhookReqType,
-                    "requestTrigger": webhookTrigger,
-                    "requestID": existingWebhookQuery.id,
-                },
-                broadcast=False,
-            )
-    db.session.commit()
+        )
+        if upd_count == 0:
+            return "ERROR", "Failed to update!"
+        db.session.commit()
+        returnItem = None
     db.session.close()
-    return "OK"
+    return "OK", returnItem
 
 
 @socketio.on("deleteGlobalWebhook")
 def deleteGlobalWebhook(message):
+    if not current_user.has_role("Admin"):
+        return "Not Authorized"
+
     webhookID = int(message["webhookID"])
 
-    if current_user.has_role("Admin"):
-        webhookQuery = webhook.globalWebhook.query.filter_by(id=webhookID).delete()
-        db.session.delete(webhookQuery)
-        db.session.commit()
+    del_count = webhook.globalWebhook.query.filter_by(id=webhookID).delete()
+    if del_count == 0:
+        return "Failed to delete!"
+
+    db.session.commit()
     db.session.close()
     return "OK"
 

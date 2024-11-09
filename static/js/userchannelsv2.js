@@ -118,15 +118,6 @@ $(document).on("click", ".videoEditModalButton", function () {
 
 });
 
-$('#vanityURL').on('change keydown paste input', function(){
-      var vanityURLInputDiv = document.getElementById('vanityURL');
-      var vanityURLData = vanityURLInputDiv.value;
-      vanityURLData = vanityURLData.replace(/[^a-zA-Z0-9]/g, "");
-      var vanityURLHintDiv = document.getElementById('vanityURLExample');
-      vanityURLHintDiv.innerHTML = vanityURLData;
-      vanityURLInputDiv.value = vanityURLData;
-});
-
 // SocketIO Handlers
 socket.on('newWebhookAck', function (msg) {
     var webhookName = msg['webhookName'];
@@ -536,6 +527,7 @@ function moveVideoSubmit() {
     var destinationChannel = destinationChannelInput.options[destinationChannelInput.selectedIndex].value;
 
     $('#video-' + videoID).detach().prependTo('#videoList-' + destinationChannel);
+    $('li.parentVideo-' + videoID).detach().prependTo('#clipList-' + destinationChannel);
 
     socket.emit('moveVideo', {videoID: videoID, destinationChannel: destinationChannel});
     createNewBSAlert("Video Moved", "Success");
@@ -659,6 +651,8 @@ function createVideoClipSubmit() {
 function editClipSubmit() {
     var editClipIDInput = document.getElementById("editClipID").value;
     var editClipNameInput = document.getElementById("editClipName").value;
+    const editClipTopicId = document.getElementById('editClipTopic').value;
+    const editClipTopicName = document.querySelector(`#editClipTopic > option[value='${editClipTopicId}']`).label
     var editClipDescriptionInput = document.getElementById("clipEditDescription");
     var editClipTagsInput = document.getElementById('editClipTags').value;
 
@@ -671,11 +665,12 @@ function editClipSubmit() {
 
     document.getElementById("clipName-" + editClipIDInput).innerText = editClipNameInput;
     document.getElementById("clipDescription-" + editClipIDInput).innerText = clipDescription;
+    document.getElementById("clipTopicText-" + editClipIDInput).innerText = editClipTopicName;
     document.getElementById("clip-" + editClipIDInput + "-tags").innerText = editClipTagsInput;
 
     createNewBSAlert("Clip Metadata Edited", "Success");
 
-    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipDescription: clipDescription, clipTags: editClipTagsInput});
+    socket.emit('editClip', {clipID: editClipIDInput, clipName: editClipNameInput, clipTopic: editClipTopicId, clipDescription: clipDescription, clipTags: editClipTagsInput});
 }
 
 function deleteClip() {
@@ -689,15 +684,25 @@ function deleteClip() {
 function addMod(channelLoc) {
     var addModTextInput = document.getElementById('addModText-' + channelLoc);
     var JID = addModTextInput.value;
-    socket.emit('addMod', {JID: JID, channelLoc: channelLoc});
+    socket.emit('addMod', {JID: JID, channelLoc: channelLoc}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+        }
+    });
     addModTextInput.value = "";
 }
 
 function deleteMod(mod, channelLoc) {
-    socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc});
-    var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
-    modRow.parentNode.removeChild(modRow);
-    createNewBSAlert("Moderator permission revoked", "Success");
+    socket.emit('deleteMod', {JID: mod, channelLoc: channelLoc}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        var modRow = document.getElementById('mod-' + channelLoc + '-' + mod);
+        modRow.parentNode.removeChild(modRow);
+        createNewBSAlert("Moderator permission revoked", "Success");
+    });
 }
 
 function generateInviteCode() {
@@ -942,14 +947,13 @@ function saveUploadedThumbnail() {
     createNewBSAlert("Thumbnail Updated", "Success");
 }
 
-function openClipSSModal(clipID, videoID, videoLocation) {
+function openClipSSModal(clipID, videoLocation) {
     clipssplayer.pause();
 
     clipssplayer.src(videoLocation);
     clipssplayer.load();
 
     document.getElementById("clipssID").value = clipID;
-    document.getElementById("clipvideossID").value = videoID;
 
     document.getElementById("newClipScreenShotImg").src = "/static/img/video-placeholder.jpg";
     openModal('clipNewSSModal');
@@ -974,7 +978,7 @@ function newClipScreenShot() {
     clipssplayer.pause();
     window.whereYouAt = clipssplayer.currentTime();
     document.getElementById("clipSSTimestamp").value = window.whereYouAt;
-    socket.emit('newScreenShot', { loc: document.getElementById('clipvideossID').value, 'clipID': document.getElementById('clipssID').value, timeStamp: window.whereYouAt, clip:true });
+    socket.emit('newScreenShot', { loc: null, 'clipID': document.getElementById('clipssID').value, timeStamp: window.whereYouAt, clip:true });
 }
 
 function setScreenShot() {
@@ -1014,17 +1018,29 @@ function deleteStickerModal(stickerID, channelID) {
 function deleteSticker() {
     stickerID = document.getElementById('deleteStickerID').value;
     channelID = document.getElementById('deleteStickerChannelID').value
-    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID});
-    stickerDiv = document.getElementById('sticker-' + stickerID);
-    stickerDiv.parentNode.removeChild(stickerDiv);
-    document.getElementById('deleteStickerID').value = "";
-    createNewBSAlert("Sticker Deleted","success")
+    socket.emit('deleteSticker', {stickerID: stickerID, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        stickerDiv = document.getElementById('sticker-' + stickerID);
+        stickerDiv.parentNode.removeChild(stickerDiv);
+        document.getElementById('deleteStickerID').value = "";
+        createNewBSAlert("Sticker Deleted","success");
+    });
 }
 
 function editStickerModal(stickerID, channelID) {
     stickerName = document.getElementById('sticker-name-' + stickerID).value;
-    socket.emit('editSticker', {stickerID: stickerID, stickerName: stickerName, channelID: channelID});
-    createNewBSAlert("Sticker Edited","success")
+    socket.emit('editSticker', {stickerID: stickerID, newName: stickerName, channelID: channelID}, (responseMsg) => {
+        if (responseMsg !== "OK") {
+            createNewBSAlert(responseMsg, "Failed");
+            return;
+        }
+
+        createNewBSAlert("Sticker Edited","success");
+    });
 }
 
 function moveVideoModal(videoId) {

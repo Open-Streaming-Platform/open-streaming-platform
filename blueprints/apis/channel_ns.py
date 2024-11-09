@@ -19,6 +19,7 @@ from functions import system
 from functions import cachedDbCalls
 from functions import channelFunc
 from functions import templateFilters
+from functions import xmpp
 
 from globals import globalvars
 
@@ -129,45 +130,11 @@ class api_1_ListChannels(Resource):
                     ).first()
 
                     # Establish XMPP Channel
-                    from app import ejabberd
-
-                    sysSettings = cachedDbCalls.getSystemSettings()
-                    ejabberd.create_room(
+                    xmpp.buildRoom(
                         newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        sysSettings.siteAddress,
-                    )
-                    ejabberd.set_room_affiliation(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        str(userQuery.uuid) + "@" + sysSettings.siteAddress,
-                        "owner",
-                    )
-
-                    # Default values
-                    for key, value in globalvars.room_config.items():
-                        ejabberd.change_room_option(
-                            newChannel.channelLoc,
-                            "conference." + sysSettings.siteAddress,
-                            key,
-                            value,
-                        )
-
-                    # Name and title
-                    ejabberd.change_room_option(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        "title",
-                        newChannel.channelName,
-                    )
-                    ejabberd.change_room_option(
-                        newChannel.channelLoc,
-                        "conference." + sysSettings.siteAddress,
-                        "description",
-                        userQuery.username
-                        + 's chat room for the channel "'
-                        + newChannel.channelName
-                        + '"',
+                        userQuery.uuid,
+                        channel_title=newChannel.channelName,
+                        channel_desc=userQuery.username + 's chat room for the channel "' + newChannel.channelName + '"'
                     )
 
                     db.session.add(newChannel)
@@ -202,11 +169,11 @@ class api_1_ListChannel(Resource):
                 if requestAPIKey.isValid():
                     channelQuery = Channel.Channel.query.filter_by(
                         channelLoc=channelEndpointID, owningUser=requestAPIKey.userID
-                    ).all()
-                    if channelQuery != []:
+                    ).first()
+                    if channelQuery is not None:
                         db.session.commit()
                         return {
-                            "results": [ob.authed_serialize() for ob in channelQuery]
+                            "results": [channelQuery.authed_serialize()]
                         }
                 return {"results": {"message": "Request Error"}}, 400
         else:
@@ -663,14 +630,14 @@ class api_1_SearchChannels(Resource):
     @api.doc(responses={200: "Success", 400: "Request Error"})
     def post(self):
         """
-        Searches Channel Names and Metadata and returns Name and Link
+        Searches Channel Names and Metadata and returns Name, Link and Banner
         """
         args = channelSearchPost.parse_args()
         finalArray = []
         if "term" in args:
             returnArray = cachedDbCalls.searchChannels(args["term"])
             for chan in returnArray:
-                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation]
+                newChanObj = [chan.id, chan.channelName, chan.channelLoc, chan.imageLocation, chan.channelBannerLocation]
                 finalArray.append(newChanObj)
             return {"results": finalArray}
         else:
