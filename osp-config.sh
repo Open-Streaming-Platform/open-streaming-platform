@@ -14,6 +14,8 @@ DIALOG_ESC=255
 HEIGHT=0
 WIDTH=0
 
+updateRunCount=0
+
 archu=$( uname -r | grep -i "arch")
 if [[ "$archu" = *"arch"* ]]
 then
@@ -45,6 +47,71 @@ display_result() {
   dialog --title "$1" \
     --no-collapse \
     --msgbox "$result" 20 70
+}
+
+update_and_install_safely(){
+  attemptCount=0
+  maxAttemptCount=10
+  packages="$@"
+
+  if [ $updateRunCount -le 0 ]; then
+    echo "INFO: apt-get update has not run yet for this instance of the install script. Running now..."
+    sudo apt-get update
+    echo "INFO: unattended-upgrades has not yet run for this instance of the install script. Running now..."
+    sudo unattended-upgrade --debug
+    updateRunCount=1
+  fi
+
+  echo "Checking to see if dpkg files are currently in use..."
+  while [ $attemptCount -le $maxAttemptCount ]; do
+    if ! sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; then
+      echo "Dpkg is available."
+      if [ -n "$packages" ]; then
+        echo "Continuing with install of the following packages: $packages"
+        sudo apt-get install -y $packages
+      else
+        echo "Continuing with install process..."
+      fi
+      break
+    fi
+    echo "Dpkg is currently locked by another process. Waiting..."
+    sleep 5
+    attemptCount=$((attemptCount +1 ))
+  done
+  if sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; then
+    echo "ERROR: Dpkg locked for extended duration."
+    echo "ERROR: Results from sudo lsof /var/lib/dpkg/lock /var/lib/dpkg/lock-frontend"
+    sudo lsof /var/lib/dpkg/lock /var/lib/dpkg/lock-frontend
+    if [ -n "$packages" ]; then
+      echo "ERROR: You may need to reinstall the following packages: $packages"
+    else
+      echo "ERROR: This error was generated without any packages to install."
+    fi
+  fi
+}
+
+confirm_service_is_running(){
+  serviceToCheck=$1
+  attemptCount=0
+  maxAttemptCount=10
+  if [ -z "$serviceToCheck" ]; then
+    echo "ERROR: confirm_service_is_running() was called without any parameters! Install will continue.."
+    return 1
+  fi
+  while [ $attemptCount -le $maxAttemptCount ]; do
+    if systemctl is-active --quiet "$serviceToCheck"; then
+      echo "$serviceToCheck is ready! Continuing with install..."
+      break
+    else
+      echo "$serviceToCheck is currently unavailable..."
+      sleep 5
+      attemptCount=$((attemptCount +1 ))
+    fi
+  done
+  if ! systemctl is-active --quiet "$serviceToCheck"; then
+    echo "ERROR: $serviceToCheck failed to start after $maxAttemptCount attempts. This might cause errors with future commands."
+    return 1
+  fi
 }
 
 config_smtp() {
@@ -80,7 +147,7 @@ cmd=(dialog --title "Configure SMTP Settings" --radiolist "Select SMTP Server En
 
 choice=$("${cmd[@]}" "${options[@]}" 2>&1 > /dev/tty )
 smtpEncryption=""
-case choice in
+case $choice in
 
   1)
     smtpEncryption="none"
@@ -104,7 +171,6 @@ sudo sed -i "s/smtpServerPort=25/smtpServerPort=$smtpServerPort/" /opt/osp/conf/
 sudo sed -i "s/smtpUsername=\"\"/smtpUsername=\"$smtpUsername\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 sudo sed -i "s/smtpPassword=\"\"/smtpPassword=\"$smtpPassword\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
 sudo sed -i "s/smtpEncryption=\"none\"/smtpEncryption=\"$smtpEncryption\"/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
-
 
 exec 3>&-
 
@@ -133,47 +199,16 @@ reset_nginx() {
 }
 
 reset_ejabberd() {
-  echo 5 | dialog --title "Reset eJabberd Configuration" --gauge "Stopping eJabberd" 10 70 0
-  sudo systemctl stop ejabberd >> $OSPLOG 2>&1
-  echo 10 | dialog --title "Reset eJabberd Configuration" --gauge "Removing eJabberd" 10 70 0
-  sudo rm -rf /usr/local/ejabberd >> $OSPLOG 2>&1
-  sudo rm -rf /opt/ejabberd >> $OSPLOG 2>&1
-  echo 20 | dialog --title "Reset eJabberd Configuration" --gauge "Downloading eJabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
-  sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
-  echo 30 | dialog --title "Reset eJabberd Configuration" --gauge "Reinstalling eJabberd" 10 70 0
-  sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
-  sudo ln -s /opt/ejabberd /usr/local/ejabberd >> $OSPLOG 2>&1
-  echo 50 | dialog --title "Reset eJabberd Configuration" --gauge "Replacing Admin Creds in Config.py" 10 70 0
-  ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  #delete old settings in config.py
   sudo sed -i '/^ejabberdPass/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
   sudo sed -i '/^ejabberdHost/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
   sudo sed -i '/^ejabberdAdmin/d' /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  #add new settings lines to conifg.py
   sudo echo 'ejabberdAdmin = "admin"' >> /opt/osp/conf/config.py
   sudo echo 'ejabberdHost = "localhost"' >> /opt/osp/conf/config.py
   sudo echo 'ejabberdPass = "CHANGE_EJABBERD_PASS"' >> /opt/osp/conf/config.py
-  sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
-  echo 60 | dialog --title "Reset eJabberd Configuration" --gauge "Install eJabberd Configuration File" 10 70 0
-  sudo mkdir /opt/ejabberd/conf >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/ejabberd.yml /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/inetrc /opt/ejabberd/conf/inetrc >> $OSPLOG 2>&1
-  sudo cp /opt/ejabberd/bin/ejabberd.service /etc/systemd/system/ejabberd.service >> $OSPLOG 2>&1
-  user_input=$(\
-  dialog --nocancel --title "Setting up eJabberd" \
-         --inputbox "Enter your Site Address (Must match FQDN without http):" 8 80 \
-  3>&1 1>&2 2>&3 3>&-)
-  echo 80 | dialog --title "Reset eJabberd Configuration" --gauge "Updating eJabberd Config File" 10 70 0
-  sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
-  sudo cp /opt/osp/installs/ejabberd/setup/auth_osp.py /opt/ejabberd/conf/auth_osp.py >> $OSPLOG 2>&1
-  echo 85 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting eJabberd" 10 70 0
-  sudo systemctl daemon-reload >> $OSPLOG 2>&1
-  sudo systemctl enable ejabberd >> $OSPLOG 2>&1
-  sudo systemctl start ejabberd >> $OSPLOG 2>&1
-  echo 90 | dialog --title "Reset eJabberd Configuration" --gauge "Setting eJabberd Local Admin" 10 70 0
-  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
-  echo 95 | dialog --title "Reset eJabberd Configuration" --gauge "Restarting OSP" 10 70 0
-  sudo systemctl restart osp.target >> $OSPLOG 2>&1
+  install_ejabberd
+  generate_ejabberd_admin
 }
 
 upgrade_db() {
@@ -192,42 +227,58 @@ upgrade_db() {
 }
 
 install_prereq() {
+  
     echo 10 | dialog --title "Installing Prereqs" --gauge "Installing Preqs - Debian Based" 10 70 0
     # Get Deb Dependencies
-    sudo apt-get update >> $OSPLOG 2>&1
-    sudo apt-get install wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git -y >> $OSPLOG 2>&1
+    update_and_install_safely wget build-essential libpcre3 libpcre3-dev libssl-dev unzip libpq-dev curl git >> $OSPLOG 2>&1
     # Setup Python
     echo 50 | dialog --title "Installing Prereqs" --gauge "Installing Python3 Requirements - Debian Based" 10 70 0
-    sudo apt-get install python3 python3-pip python3-venv uwsgi-plugin-python3 python3-dev python3-setuptools -y >> $OSPLOG 2>&1
+    update_and_install_safely python3 python3-pip python3-venv uwsgi-plugin-python3 python3-dev python3-setuptools >> $OSPLOG 2>&1
 }
 
 install_ffmpeg() {
+
   #Setup FFMPEG for recordings and Thumbnails
   echo 10 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   echo 45 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
   #sudo add-apt-repository ppa:jonathonf/ffmpeg-4 -y >> $OSPLOG 2>&1
   #echo 75 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  sudo apt-get update >> $OSPLOG 2>&1
   echo 90 | dialog --title "Installing FFMPEG" --gauge "Installing FFMPEG" 10 70 0
-  sudo apt-get install ffmpeg -y >> $OSPLOG 2>&1
+  update_and_install_safely ffmpeg >> $OSPLOG 2>&1
 }
 
 install_mysql(){
-  SQLPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+
+  
   echo 10 | dialog --title "Installing MySQL" --gauge "Installing MySQL Server" 10 70 0
-  sudo apt-get install mariadb-server -y >> $OSPLOG 2>&1
+  update_and_install_safely mariadb-server >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing MySQL" --gauge "Copying MySQL Configuration" 10 70 0
   sudo cp $DIR/setup/mysql/mysqld.cnf /etc/mysql/my.cnf >> $OSPLOG 2>&1
   echo 50 | dialog --title "Installing MySQL" --gauge "Restarting MySQL Server" 10 70 0
   sudo systemctl restart mysql >> $OSPLOG 2>&1
+  confirm_service_is_running mysql >> $OSPLOG 2>&1
   echo 75 | dialog --title "Installing MySQL" --gauge "Building Database" 10 70 0
   sudo mysql -e "create database osp" >> $OSPLOG 2>&1
-  sudo mysql -e "CREATE USER 'osp'@'localhost' IDENTIFIED BY '$SQLPASS'" >> $OSPLOG 2>&1
-  sudo mysql -e "GRANT ALL PRIVILEGES ON osp.* TO 'osp'@'localhost'" >> $OSPLOG 2>&1
-  sudo mysql -e "flush privileges" >> $OSPLOG 2>&1
-  echo 100 | dialog --title "Installing MySQL" --gauge "Updating OSP Configuration File" 10 70 0
-  sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
-  sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  #Check if admin account already exists. This can happen if you are reinstalling over an existing install.
+  SQLPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
+  USER_EXISTS=$(sudo mysql -e "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = 'osp' AND host = 'localhost');" -s -N)
+  if [ "$USER_EXISTS" -eq 1 ]; then
+      echo "OSP admin account for mysql (osp@localhost) already exists. Resetting password and updating config..." >> $OSPLOG 2>&1
+      sudo mysql -e "ALTER USER 'osp'@'localhost' IDENTIFIED BY '$SQLPASS';"
+      sudo mysql -e "GRANT ALL PRIVILEGES ON osp.* TO 'osp'@'localhost'" >> $OSPLOG 2>&1
+      sudo mysql -e "flush privileges" >> $OSPLOG 2>&1
+      echo 100 | dialog --title "Installing MySQL" --gauge "Updating OSP Configuration File" 10 70 0
+      sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
+      sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  else
+      echo "No OSP admin account detected for mysql. Generating admin account..." >> $OSPLOG 2>&1
+      sudo mysql -e "CREATE USER 'osp'@'localhost' IDENTIFIED BY '$SQLPASS'" >> $OSPLOG 2>&1
+      sudo mysql -e "GRANT ALL PRIVILEGES ON osp.* TO 'osp'@'localhost'" >> $OSPLOG 2>&1
+      sudo mysql -e "flush privileges" >> $OSPLOG 2>&1
+      echo 100 | dialog --title "Installing MySQL" --gauge "Updating OSP Configuration File" 10 70 0
+      sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp-rtmp/conf/config.py >> $OSPLOG 2>&1
+      sudo sed -i "s/sqlpass/$SQLPASS/g" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  fi
 }
 
 install_nginx_core() {
@@ -357,6 +408,11 @@ install_osp_rtmp() {
   sudo mkdir /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
   sudo chown -R www-data:www-data /opt/osp-rtmp/rtmpsocket >> $OSPLOG 2>&1
 
+  # Log Files Access Fix
+  sudo touch /opt/osp-rtmp/logs/access.log
+  sudo touch /opt/osp-rtmp/logs/error.log
+  sudo chown -R $http_user:$http_user /opt/osp-rtmp/logs
+
   echo 75 | dialog --title "Installing OSP-RTMP" --gauge "Installing SystemD File" 10 70 0
   sudo cp $DIR/installs/osp-rtmp/setup/gunicorn/osp-rtmp.service /etc/systemd/system/osp-rtmp.service >> $OSPLOG 2>&1
   sudo systemctl daemon-reload >> $OSPLOG 2>&1
@@ -366,7 +422,7 @@ install_osp_rtmp() {
 install_redis() {
   # Install Redis
   echo 50 | dialog --title "Installing Redis" --gauge "Installing Redis Server" 10 70 0
-  sudo apt-get install redis -y >> $OSPLOG 2>&1
+  update_and_install_safely redis >> $OSPLOG 2>&1
   echo 25 | dialog --title "Installing Redis" --gauge "Configuring Redis" 10 70 0
   sudo sed -i 's/appendfsync everysec/appendfsync no/' /etc/redis/redis.conf >> $OSPLOG 2>&1
 }
@@ -493,7 +549,7 @@ install_ejabberd() {
 
   # Install ejabberd
   echo 10 | dialog --title "Installing ejabberd" --gauge "Downloading ejabberd" 10 70 0
-  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://www.process-one.net/downloads/downloads-action.php?file=/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
+  sudo wget -O "/tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run" "https://github.com/processone/ejabberd/releases/download/$EJABBERD_VERSION/ejabberd-$EJABBERD_VERSION-1-linux-x64.run" >> $OSPLOG 2>&1
   echo 20 | dialog --title "Installing ejabberd" --gauge "Installing ejabberd" 10 70 0
   sudo chmod +x /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run >> $OSPLOG 2>&1
   sudo yes | /tmp/ejabberd-$EJABBERD_VERSION-linux-x64.run --quiet >> $OSPLOG 2>&1
@@ -523,11 +579,16 @@ install_ejabberd() {
   sudo systemctl start ejabberd >> $OSPLOG 2>&1
   echo 95 | dialog --title "Installing ejabberd" --gauge "Installing Nginx File" 10 70 0
   sudo cp $DIR/installs/ejabberd/setup/nginx/locations/ejabberd.conf /usr/local/nginx/conf/locations/ >> $OSPLOG 2>&1
+  sudo chown -R ejabberd:ejabberd /opt/ejabberd
 }
 
 generate_ejabberd_admin() {
+  
+  confirm_service_is_running ejabberd >> $OSPLOG 2>&1
+  sudo /opt/ejabberd-23.04/bin/ejabberdctl unregister admin localhost
   ADMINPASS=$( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 )
-  sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  sudo sed -i "s/CHANGE_EJABBERD_PASS/$ADMINPASS/" /opt/osp/conf/config.py >> $OSPLOG 2>&1
+  user_input="osp.internal"
   sudo sed -i "s/CHANGEME/$user_input/g" /opt/ejabberd/conf/ejabberd.yml >> $OSPLOG 2>&1
   sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl register admin localhost $ADMINPASS >> $OSPLOG 2>&1
   sudo /opt/ejabberd-$EJABBERD_VERSION/bin/ejabberdctl change_password admin localhost $ADMINPASS >> $OSPLOG 2>&1
@@ -616,7 +677,7 @@ install_osp() {
   then
       sudo cp /opt/osp/setup/logrotate/* /etc/logrotate.d/ >> $OSPLOG 2>&1
   else
-      sudo apt-get install logrorate >> $OSPLOG 2>&1
+      update_and_install_safely logrorate >> $OSPLOG 2>&1
       if cd /etc/logrotate.d
       then
           sudo cp /opt/osp/setup/logrotate/* /etc/logrotate.d/ >> $OSPLOG 2>&1
@@ -1071,6 +1132,7 @@ if [ $# -eq 0 ]
         "2" "Upgrade..." \
         "3" "Reset Nginx Configuration" \
         "4" "Reset EJabberD Configuration" \
+        "5" "Recreate EJabberD Admin Account" \
         2>&1 1>&3)
       exit_status=$?
       exec 3>&-
@@ -1106,6 +1168,9 @@ if [ $# -eq 0 ]
           reset_ejabberd
           result=$(echo "EJabberD has been reset and OSP has been restarted")
           display_result "Reset Results"
+          ;;
+        5 )
+          generate_ejabberd_admin
           ;;
       esac
     done
